@@ -1,5 +1,7 @@
 # Leagues Manager
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a5c6aa9c-d3f1-457e-9ff7-9aeb09632154/deploy-status)](https://app.netlify.com/sites/leagues-manager/deploys)
+
 ## Running the Project Locally
 
 1. open a terminal and run `https://github.com/stackoverfloweth/leagues-manager.git`

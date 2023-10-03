@@ -1,0 +1,1 @@
+export type JsonOutput = object | unknown[] | null

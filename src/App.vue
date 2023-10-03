@@ -1,5 +1,26 @@
+<script lang="ts" setup>
+  import { provide } from 'vue'
+  import { ApiConfig } from '@/services/api'
+  import { apiKey, createApi } from '@/services/createApi'
+  import { env } from '@/utilities'
+
+  const config: ApiConfig = {
+    baseUrl: env().baseApiUrl,
+  }
+
+  const api = createApi(config)
+  provide(apiKey, api)
+
+  function test(): void {
+    api.example.ping()
+  }
+</script>
+
 <template>
   <div class="app">
+    <button @click="test">
+      test
+    </button>
     <router-view />
   </div>
 </template>
