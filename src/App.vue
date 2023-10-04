@@ -12,7 +12,7 @@
   provide(apiKey, api)
 
   function test(): void {
-    api.example.ping()
+    api.seasons.getList()
   }
 </script>
 

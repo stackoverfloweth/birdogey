@@ -1,11 +1,12 @@
+import { createActions } from '@prefecthq/vue-compositions'
 import { InjectionKey } from 'vue'
 import { ApiConfig } from '@/services/api'
-import { ExampleApi } from '@/services/exampleApi'
+import { SeasonApi } from '@/services/seasonApi'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createApi(config: ApiConfig) {
   return {
-    example: new ExampleApi(config),
+    seasons: createActions(new SeasonApi(config)),
   }
 }
 
