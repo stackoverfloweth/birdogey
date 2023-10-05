@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { provide } from 'vue'
+  import MenuHeader from '@/components/MenuHeader.vue'
   import { ApiConfig } from '@/services/api'
   import { apiKey, createApi } from '@/services/createApi'
   import { env } from '@/utilities'
@@ -10,18 +11,14 @@
 
   const api = createApi(config)
   provide(apiKey, api)
-
-  function test(): void {
-    api.seasons.getList()
-  }
 </script>
 
 <template>
   <div class="app">
-    <button @click="test">
-      test
-    </button>
-    <router-view />
+    <MenuHeader />
+    <Suspense>
+      <router-view :key="$route.fullPath" />
+    </Suspense>
   </div>
 </template>
 
@@ -35,18 +32,11 @@
 
   .app {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     padding: var(--space-md);
   }
 
   .app > * {
     flex-grow: 1;
-  }
-
-  @media(max-width: 400px){
-    .app {
-      padding: var(--space-xs);
-    }
   }
 </style>
