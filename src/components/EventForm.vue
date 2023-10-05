@@ -9,6 +9,10 @@
     seasonId: string,
   }>()
 
+  const emit = defineEmits<{
+    submit: [value: string],
+  }>()
+
   const api = useApi()
   const { validate, pending } = useValidationObserver()
   const name = ref<string>()
@@ -30,9 +34,9 @@
       seasonId: props.seasonId,
     } as EventRequest
 
-    await api.events.create(request)
+    const eventId = await api.events.create(request)
     showToast('Event Created!', 'success')
-    // todo: refresh parent subscription
+    emit('submit', eventId)
   }
 </script>
 

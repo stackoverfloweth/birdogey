@@ -17,6 +17,7 @@ export const handler: Handler = Api('POST', 'events-create', (args, body) => asy
     const result = await collection.insertOne({
       _id: new ObjectId(),
       seasonId: body.seasonId,
+      created: new Date(),
       name: body.name,
       notes: body.notes,
     })

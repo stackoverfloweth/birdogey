@@ -7,8 +7,8 @@ export class EventApi extends Api {
     return this.get(`/events-get-by-id/${id}`)
   }
 
-  public getList(): Promise<Event[]> {
-    return this.get<EventResponse[]>('/events-get-list')
+  public getList(seasonId: string): Promise<Event[]> {
+    return this.get<EventResponse[]>(`/events-get-list/${seasonId}`)
       .then(({ data }) => mapper.map('EventResponse', data, 'Event'))
   }
 

@@ -1,15 +1,23 @@
 <script lang="ts" setup>
   import { Tab } from '@prefecthq/prefect-design'
+  import { useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import EventForm from '@/components/EventForm.vue'
   import EventsTable from '@/components/EventsTable.vue'
-  import { useSavedContext } from '@/composables'
+  import { useApi, useSavedContext } from '@/composables'
 
   const { seasonId } = useSavedContext()
 
+  const api = useApi()
+  const subscriptionArgs = computed<Parameters<typeof api.events.getList> | null>(() => seasonId.value ? [seasonId.value] : null)
+  const eventSubscription = useSubscriptionWithDependencies(api.events.getList, subscriptionArgs)
+  const events = computed(() => eventSubscription.response ?? [])
+
   const tabs = computed<Tab[]>(() => [
     { label: 'Add Event' },
-    { label: 'Oct 2, 2023' },
+    ...events.value.map(event => ({
+      label: event.name,
+    })),
   ])
 </script>
 
@@ -21,7 +29,7 @@
         <p-icon icon="PlusIcon" />
       </template>
       <template #add-event>
-        <EventForm :season-id="seasonId" />
+        <EventForm :season-id="seasonId" @submit="eventSubscription.refresh" />
       </template>
     </p-tabs>
     <!-- tab set, each week is a tab, first tab is always a button to create new event -->
