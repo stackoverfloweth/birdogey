@@ -1,8 +1,6 @@
 import { Handler } from '@netlify/functions'
 import { ObjectId } from 'mongodb'
-import { Api } from '../utilities/api'
-import { env } from '../utilities/env'
-import { getClient } from '../utilities/mongodbClient'
+import { Api, env, getClient } from '../utilities'
 import { CourseResponse } from '@/models/api'
 
 export const handler: Handler = Api('GET', '/courses-get-by-id/:courseId', ([courseId]) => async () => {

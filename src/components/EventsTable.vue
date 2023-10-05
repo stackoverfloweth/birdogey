@@ -1,10 +1,6 @@
 <script lang="ts" setup>
-  import { useSeason } from '@/composables/useSeason.ts'
-  const { season } = useSeason()
 </script>
 
 <template>
-  <div class="events-table">
-    {{ season }}
-  </div>
+  <div class="events-table" />
 </template>

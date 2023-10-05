@@ -9,6 +9,7 @@ export type UseSavedContext = {
     courseId?: string | undefined,
     seasonId?: string | undefined,
   }) => void,
+  hasContext: Ref<boolean>,
 }
 
 export function useSavedContext(): UseSavedContext {
@@ -38,9 +39,12 @@ export function useSavedContext(): UseSavedContext {
     },
   })
 
+  const hasContext = computed(() => !!courseId.value && !!seasonId.value)
+
   return {
     courseId,
     seasonId,
     setSavedContext,
+    hasContext,
   }
 }

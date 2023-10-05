@@ -41,5 +41,9 @@
 </script>
 
 <template>
-  <p-select v-model="seasonId" :disabled="!courseId" class="season-select" :options="options" />
+  <p-select v-model="seasonId" :disabled="!courseId" class="season-select" :options="options">
+    <template v-if="seasonSubscription.loading" #empty-message>
+      <p-loading-icon />
+    </template>
+  </p-select>
 </template>

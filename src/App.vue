@@ -31,6 +31,7 @@
   .app {
     display: flex;
     flex-direction: column;
+    gap: var(--space-md);
     padding: var(--space-md);
   }
 
