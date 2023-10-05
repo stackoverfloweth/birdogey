@@ -5,7 +5,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
   {
     path: '/',
     name: 'Home',
-    // component: () => import('@/views/PaymentsCalculator.vue'),
+    component: () => import('@/views/HomeView.vue'),
   },
 ]
 
