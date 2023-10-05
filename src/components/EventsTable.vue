@@ -8,7 +8,3 @@
     {{ season }}
   </div>
 </template>
-
-<style>
-
-</style>
