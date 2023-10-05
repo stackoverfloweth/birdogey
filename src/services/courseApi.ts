@@ -3,8 +3,9 @@ import { Api } from '@/services/api'
 import { mapper } from '@/services/mapper'
 
 export class CourseApi extends Api {
-  public getById(id: string): Promise<void> {
-    return this.get(`/courses-get-by-id/${id}`)
+  public getById(id: string): Promise<Course | null> {
+    return this.get<CourseResponse>(`/courses-get-by-id/${id}`)
+      .then(({ data }) => mapper.map('CourseResponse', data, 'Course'))
   }
 
   public getList(): Promise<Course[]> {

@@ -50,7 +50,7 @@ export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T
       }
     }
 
-    console.log('NO MATCH')
+    console.error('NO MATCH')
 
     return {
       statusCode: 404,

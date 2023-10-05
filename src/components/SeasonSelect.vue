@@ -1,15 +1,25 @@
 <script lang="ts" setup>
+  import { useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import { Season } from '@/models'
+  import { useApi } from '@/composables'
 
   const props = defineProps<{
     courseId?: string,
-    modelValue?: Season | null | undefined,
+    modelValue?: string | undefined | null,
   }>()
 
   const emit = defineEmits<{
-    'update:modelValue': [value: Season | null],
+    'update:modelValue': [value: string | undefined | null],
   }>()
+
+  const api = useApi()
+  const subscriptionArgs = computed<Parameters<typeof api.seasons.getList> | null>(() => props.courseId ? [props.courseId] : null)
+  const seasonSubscription = useSubscriptionWithDependencies(api.seasons.getList, subscriptionArgs)
+  const seasons = computed(() => seasonSubscription.response ?? [])
+  const options = computed(() => seasons.value.map(season => ({
+    label: season.name,
+    value: season.id,
+  })))
 
   const modelValue = computed({
     get() {
@@ -20,18 +30,16 @@
     },
   })
 
-  const options = computed<Season[]>(() => [])
-
   const seasonId = computed({
     get() {
-      return modelValue.value?.id
+      return modelValue.value
     },
     set(value) {
-      modelValue.value = options.value.find(season => season.id === value) ?? null
+      modelValue.value = value
     },
   })
 </script>
 
 <template>
-  <p-select v-model="seasonId" :disabled="!courseId" class="season-select" :options="['1', '2', '3']" />
+  <p-select v-model="seasonId" :disabled="!courseId" class="season-select" :options="options" />
 </template>

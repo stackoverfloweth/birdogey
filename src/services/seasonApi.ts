@@ -3,12 +3,13 @@ import { Api } from '@/services/api'
 import { mapper } from '@/services/mapper'
 
 export class SeasonApi extends Api {
-  public getById(id: string): Promise<void> {
-    return this.get(`/seasons-get-by-id/${id}`)
+  public getById(id: string): Promise<Season | null> {
+    return this.get<SeasonResponse>(`/seasons-get-by-id/${id}`)
+      .then(({ data }) => mapper.map('SeasonResponse', data, 'Season'))
   }
 
-  public getList(): Promise<Season[]> {
-    return this.get<SeasonResponse[]>('/seasons-get-list')
+  public getList(courseId: string): Promise<Season[]> {
+    return this.get<SeasonResponse[]>(`/seasons-get-list/${courseId}`)
       .then(({ data }) => mapper.map('SeasonResponse', data, 'Season'))
   }
 
