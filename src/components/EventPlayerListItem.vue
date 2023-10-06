@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { useDebouncedRef, useSubscription } from '@prefecthq/vue-compositions'
+  import { computed, ref, watch } from 'vue'
+  import { useApi } from '@/composables'
   import { EventPlayer, Player } from '@/models'
 
   const props = defineProps<{
@@ -8,12 +10,29 @@
     player?: Player,
   }>()
 
+  const api = useApi()
+  const eventId = computed(() => props.eventPlayer.eventId)
+  const eventPlayerSubscription = useSubscription(api.eventPlayers.getList, [eventId])
+
   const score = ref(props.eventPlayer.score)
   const inForCtp = ref(props.eventPlayer.inForCtp)
   const inForAce = ref(props.eventPlayer.inForAce)
 
-  async function submit(): Promise<void> {
+  const request = computed(() => ({
+    score: score.value,
+    inForCtp: inForCtp.value,
+    inForAce: inForAce.value,
+  }))
+  const debounced = useDebouncedRef(request, 1000)
 
+  watch(debounced, async (value) => {
+    await api.eventPlayers.update(props.eventPlayer.id, value)
+    eventPlayerSubscription.refresh()
+  })
+
+  async function removePlayer(): Promise<void> {
+    await api.eventPlayers.remove(props.eventPlayer.id)
+    eventPlayerSubscription.refresh()
   }
 </script>
 
@@ -25,7 +44,7 @@
       </div>
 
       <div v-else class="event-player-list-item__name event-player-list-item__name--not-found">
-        Player Not Found
+        Player Deleted
       </div>
 
       <div class="event-player-list-item__tag">
@@ -37,7 +56,7 @@
       </div>
     </div>
 
-    <p-form class="event-player-list-item__form" @submit="submit">
+    <div class="event-player-list-item__form">
       <p-label label="In for Ctp" class="event-player-list-item__in-for-ctp">
         <template #default="{ id }">
           <p-toggle :id="id" v-model="inForCtp" :disabled="disabled" />
@@ -55,17 +74,19 @@
           <p-number-input :id="id" v-model="score" :disabled="disabled" />
         </template>
       </p-label>
-    </p-form>
+
+      <p-button class="event-player-list-item__trash" dangerous icon="TrashIcon" @click="removePlayer" />
+    </div>
   </div>
 </template>
 
 <style>
 .event-player-list-item__form {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr)) min-content;
   row-gap: var(--space-md);
   column-gap: var(--space-sm);
-  align-items: center;
+  align-items: flex-end;
 }
 
 .event-player-list-item__header {
@@ -79,6 +100,10 @@
 .event-player-list-item__name {
   white-space: nowrap;
   flex-grow: 1;
+}
+
+.event-player-list-item__trash {
+  color: var(--p-color-sentiment-negative);
 }
 
 .event-player-list-item__name--not-found {

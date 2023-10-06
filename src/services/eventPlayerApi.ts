@@ -17,7 +17,7 @@ export class EventPlayerApi extends Api {
       .then(({ data }) => data)
   }
 
-  public update(id: string, request: EventPlayerRequest): Promise<string> {
+  public update(id: string, request: Partial<EventPlayerRequest>): Promise<string> {
     return this.put<string>(`event-players-update/${id}`, request)
       .then(({ data }) => data)
   }

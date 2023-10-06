@@ -1,13 +1,12 @@
 <script lang="ts" setup>
   import { SelectOption, showToast } from '@prefecthq/prefect-design'
   import { useSubscription } from '@prefecthq/vue-compositions'
-  import { computed, ref, toRefs } from 'vue'
+  import { computed, ref } from 'vue'
   import { useApi } from '@/composables'
   import { Event, EventRequest } from '@/models'
 
   const props = defineProps<{
     event: Event,
-    seasonId: string,
   }>()
 
   const emit = defineEmits<{
@@ -16,7 +15,7 @@
 
   const api = useApi()
   const eventId = computed(() => props.event.id)
-  const { seasonId } = toRefs(props)
+  const seasonId = computed(() => props.event.seasonId)
 
   const eventPlayerSubscription = useSubscription(api.eventPlayers.getList, [eventId])
   const eventPlayers = computed(() => eventPlayerSubscription.response ?? [])
@@ -25,7 +24,7 @@
   const players = computed(() => playerSubscription.response ?? [])
 
   const options = computed(() => eventPlayers.value.map<SelectOption>(player => ({
-    label: players.value.find(({ id }) => player.playerId === id)?.name ?? 'Player Not Found',
+    label: players.value.find(({ id }) => player.playerId === id)?.name ?? 'Player Deleted',
     value: player.playerId,
   })))
   const eventCompleted = computed(() => !!props.event.completed)
@@ -37,7 +36,6 @@
   async function submit(): Promise<void> {
     const request: Partial<EventRequest> = {
       notes: notes.value,
-      seasonId: props.seasonId,
       ctpPlayerIds: ctpPlayerIds.value,
       acePlayerIds: acePlayerIds.value,
     }

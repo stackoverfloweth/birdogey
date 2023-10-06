@@ -1,21 +1,21 @@
 <script lang="ts" setup>
   import { SelectModelValue, SelectOption } from '@prefecthq/prefect-design'
-  import { useBoolean, useSubscription } from '@prefecthq/vue-compositions'
-  import { computed, toRefs } from 'vue'
+  import { useSubscription } from '@prefecthq/vue-compositions'
+  import { computed } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventUpdateForm from '@/components/EventUpdateForm.vue'
-  import { useApi } from '@/composables'
+  import { useApi, useSeason } from '@/composables'
   import { Event, Player } from '@/models'
+  import { penniesToUSD } from '@/utilities'
 
   const props = defineProps<{
-    seasonId: string,
     event: Event,
   }>()
 
   const api = useApi()
-  const { seasonId } = toRefs(props)
   const eventId = computed(() => props.event.id)
-  const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
+  const seasonId = computed(() => props.event.seasonId)
+  const { season } = useSeason(seasonId)
 
   const eventPlayerSubscription = useSubscription(api.eventPlayers.getList, [eventId])
   const eventPlayers = computed(() => eventPlayerSubscription.response ?? [])
@@ -30,12 +30,42 @@
   })))
   const eventCompleted = computed(() => !!props.event.completed)
 
+  const ctpInPennies = computed(() => {
+    if (eventPlayerSubscription.loading) {
+      return '--'
+    }
+
+    const value = eventPlayers.value.reduce((sum, eventPlayer) => {
+      if (eventPlayer.inForCtp && season.value?.ctpInPennies) {
+        sum += season.value.ctpInPennies
+      }
+
+      return sum
+    }, props.event.ctpPennyBalance ?? 0)
+
+    return penniesToUSD(value)
+  })
+  const aceInPennies = computed(() => {
+    if (eventPlayerSubscription.loading) {
+      return '--'
+    }
+
+    const value = eventPlayers.value.reduce((sum, eventPlayer) => {
+      if (eventPlayer.inForAce && season.value?.aceInPennies) {
+        sum += season.value.aceInPennies
+      }
+
+      return sum
+    }, props.event.acePennyBalance ?? 0)
+
+    return penniesToUSD(value)
+  })
+
   function getPlayer(playerId: string): Player | undefined {
     return players.value.find(({ id }) => playerId === id)
   }
 
   async function addPlayer(playerId: SelectModelValue | SelectModelValue[]): Promise<void> {
-    startLoading()
     if (typeof playerId !== 'string') {
       return
     }
@@ -46,16 +76,21 @@
     })
 
     eventPlayerSubscription.refresh()
-    stopLoading()
   }
 </script>
 
 <template>
-  <div class="event-players-list">
+  <div class="event-overview">
+    <div class="event-overview__payout-summary">
+      <p-key-value label="CTP" class="event-overview__payout" :value="ctpInPennies" />
+      <p-key-value label="ACE" class="event-overview__payout" :value="aceInPennies" />
+    </div>
+
     <p-list-item v-if="!eventCompleted">
       <p-select empty-message="Add Player" :disabled="eventCompleted" :model-value="undefined" :options="options" @update:model-value="addPlayer" />
     </p-list-item>
-    <template v-if="eventPlayerSubscription.loading || loading">
+
+    <template v-if="!eventPlayerSubscription.executed && eventPlayerSubscription.loading">
       <p-loading-icon />
     </template>
     <template v-for="eventPlayer in eventPlayers" v-else :key="eventPlayer.id">
@@ -63,6 +98,7 @@
         <EventPlayerListItem :disabled="eventCompleted" :event-player="eventPlayer" :player="getPlayer(eventPlayer.playerId)" />
       </p-list-item>
     </template>
+
     <p-list-item>
       <EventUpdateForm :event="event" :season-id="seasonId" />
     </p-list-item>
@@ -70,17 +106,32 @@
 </template>
 
 <style>
-.event-players-list {
+.event-overview {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
 
-.event-players-list__item-paid {
+.event-overview__payout-summary {
+  padding: var(--space-md) 0;
+  display: flex;
+  gap: var(--space-xl);
+  align-items: center;
+  justify-content: center;
+}
+
+.event-overview__payout {
+  width: min-content;
+  align-items: center;
+  white-space: nowrap;
+  font-size: var(--text-lg);
+}
+
+.event-overview__item-paid {
   color: var(--p-color-sentiment-negative);
 }
 
-.event-players-list__item-paid--paid {
+.event-overview__item-paid--paid {
   color: var(--p-color-sentiment-positive);
 }
 </style>
