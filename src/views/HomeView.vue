@@ -2,6 +2,7 @@
   import { useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import EventForm from '@/components/EventForm.vue'
+  import EventPlayersList from '@/components/EventPlayersList.vue'
   import { useApi, useSavedContext } from '@/composables'
 
   const { seasonId } = useSavedContext()
@@ -30,7 +31,7 @@
         <EventForm :season-id="seasonId" @submit="eventSubscription.refresh" />
       </template>
       <template #content="{ index }">
-        <!-- <PlayersList :event-id="tabs[index].id!" /> -->
+        <EventPlayersList :season-id="seasonId" :event-id="tabs[index].id!" />
       </template>
     </p-tabs>
   </div>
@@ -39,6 +40,6 @@
 <style>
 .home-view__tabs .p-tab:first-of-type {
   color: white;
-  background-color: var(--contrast-gray-300);
+  background-color: var(--p-color-bg-1);
 }
 </style>
