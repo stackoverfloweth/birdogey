@@ -1,10 +1,13 @@
 import { Handler } from '@netlify/functions'
 import { ObjectId } from 'mongodb'
-import { Api, env, getClient } from '../utilities'
-import { EventResponse } from '@/models'
+import { Api, env, getClient, isValidRequest } from '../utilities'
+import { EventRequest, EventResponse } from '@/models'
 
 export const handler: Handler = Api('POST', 'events-create', (args, body) => async () => {
-  if (!isValidRequest(body)) {
+  if (!isValidRequest<EventRequest>(body, [
+    ['seasonId', 'string'],
+    ['name', 'string'],
+  ])) {
     return { statusCode: 400 }
   }
 
@@ -30,9 +33,3 @@ export const handler: Handler = Api('POST', 'events-create', (args, body) => asy
     await client.close()
   }
 })
-
-function isValidRequest(value: unknown): value is { name: string, seasonId: string, notes?: string } {
-  return !!value && typeof value === 'object'
-    && 'name' in value && typeof value.name === 'string'
-    && 'seasonId' in value && typeof value.seasonId === 'string'
-}
