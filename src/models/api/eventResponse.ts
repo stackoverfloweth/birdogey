@@ -6,6 +6,9 @@ export type EventResponse = {
   created: Date,
   name: string,
   notes?: string,
-  ctpPlayerId?: string,
-  acePlayerId?: string,
+  completed?: Date,
+  ctpPlayerIds?: string[],
+  acePlayerIds?: string[],
+  ctpPennyBalance?: number,
+  acePennyBalance?: number,
 }

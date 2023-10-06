@@ -17,6 +17,8 @@
   const { validate, pending } = useValidationObserver()
   const name = ref<string>()
   const notes = ref<string>()
+  const ctpBalance = ref<number>()
+  const aceBalance = ref<number>()
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: nameErrorMessage, state: nameState } = useValidation(name, 'Name', [isRequired])
@@ -32,6 +34,8 @@
       name: name.value,
       notes: notes.value,
       seasonId: props.seasonId,
+      ctpPennyBalance: Math.floor(ctpBalance.value ?? 0 * 100),
+      acePennyBalance: Math.floor(aceBalance.value ?? 0 * 100),
     } as EventRequest
 
     const eventId = await api.events.create(request)
@@ -41,7 +45,7 @@
 </script>
 
 <template>
-  <p-form class="event-form" @submit="submit">
+  <p-form class="event-create-form" @submit="submit">
     <p-label label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
         <p-text-input :id="id" v-model="name" :state="nameState" />
@@ -51,6 +55,18 @@
     <p-label label="Notes">
       <template #default="{ id }">
         <p-textarea :id="id" v-model="notes" />
+      </template>
+    </p-label>
+
+    <p-label label="Ctp (starting balance)">
+      <template #default="{ id }">
+        <p-number-input :id="id" v-model="ctpBalance" prepend="$" />
+      </template>
+    </p-label>
+
+    <p-label label="Ace (starting balance)">
+      <template #default="{ id }">
+        <p-number-input :id="id" v-model="aceBalance" prepend="$" />
       </template>
     </p-label>
 

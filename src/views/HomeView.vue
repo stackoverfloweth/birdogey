@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import EventForm from '@/components/EventForm.vue'
+  import EventCreateForm from '@/components/EventCreateForm.vue'
   import EventPlayersList from '@/components/EventPlayersList.vue'
   import { useApi, useSavedContext } from '@/composables'
 
@@ -13,9 +13,9 @@
   const events = computed(() => eventSubscription.response ?? [])
 
   const tabs = computed(() => [
-    { label: 'Add Event', id: null },
+    { label: 'Add Event', event: null },
     ...events.value.map(event => ({
-      ...event,
+      event,
       label: event.name,
     })),
   ])
@@ -28,18 +28,11 @@
         <p-icon icon="PlusIcon" />
       </template>
       <template #add-event>
-        <EventForm :season-id="seasonId" @submit="eventSubscription.refresh" />
+        <EventCreateForm :season-id="seasonId" @submit="eventSubscription.refresh" />
       </template>
       <template #content="{ index }">
-        <EventPlayersList :season-id="seasonId" :event-id="tabs[index].id!" />
+        <EventPlayersList :season-id="seasonId" :event="tabs[index].event!" />
       </template>
     </p-tabs>
   </div>
 </template>
-
-<style>
-.home-view__tabs .p-tab:first-of-type {
-  color: white;
-  background-color: var(--p-color-bg-1);
-}
-</style>

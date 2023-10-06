@@ -9,13 +9,13 @@ export const handler: Handler = Api('GET', '/players-get-list/:seasonId', ([seas
     const db = client.db(env().mongodbName)
     const collection = db.collection<PlayerResponse>('players')
 
-    const courses = await collection.find({
+    const players = await collection.find({
       seasonId,
     }).toArray()
 
     return {
       statusCode: 200,
-      body: JSON.stringify(courses),
+      body: JSON.stringify(players),
     }
   } finally {
     await client.close()
