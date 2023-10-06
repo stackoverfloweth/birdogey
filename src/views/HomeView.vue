@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-  import { Tab } from '@prefecthq/prefect-design'
   import { useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import EventForm from '@/components/EventForm.vue'
-  import EventsTable from '@/components/EventsTable.vue'
   import { useApi, useSavedContext } from '@/composables'
 
   const { seasonId } = useSavedContext()
@@ -13,9 +11,10 @@
   const eventSubscription = useSubscriptionWithDependencies(api.events.getList, subscriptionArgs)
   const events = computed(() => eventSubscription.response ?? [])
 
-  const tabs = computed<Tab[]>(() => [
-    { label: 'Add Event' },
+  const tabs = computed(() => [
+    { label: 'Add Event', id: null },
     ...events.value.map(event => ({
+      ...event,
       label: event.name,
     })),
   ])
@@ -23,7 +22,6 @@
 
 <template>
   <div class="home-view">
-    <!-- v-if="seasonId" -->
     <p-tabs v-if="seasonId" :tabs="tabs" class="home-view__tabs">
       <template #add-event-heading>
         <p-icon icon="PlusIcon" />
@@ -31,11 +29,10 @@
       <template #add-event>
         <EventForm :season-id="seasonId" @submit="eventSubscription.refresh" />
       </template>
+      <template #content="{ index }">
+        <!-- <PlayersList :event-id="tabs[index].id!" /> -->
+      </template>
     </p-tabs>
-    <!-- tab set, each week is a tab, first tab is always a button to create new event -->
-    <!-- new event modal -->
-    <!-- within each tab, EventsTable, last row has button to add row -->
-    <EventsTable />
   </div>
 </template>
 

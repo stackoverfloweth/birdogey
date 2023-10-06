@@ -7,8 +7,8 @@ export class PlayerApi extends Api {
     return this.get(`/players-get-by-id/${id}`)
   }
 
-  public getList(): Promise<Player[]> {
-    return this.get<PlayerResponse[]>('/players-get-list')
+  public getList(seasonId: string): Promise<Player[]> {
+    return this.get<PlayerResponse[]>(`/players-get-list/${seasonId}`)
       .then(({ data }) => mapper.map('PlayerResponse', data, 'Player'))
   }
 
@@ -17,8 +17,8 @@ export class PlayerApi extends Api {
       .then(({ data }) => data)
   }
 
-  public update(id: string, request: PlayerRequest): Promise<string> {
-    return this.put<string>('players-update', { id, ...request })
+  public update(id: string, request: Partial<PlayerRequest>): Promise<string> {
+    return this.put<string>(`players-update/${id}`, request)
       .then(({ data }) => data)
   }
 

@@ -7,8 +7,8 @@ export class EventPlayerApi extends Api {
     return this.get(`/event-players-get-by-id/${id}`)
   }
 
-  public getList(): Promise<EventPlayer[]> {
-    return this.get<EventPlayerResponse[]>('/event-players-get-list')
+  public getList(eventId: string): Promise<EventPlayer[]> {
+    return this.get<EventPlayerResponse[]>(`/event-players-get-list/${eventId}`)
       .then(({ data }) => mapper.map('EventPlayerResponse', data, 'EventPlayer'))
   }
 
@@ -18,7 +18,7 @@ export class EventPlayerApi extends Api {
   }
 
   public update(id: string, request: EventPlayerRequest): Promise<string> {
-    return this.put<string>('event-players-update', { id, ...request })
+    return this.put<string>(`event-players-update/${id}`, request)
       .then(({ data }) => data)
   }
 

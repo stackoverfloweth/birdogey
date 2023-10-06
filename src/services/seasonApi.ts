@@ -19,7 +19,7 @@ export class SeasonApi extends Api {
   }
 
   public update(id: string, request: SeasonRequest): Promise<string> {
-    return this.put<string>('seasons-update', { id, ...request })
+    return this.put<string>(`seasons-update/${id}`, request)
       .then(({ data }) => data)
   }
 

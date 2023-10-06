@@ -19,7 +19,7 @@ export class CourseApi extends Api {
   }
 
   public update(id: string, request: CourseRequest): Promise<string> {
-    return this.put<string>('courses-update', { id, ...request })
+    return this.put<string>(`courses-update/${id}`, request)
       .then(({ data }) => data)
   }
 

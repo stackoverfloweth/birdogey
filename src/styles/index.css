@@ -28,3 +28,7 @@
   --contrast-gray-900:     var(--gray-100);
   --contrast-foreground:   var(--brand-white);
 }
+
+.p-modal__footer {
+  display: none;
+}

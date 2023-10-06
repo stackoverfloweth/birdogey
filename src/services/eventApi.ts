@@ -18,7 +18,7 @@ export class EventApi extends Api {
   }
 
   public update(id: string, request: EventRequest): Promise<string> {
-    return this.put<string>('events-update', { id, ...request })
+    return this.put<string>(`events-update/${id}`, request)
       .then(({ data }) => data)
   }
 
