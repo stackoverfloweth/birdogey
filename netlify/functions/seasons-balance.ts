@@ -1,23 +1,23 @@
 import { Handler } from '@netlify/functions'
-import { Db, ObjectId } from 'mongodb'
+import { Db } from 'mongodb'
 import { Api, env, getClient } from '../utilities'
 import { EventPlayerResponse, EventResponse, SeasonResponse } from '@/models'
 
-export const handler: Handler = Api('GET', 'events-balance/:eventId', ([eventId]) => async () => {
+export const handler: Handler = Api('GET', 'seasons-balance/:seasonId', ([seasonId]) => async () => {
   const client = await getClient()
 
   try {
     const db = client.db(env().mongodbName)
-    const eventData = await getEventData(db, eventId)
+    const mostRecentEvent = await getMostRecentEvent(db, seasonId)
 
-    if (!eventData) {
+    if (!mostRecentEvent) {
       return {
         statusCode: 200,
         body: JSON.stringify({ ctpPennyBalance: 0, acePennyBalance: 0 }),
       }
     }
 
-    const { season, eventPlayers, ...event } = eventData
+    const { season, eventPlayers, ...event } = mostRecentEvent
 
     const ctpPennyBalance = calculateCtpBalance(event, season, eventPlayers)
     const acePennyBalance = calculateAceBalance(event, season, eventPlayers)
@@ -33,11 +33,11 @@ export const handler: Handler = Api('GET', 'events-balance/:eventId', ([eventId]
 
 type EventWithSeasonAndPlayers = EventResponse & { season: SeasonResponse, eventPlayers: EventPlayerResponse[] }
 
-async function getEventData(db: Db, eventId: string): Promise<EventWithSeasonAndPlayers | undefined> {
+async function getMostRecentEvent(db: Db, seasonId: string): Promise<EventWithSeasonAndPlayers | undefined> {
   const collection = db.collection<EventResponse>('events')
 
-  const [eventData] = await collection.aggregate([
-    { $match: { _id: new ObjectId(eventId) } },
+  const [mostRecentEvent] = await collection.aggregate([
+    { $match: { seasonId, completed: { $exists: true } } },
     {
       $addFields: {
         seasonIdObjectId: { $toObjectId: '$seasonId' },
@@ -69,7 +69,7 @@ async function getEventData(db: Db, eventId: string): Promise<EventWithSeasonAnd
     { $limit: 1 },
   ]).toArray()
 
-  return eventData as EventWithSeasonAndPlayers | undefined
+  return mostRecentEvent as EventWithSeasonAndPlayers | undefined
 }
 
 function calculateCtpBalance(event: EventResponse, season: SeasonResponse, eventPlayers: EventPlayerResponse[]): number {

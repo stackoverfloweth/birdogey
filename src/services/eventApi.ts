@@ -27,8 +27,8 @@ export class EventApi extends Api {
       .then(({ data }) => data)
   }
 
-  public getSuggestedBalance(seasonId: string): Promise<{ ctpPennyBalance: number, acePennyBalance: number }> {
-    return this.get<{ ctpPennyBalance: number, acePennyBalance: number }>(`/events-balance/${seasonId}`)
+  public getBalance(eventId: string): Promise<{ ctpPennyBalance: number, acePennyBalance: number }> {
+    return this.get<{ ctpPennyBalance: number, acePennyBalance: number }>(`/events-balance/${eventId}`)
       .then(({ data }) => data)
   }
 }

@@ -4,7 +4,7 @@
   import { computed } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventUpdateForm from '@/components/EventUpdateForm.vue'
-  import { useApi, useSeason } from '@/composables'
+  import { useApi } from '@/composables'
   import { Event, Player } from '@/models'
   import { penniesToUSD } from '@/utilities'
 
@@ -15,7 +15,8 @@
   const api = useApi()
   const eventId = computed(() => props.event.id)
   const seasonId = computed(() => props.event.seasonId)
-  const { season } = useSeason(seasonId)
+
+  const eventBalanceSubscription = useSubscription(api.events.getBalance, [eventId])
 
   const eventPlayerSubscription = useSubscription(api.eventPlayers.getList, [eventId])
   const eventPlayers = computed(() => eventPlayerSubscription.response ?? [])
@@ -31,32 +32,21 @@
   const eventCompleted = computed(() => !!props.event.completed)
 
   const ctpInPennies = computed(() => {
-    if (eventPlayerSubscription.loading) {
+    if (eventBalanceSubscription.loading) {
       return '--'
     }
 
-    const value = eventPlayers.value.reduce((sum, eventPlayer) => {
-      if (eventPlayer.inForCtp && season.value?.ctpInPennies) {
-        sum += season.value.ctpInPennies
-      }
-
-      return sum
-    }, props.event.ctpPennyBalance ?? 0)
+    const value = eventBalanceSubscription.response?.ctpPennyBalance ?? 0
 
     return penniesToUSD(value)
   })
+
   const aceInPennies = computed(() => {
-    if (eventPlayerSubscription.loading) {
+    if (eventBalanceSubscription.loading) {
       return '--'
     }
 
-    const value = eventPlayers.value.reduce((sum, eventPlayer) => {
-      if (eventPlayer.inForAce && season.value?.aceInPennies) {
-        sum += season.value.aceInPennies
-      }
-
-      return sum
-    }, props.event.acePennyBalance ?? 0)
+    const value = eventBalanceSubscription.response?.acePennyBalance ?? 0
 
     return penniesToUSD(value)
   })
@@ -75,7 +65,11 @@
       playerId,
     })
 
-    eventPlayerSubscription.refresh()
+    refresh()
+  }
+
+  function refresh(): Promise<unknown> {
+    return Promise.all([eventPlayerSubscription.refresh(), eventBalanceSubscription.refresh()])
   }
 </script>
 
@@ -95,7 +89,7 @@
     </template>
     <template v-for="eventPlayer in eventPlayers" v-else :key="eventPlayer.id">
       <p-list-item>
-        <EventPlayerListItem :disabled="eventCompleted" :event-player="eventPlayer" :player="getPlayer(eventPlayer.playerId)" />
+        <EventPlayerListItem :disabled="eventCompleted" :event-player="eventPlayer" :player="getPlayer(eventPlayer.playerId)" @update="refresh" />
       </p-list-item>
     </template>
 

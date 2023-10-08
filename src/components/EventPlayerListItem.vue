@@ -10,9 +10,11 @@
     player?: Player,
   }>()
 
+  const emit = defineEmits<{
+    'update': [playerId: string],
+  }>()
+
   const api = useApi()
-  const eventId = computed(() => props.eventPlayer.eventId)
-  const eventPlayerSubscription = useSubscription(api.eventPlayers.getList, [eventId])
 
   const score = ref(props.eventPlayer.score)
   const inForCtp = ref(props.eventPlayer.inForCtp)
@@ -27,12 +29,12 @@
 
   watch(debounced, async (value) => {
     await api.eventPlayers.update(props.eventPlayer.id, value)
-    eventPlayerSubscription.refresh()
+    emit('update', props.eventPlayer.playerId)
   })
 
   async function removePlayer(): Promise<void> {
     await api.eventPlayers.remove(props.eventPlayer.id)
-    eventPlayerSubscription.refresh()
+    emit('update', props.eventPlayer.playerId)
   }
 </script>
 

@@ -27,4 +27,9 @@ export class SeasonApi extends Api {
     return this.delete<string>(`seasons-remove/${id}`)
       .then(({ data }) => data)
   }
+
+  public getBalance(seasonId: string): Promise<{ ctpPennyBalance: number, acePennyBalance: number }> {
+    return this.get<{ ctpPennyBalance: number, acePennyBalance: number }>(`/seasons-balance/${seasonId}`)
+      .then(({ data }) => data)
+  }
 }

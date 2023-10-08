@@ -14,7 +14,7 @@
   }>()
 
   const api = useApi()
-  const { ctpPennyBalance, acePennyBalance } = await api.events.getSuggestedBalance(props.seasonId)
+  const { ctpPennyBalance, acePennyBalance } = await api.seasons.getBalance(props.seasonId)
   const { validate, pending } = useValidationObserver()
   const name = ref<string>()
   const notes = ref<string>()
