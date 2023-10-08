@@ -23,6 +23,8 @@ export const handler: Handler = Api('POST', 'events-create', (args, body) => asy
       created: new Date(),
       name: body.name,
       notes: body.notes,
+      ctpPennyBalance: body.ctpPennyBalance,
+      acePennyBalance: body.acePennyBalance,
     })
 
     return {

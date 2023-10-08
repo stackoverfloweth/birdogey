@@ -26,4 +26,9 @@ export class EventApi extends Api {
     return this.delete<string>(`events-remove/${id}`)
       .then(({ data }) => data)
   }
+
+  public getSuggestedBalance(seasonId: string): Promise<{ ctpPennyBalance: number, acePennyBalance: number }> {
+    return this.get<{ ctpPennyBalance: number, acePennyBalance: number }>(`/events-balance/${seasonId}`)
+      .then(({ data }) => data)
+  }
 }

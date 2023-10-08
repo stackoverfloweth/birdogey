@@ -14,11 +14,12 @@
   }>()
 
   const api = useApi()
+  const { ctpPennyBalance, acePennyBalance } = await api.events.getSuggestedBalance(props.seasonId)
   const { validate, pending } = useValidationObserver()
   const name = ref<string>()
   const notes = ref<string>()
-  const ctpBalance = ref<number>()
-  const aceBalance = ref<number>()
+  const ctpBalance = ref<number>(ctpPennyBalance / 100)
+  const aceBalance = ref<number>(acePennyBalance / 100)
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: nameErrorMessage, state: nameState } = useValidation(name, 'Name', [isRequired])
@@ -34,8 +35,8 @@
       name: name.value,
       notes: notes.value,
       seasonId: props.seasonId,
-      ctpPennyBalance: Math.floor(ctpBalance.value ?? 0 * 100),
-      acePennyBalance: Math.floor(aceBalance.value ?? 0 * 100),
+      ctpPennyBalance: Math.floor(ctpBalance.value * 100),
+      acePennyBalance: Math.floor(aceBalance.value * 100),
     } as EventRequest
 
     const eventId = await api.events.create(request)
