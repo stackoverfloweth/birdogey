@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { showToast } from '@prefecthq/prefect-design'
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { format } from 'date-fns'
   import { ref } from 'vue'
   import { useApi } from '@/composables'
   import { EventRequest } from '@/models'
@@ -16,7 +17,8 @@
   const api = useApi()
   const { ctpPennyBalance, acePennyBalance } = await api.seasons.getBalance(props.seasonId)
   const { validate, pending } = useValidationObserver()
-  const name = ref<string>()
+  const today = format(new Date(), 'MMMM do')
+  const name = ref<string>(today)
   const notes = ref<string>()
   const ctpBalance = ref<number>(ctpPennyBalance / 100)
   const aceBalance = ref<number>(acePennyBalance / 100)
@@ -49,7 +51,7 @@
   <p-form class="event-create-form" @submit="submit">
     <p-label label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="name" :state="nameState" />
+        <p-text-input :id="id" v-model="name" disabled :state="nameState" />
       </template>
     </p-label>
 
