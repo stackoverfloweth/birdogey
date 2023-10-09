@@ -81,7 +81,7 @@
 </script>
 
 <template>
-  <p-modal v-model:show-modal="isOpen" title="Manage Players" class="manage-players-modal" auto-close>
+  <p-modal v-model:show-modal="isOpen" title="Manage Players" class="players-manage" auto-close>
     <template v-if="showingPlayerForm">
       <PlayerForm :season-id="seasonId" @submit="addPlayer" @cancel="hidePlayerForm" />
     </template>
@@ -90,7 +90,7 @@
     </template>
     <template v-else>
       <PlayersList v-model:selected="selected" :players="players" />
-      <div class="manage-players-modal__actions">
+      <div class="players-manage__actions">
         <p-button v-if="selected.length === 0" @click="showPlayerForm">
           Add new player
         </p-button>
@@ -111,7 +111,7 @@
 </template>
 
 <style>
-.manage-players-modal__actions {
+.players-manage__actions {
   display: flex;
   gap: var(--space-sm);
   justify-content: flex-end;

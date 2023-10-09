@@ -17,14 +17,27 @@ export const handler: Handler = Api('POST', 'events-create', (args, body) => asy
     const db = client.db(env().mongodbName)
     const collection = db.collection<EventResponse>('events')
 
+    const players = body.players?.map(eventPlayer => ({
+      ...eventPlayer,
+      _id: new ObjectId(),
+      playerId: new ObjectId(eventPlayer.playerId),
+      inForCtp: eventPlayer.inForCtp ?? false,
+      inForAce: eventPlayer.inForAce ?? false,
+    })) ?? []
+
     const result = await collection.insertOne({
       _id: new ObjectId(),
-      seasonId: body.seasonId,
+      seasonId: new ObjectId(body.seasonId),
       created: new Date(),
       name: body.name,
       notes: body.notes,
-      ctpPennyBalance: body.ctpPennyBalance,
-      acePennyBalance: body.acePennyBalance,
+      ctpStartingBalance: body.ctpStartingBalance ?? 0,
+      aceStartingBalance: body.aceStartingBalance ?? 0,
+      ctpPerPlayer: body.ctpPerPlayer,
+      acePerPlayer: body.acePerPlayer,
+      ctpPlayerIds: [],
+      acePlayerIds: [],
+      players,
     })
 
     return {

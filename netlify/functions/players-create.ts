@@ -1,5 +1,5 @@
 import { Handler } from '@netlify/functions'
-import { ObjectId } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import { Api, env, getClient, isValidRequest } from '../utilities'
 import { PlayerRequest, PlayerResponse } from '@/models'
 
@@ -17,11 +17,14 @@ export const handler: Handler = Api('POST', 'players-create', (args, body) => as
     const db = client.db(env().mongodbName)
     const collection = db.collection<PlayerResponse>('players')
 
+    const tagId = body.tagId ?? await getNextAvailableTag(body.seasonId, collection)
+
     const result = await collection.insertOne({
       _id: new ObjectId(),
       seasonId: body.seasonId,
       name: body.name,
-      entryPaid: body.entryPaid,
+      entryPaid: body.entryPaid ?? false,
+      tagId,
     })
 
     return {
@@ -32,3 +35,7 @@ export const handler: Handler = Api('POST', 'players-create', (args, body) => as
     await client.close()
   }
 })
+
+function getNextAvailableTag(seasonId: string, collection: Collection<PlayerResponse>): Promise<number> {
+  return collection.countDocuments({ seasonId })
+}

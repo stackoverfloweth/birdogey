@@ -1,14 +1,18 @@
 import { ObjectId } from 'mongodb'
+import { EventPlayerResponse } from '@/models/api/eventPlayerResponse'
 
 export type EventResponse = {
   _id: ObjectId,
-  seasonId: string,
+  seasonId: ObjectId,
   created: Date,
+  completed?: Date,
   name: string,
   notes?: string,
-  completed?: Date,
-  ctpPlayerIds?: string[],
-  acePlayerIds?: string[],
-  ctpPennyBalance?: number,
-  acePennyBalance?: number,
+  players: EventPlayerResponse[],
+  ctpStartingBalance: number,
+  aceStartingBalance: number,
+  ctpPerPlayer: number,
+  acePerPlayer: number,
+  ctpPlayerIds: ObjectId[],
+  acePlayerIds: ObjectId[],
 }

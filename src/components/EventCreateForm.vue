@@ -8,6 +8,7 @@
 
   const props = defineProps<{
     seasonId: string,
+    disabled?: boolean,
   }>()
 
   const emit = defineEmits<{
@@ -15,13 +16,14 @@
   }>()
 
   const api = useApi()
-  const { ctpPennyBalance, acePennyBalance } = await api.seasons.getBalance(props.seasonId)
   const { validate, pending } = useValidationObserver()
   const today = format(new Date(), 'MMMM do')
   const name = ref<string>(today)
   const notes = ref<string>()
-  const ctpBalance = ref<number>(ctpPennyBalance / 100)
-  const aceBalance = ref<number>(acePennyBalance / 100)
+  const ctpStartingBalance = ref(0)
+  const aceStartingBalance = ref(0)
+  const ctpPerPlayer = ref(0)
+  const acePerPlayer = ref(0)
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: nameErrorMessage, state: nameState } = useValidation(name, 'Name', [isRequired])
@@ -37,8 +39,10 @@
       name: name.value,
       notes: notes.value,
       seasonId: props.seasonId,
-      ctpPennyBalance: Math.floor(ctpBalance.value * 100),
-      acePennyBalance: Math.floor(aceBalance.value * 100),
+      ctpStartingBalance: Math.floor(ctpStartingBalance.value * 100),
+      aceStartingBalance: Math.floor(aceStartingBalance.value * 100),
+      ctpPerPlayer: Math.floor(ctpPerPlayer.value * 100),
+      acePerPlayer: Math.floor(acePerPlayer.value * 100),
     } as EventRequest
 
     const eventId = await api.events.create(request)
@@ -49,32 +53,49 @@
 
 <template>
   <p-form class="event-create-form" @submit="submit">
+    <p-message v-if="disabled" warning>
+      You must complete active event before creating another
+    </p-message>
+
     <p-label label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="name" disabled :state="nameState" />
+        <!-- todo: make this disabled -->
+        <p-text-input :id="id" v-model="name" :disabled="disabled" :state="nameState" />
       </template>
     </p-label>
 
     <p-label label="Notes">
       <template #default="{ id }">
-        <p-textarea :id="id" v-model="notes" />
+        <p-textarea :id="id" v-model="notes" :disabled="disabled" />
+      </template>
+    </p-label>
+
+    <p-label label="Ctp (per player)">
+      <template #default="{ id }">
+        <p-number-input :id="id" v-model="ctpPerPlayer" :disabled="disabled" prepend="$" />
+      </template>
+    </p-label>
+
+    <p-label label="Ace (per player)">
+      <template #default="{ id }">
+        <p-number-input :id="id" v-model="acePerPlayer" :disabled="disabled" prepend="$" />
       </template>
     </p-label>
 
     <p-label label="Ctp (starting balance)">
       <template #default="{ id }">
-        <p-number-input :id="id" v-model="ctpBalance" prepend="$" />
+        <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
       </template>
     </p-label>
 
     <p-label label="Ace (starting balance)">
       <template #default="{ id }">
-        <p-number-input :id="id" v-model="aceBalance" prepend="$" />
+        <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
       </template>
     </p-label>
 
     <template #footer>
-      <p-button :disabled="pending" type="submit" primary>
+      <p-button :disabled="disabled || pending" type="submit" primary>
         Create Event
       </p-button>
     </template>

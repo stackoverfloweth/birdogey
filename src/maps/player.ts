@@ -4,7 +4,7 @@ import { MapFunction } from '@/services/mapper'
 
 export const mapPlayerResponseToPlayer: MapFunction<PlayerResponse, Player> = function(source) {
   return {
-    id: source._id.toString(),
+    id: this.map('ObjectId', source._id, 'string'),
     ...source,
   }
 }

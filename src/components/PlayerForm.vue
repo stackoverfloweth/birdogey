@@ -15,6 +15,7 @@
 
   const { validate, pending } = useValidationObserver()
   const name = ref(props.initialValues?.name)
+  const tagId = ref(props.initialValues?.tagId)
   const entryPaid = ref(props.initialValues?.entryPaid)
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
@@ -23,8 +24,13 @@
   async function submit(): Promise<void> {
     const valid = await validate()
 
-    if (valid) {
-      emit('submit', { seasonId: props.seasonId, name: name.value } as PlayerRequest)
+    if (valid && !!name.value) {
+      emit('submit', {
+        seasonId: props.seasonId,
+        name: name.value,
+        tagId: tagId.value,
+        entryPaid: entryPaid.value,
+      })
     }
   }
 </script>
@@ -34,6 +40,12 @@
     <p-label class="player-form__name" label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
         <p-text-input :id="id" v-model="name" :state="nameState" />
+      </template>
+    </p-label>
+
+    <p-label class="player-form__tagId" label="Tag #">
+      <template #default="{ id }">
+        <p-number-input :id="id" v-model="tagId" :min="0" />
       </template>
     </p-label>
 

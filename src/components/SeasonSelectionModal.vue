@@ -25,6 +25,7 @@
 
   function submit(request: SavedContext): void {
     emit('submit', request)
+    isOpen.value = false
   }
 </script>
 

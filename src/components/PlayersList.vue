@@ -29,6 +29,9 @@
           <div class="players-list__item-name">
             {{ player.name }}
           </div>
+          <div class="players-list__item-tag">
+            {{ player.tagId }}
+          </div>
           <p-icon class="players-list__item-paid" :class="{ 'players-list__item-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
         </div>
       </p-list-item-input>
@@ -45,9 +48,25 @@
 
 .players-list__item {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   align-items: center;
-  justify-content: space-between;
+}
+
+.players-list__item-name {
+  flex-grow: 1;
+}
+
+.players-list__item-tag {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 9px;
+  color: black;
+  font-weight: bold;
+  background: white;
+  border-radius: 100%;
+  height: 18px;
+  width: 18px;
 }
 
 .players-list__item-paid {

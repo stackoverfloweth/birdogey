@@ -4,7 +4,8 @@ import { MapFunction } from '@/services/mapper'
 
 export const mapSeasonResponseToSeason: MapFunction<SeasonResponse, Season> = function(source) {
   return {
-    id: source._id.toString(),
     ...source,
+    id: this.map('ObjectId', source._id, 'string'),
+    courseId: this.map('ObjectId', source.courseId, 'string'),
   }
 }

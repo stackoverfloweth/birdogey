@@ -1,22 +1,28 @@
 <script lang="ts" setup>
-  import { useBoolean } from '@prefecthq/vue-compositions'
+  import { useBoolean, useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import ManagePlayersModal from '@/components/ManagePlayersModal.vue'
+  import PlayersManage from '@/components/PlayersManage.vue'
   import SeasonSelectionModal from '@/components/SeasonSelectionModal.vue'
-  import { useCourse, useSavedContext, useSeason } from '@/composables'
+  import { useApi, useSavedContext } from '@/composables'
 
   const { value: showSeasonModal, toggle: toggleSeasonModal } = useBoolean()
   const { value: showPlayersModal, toggle: togglePlayersModal } = useBoolean()
   const { courseId, seasonId, setSavedContext, hasContext } = useSavedContext()
-  const { course } = useCourse(courseId)
-  const { season } = useSeason(seasonId)
+
+  const api = useApi()
+
+  const seasonArgs = computed<Parameters<typeof api.seasons.getById> | null>(() => seasonId.value ? [seasonId.value] : null)
+  const seasonSubscription = useSubscriptionWithDependencies(api.seasons.getById, seasonArgs)
+
+  const courseArgs = computed<Parameters<typeof api.courses.getById> | null>(() => courseId.value ? [courseId.value] : null)
+  const courseSubscription = useSubscriptionWithDependencies(api.courses.getById, courseArgs)
 
   const contextDisplay = computed(() => {
-    if (!course.value || !season.value) {
+    if (!courseSubscription.response || !seasonSubscription.response) {
       return
     }
 
-    return `${course.value.name} / ${season.value.name}`
+    return `${courseSubscription.response.name} / ${seasonSubscription.response.name}`
   })
 </script>
 
@@ -30,7 +36,7 @@
       <p-button icon="UserCircleIcon" @click.stop="togglePlayersModal" />
     </div>
     <SeasonSelectionModal v-model:isOpen="showSeasonModal" :course-id="courseId" :season-id="seasonId" @submit="setSavedContext" />
-    <ManagePlayersModal v-if="seasonId" v-model:isOpen="showPlayersModal" :season-id="seasonId" />
+    <PlayersManage v-if="seasonId" v-model:isOpen="showPlayersModal" :season-id="seasonId" />
   </div>
 </template>
 

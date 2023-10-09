@@ -3,7 +3,6 @@ import { ObjectId } from 'mongodb'
 import { Api, env, getClient } from '../utilities'
 import { PlayerRequest, PlayerResponse } from '@/models'
 
-
 export const handler: Handler = Api<Partial<PlayerRequest>>('PUT', 'players-update/:id', ([id], body) => async () => {
   if (!body) {
     return { statusCode: 400 }

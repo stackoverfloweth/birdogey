@@ -1,6 +1,7 @@
 import { EventPlayerResponse } from '@/models/api/eventPlayerResponse'
 
-export type EventPlayerRequest = Omit<EventPlayerResponse, '_id' | 'inForCtp' | 'inForAce' | 'incomingTagId'> & {
+export type EventPlayerRequest = Omit<EventPlayerResponse, '_id'| 'playerId' | 'inForCtp' | 'inForAce'> & {
+  playerId: string,
   inForCtp?: boolean,
   inForAce?: boolean,
 }

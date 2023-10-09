@@ -1,12 +1,17 @@
+import { EventPlayer } from '@/models/eventPlayer'
+
 export type Event = {
   id: string,
   seasonId: string,
   created: Date,
+  completed?: Date,
   name: string,
   notes?: string,
-  completed?: Date,
-  ctpPlayerIds?: string[],
-  acePlayerIds?: string[],
-  ctpPennyBalance?: number,
-  acePennyBalance?: number,
+  players: EventPlayer[],
+  ctpStartingBalance: number,
+  aceStartingBalance: number,
+  ctpPerPlayer: number,
+  acePerPlayer: number,
+  ctpPlayerIds: string[],
+  acePlayerIds: string[],
 }

@@ -22,13 +22,13 @@ export class EventApi extends Api {
       .then(({ data }) => data)
   }
 
-  public remove(id: string): Promise<string> {
-    return this.delete<string>(`events-remove/${id}`)
+  public complete(id: string, request: Partial<EventRequest>): Promise<string> {
+    return this.put<string>(`events-complete/${id}`, request)
       .then(({ data }) => data)
   }
 
-  public getBalance(eventId: string): Promise<{ ctpPennyBalance: number, acePennyBalance: number }> {
-    return this.get<{ ctpPennyBalance: number, acePennyBalance: number }>(`/events-balance/${eventId}`)
+  public remove(id: string): Promise<string> {
+    return this.delete<string>(`events-remove/${id}`)
       .then(({ data }) => data)
   }
 }

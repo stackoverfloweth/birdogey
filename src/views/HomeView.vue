@@ -2,7 +2,7 @@
   import { useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import EventCreateForm from '@/components/EventCreateForm.vue'
-  import EventOverview from '@/components/EventOverview.vue'
+  import EventManage from '@/components/EventManage.vue'
   import { useApi, useSavedContext } from '@/composables'
 
   const { seasonId } = useSavedContext()
@@ -11,6 +11,8 @@
   const subscriptionArgs = computed<Parameters<typeof api.events.getList> | null>(() => seasonId.value ? [seasonId.value] : null)
   const eventSubscription = useSubscriptionWithDependencies(api.events.getList, subscriptionArgs)
   const events = computed(() => eventSubscription.response ?? [])
+
+  const canCreateEvent = computed(() => events.value.every(event => !!event.completed))
 
   const tabs = computed(() => [
     { label: 'Add Event', event: null },
@@ -28,10 +30,10 @@
         <p-icon icon="PlusIcon" />
       </template>
       <template #add-event>
-        <EventCreateForm :season-id="seasonId" @submit="eventSubscription.refresh" />
+        <EventCreateForm :disabled="!canCreateEvent" :season-id="seasonId" @submit="eventSubscription.refresh" />
       </template>
       <template #content="{ index }">
-        <EventOverview :event="tabs[index].event!" />
+        <EventManage :event="tabs[index].event!" />
       </template>
     </p-tabs>
   </div>

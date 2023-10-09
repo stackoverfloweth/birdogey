@@ -1,40 +1,34 @@
 <script lang="ts" setup>
-  import { useDebouncedRef, useSubscription } from '@prefecthq/vue-compositions'
-  import { computed, ref, watch } from 'vue'
-  import { useApi } from '@/composables'
-  import { EventPlayer, Player } from '@/models'
+  import { usePatchRef } from '@prefecthq/vue-compositions'
+  import { computed } from 'vue'
+  import { EventPlayerRequest, Player } from '@/models'
 
   const props = defineProps<{
     disabled?: boolean,
-    eventPlayer: EventPlayer,
+    eventPlayer: EventPlayerRequest,
     player?: Player,
   }>()
 
   const emit = defineEmits<{
-    'update': [playerId: string],
+    'update:eventPlayer': [value: EventPlayerRequest],
+    'remove': [playerId: string],
   }>()
 
-  const api = useApi()
-
-  const score = ref(props.eventPlayer.score)
-  const inForCtp = ref(props.eventPlayer.inForCtp)
-  const inForAce = ref(props.eventPlayer.inForAce)
-
-  const request = computed(() => ({
-    score: score.value,
-    inForCtp: inForCtp.value,
-    inForAce: inForAce.value,
-  }))
-  const debounced = useDebouncedRef(request, 1000)
-
-  watch(debounced, async (value) => {
-    await api.eventPlayers.update(props.eventPlayer.id, value)
-    emit('update', props.eventPlayer.playerId)
+  const eventPlayer = computed({
+    get() {
+      return props.eventPlayer
+    },
+    set(value) {
+      emit('update:eventPlayer', value)
+    },
   })
 
-  async function removePlayer(): Promise<void> {
-    await api.eventPlayers.remove(props.eventPlayer.id)
-    emit('update', props.eventPlayer.playerId)
+  const inForCtp = usePatchRef(eventPlayer, 'inForCtp')
+  const inForAce = usePatchRef(eventPlayer, 'inForAce')
+  const score = usePatchRef(eventPlayer, 'score')
+
+  function removePlayer(): void {
+    emit('remove', props.eventPlayer.playerId)
   }
 </script>
 
@@ -53,7 +47,7 @@
         {{ eventPlayer.outgoingTagId }}
       </div>
 
-      <div class="event-player-list-item__tag" :class="{ 'event-player-list-item__tag--replaced': !!eventPlayer.outgoingTagId }">
+      <div class="event-player-list-item__tag" :class="{ 'event-player-list-item__tag--replaced': typeof eventPlayer.outgoingTagId === 'number' }">
         {{ eventPlayer.incomingTagId }}
       </div>
     </div>

@@ -4,7 +4,8 @@ import { MapFunction } from '@/services/mapper'
 
 export const mapEventPlayerResponseToEventPlayer: MapFunction<EventPlayerResponse, EventPlayer> = function(source) {
   return {
-    id: source._id.toString(),
     ...source,
+    id: this.map('ObjectId', source._id, 'string'),
+    playerId: this.map('ObjectId', source.playerId, 'string'),
   }
 }

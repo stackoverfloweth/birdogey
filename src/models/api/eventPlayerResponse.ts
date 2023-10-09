@@ -2,11 +2,10 @@ import { ObjectId } from 'mongodb'
 
 export type EventPlayerResponse = {
   _id: ObjectId,
-  playerId: string,
-  eventId: string,
+  playerId: ObjectId,
   inForCtp: boolean,
   inForAce: boolean,
   score?: number,
-  incomingTagId?: number,
+  incomingTagId: number,
   outgoingTagId?: number,
 }
