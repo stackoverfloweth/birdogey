@@ -36,3 +36,7 @@
 .p-loading-icon {
   left: calc(50% - 0.5rem);
 }
+
+.p-modal__card {
+  flex-grow: 1;
+}
