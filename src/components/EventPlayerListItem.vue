@@ -40,6 +40,9 @@
     <div class="event-player-list-item__header">
       <div v-if="player" class="event-player-list-item__name">
         {{ player.name }}
+        <p-tooltip v-if="!player?.entryPaid" text="Player has not paid entry">
+          <p-icon class="event-player-list-item__entry-not-paid" icon="ExclamationCircleIcon" />
+        </p-tooltip>
       </div>
 
       <div v-else class="event-player-list-item__name event-player-list-item__name--not-found">
@@ -99,6 +102,13 @@
 .event-player-list-item__name {
   white-space: nowrap;
   flex-grow: 1;
+}
+
+.event-player-list-item__entry-not-paid {
+  border-radius: 100%;
+  overflow: hidden;
+  background-color: var(--p-color-message-warning-bg);
+  color: var(--p-color-message-warning-text);
 }
 
 .event-player-list-item__trash {
