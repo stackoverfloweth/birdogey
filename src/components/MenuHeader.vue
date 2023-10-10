@@ -19,11 +19,7 @@
   const courseSubscription = useSubscriptionWithDependencies(api.courses.getById, courseArgs)
 
   const contextDisplay = computed(() => {
-    if (!courseSubscription.response || !seasonSubscription.response) {
-      return
-    }
-
-    return `${courseSubscription.response.name} / ${seasonSubscription.response.name}`
+    return `${courseSubscription.response?.name ?? '...'} / ${seasonSubscription.response?.name ?? '...'}`
   })
 
   function setSavedContext(context: SavedContext): void {
@@ -36,10 +32,17 @@
   <div class="menu-header">
     <p-icon class="menu-header__icon" icon="LifebuoyIcon" />
     <div class="menu-header__actions">
-      <p-button :primary="!hasContext" @click.stop="toggleSeasonModal">
-        {{ contextDisplay }}
-      </p-button>
-      <p-button icon="UserCircleIcon" @click.stop="togglePlayersModal" />
+      <template v-if="hasContext">
+        <p-button @click.stop="toggleSeasonModal">
+          {{ contextDisplay }}
+        </p-button>
+        <p-button icon="UserCircleIcon" @click.stop="togglePlayersModal" />
+      </template>
+      <template v-else>
+        <p-button primary @click.stop="toggleSeasonModal">
+          Select Season
+        </p-button>
+      </template>
     </div>
     <SeasonSelectionModal v-model:isOpen="showSeasonModal" :course-id="courseId" :season-id="seasonId" @submit="setSavedContext" />
     <PlayersManage v-if="seasonId" v-model:isOpen="showPlayersModal" :season-id="seasonId" />
