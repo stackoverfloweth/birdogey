@@ -37,5 +37,5 @@ export const handler: Handler = Api('POST', 'players-create', (args, body) => as
 })
 
 function getNextAvailableTag(seasonId: string, collection: Collection<PlayerResponse>): Promise<number> {
-  return collection.countDocuments({ seasonId })
+  return collection.countDocuments({ seasonId }).then(count => count + 1)
 }

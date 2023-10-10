@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { SelectModelValue, SelectOption, showToast } from '@prefecthq/prefect-design'
-  import { useSubscription } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, reactive, ref } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import { useApi } from '@/composables'
@@ -24,6 +24,25 @@
   const eventPlayers = reactive<EventPlayerRequest[]>(props.event.players)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
   const acePlayerIds = ref(props.event.acePlayerIds)
+
+  const { validate, pending } = useValidationObserver()
+
+  const playerIsInForCtp: ValidationRule<string[]> = (value) => {
+    if (value.every(playerId => eventPlayers.find(player => player.playerId === playerId)?.inForCtp)) {
+      return true
+    }
+
+    return value.length === 1 ? 'Player is not in for ctp' : 'Not every player selected is in for ctp'
+  }
+  const playerIsInForAce: ValidationRule<string[]> = (value) => {
+    if (value.every(playerId => eventPlayers.find(player => player.playerId === playerId)?.inForAce)) {
+      return true
+    }
+
+    return value.length === 1 ? 'Player is not in for ace' : 'Not every player selected is in for ace'
+  }
+  const { error: ctpPlayerIdsErrorMessage, state: ctpPlayerIdsState } = useValidation(ctpPlayerIds, 'Who won ctp', [playerIsInForCtp])
+  const { error: acePlayerIdsErrorMessage, state: acePlayerIdsState } = useValidation(acePlayerIds, 'Any aces', [playerIsInForAce])
 
   const playersNotIn = computed(() => players.value.filter(player => eventPlayers.every(eventPlayer => eventPlayer.playerId !== player.id)))
   const playersNotInOptions = computed(() => playersNotIn.value.map<SelectOption>(player => ({
@@ -95,6 +114,12 @@
   }
 
   async function completeEvent(): Promise<void> {
+    const valid = await validate()
+
+    if (!valid) {
+      return
+    }
+
     const request: Partial<EventRequest> = {
       players: eventPlayers,
       notes: notes.value,
@@ -132,25 +157,25 @@
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
-        <p-label label="Who won CTP?">
+        <p-label label="Who won ctp?" :message="ctpPlayerIdsErrorMessage" :state="ctpPlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventCompleted" :options="playersInOptions" />
+            <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="ctpPlayerIdsState" />
           </template>
         </p-label>
 
-        <p-label label="Any Aces?">
+        <p-label label="Any aces?" :message="acePlayerIdsErrorMessage" :state="acePlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="acePlayerIds" :disabled="eventCompleted" :options="playersInOptions" />
+            <p-select :id="id" v-model="acePlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="acePlayerIdsState" />
           </template>
         </p-label>
       </div>
 
       <div v-if="!eventCompleted" class="event-manage__lower-form-actions">
-        <p-button type="submit">
+        <p-button :loading="pending" type="submit">
           Save
         </p-button>
 
-        <p-button primary @click="completeEvent">
+        <p-button :loading="pending" primary @click="completeEvent">
           Complete Event
         </p-button>
       </div>

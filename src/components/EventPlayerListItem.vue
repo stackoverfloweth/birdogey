@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { usePatchRef } from '@prefecthq/vue-compositions'
+  import { ValidationRule, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import { EventPlayerRequest, Player } from '@/models'
 
@@ -26,6 +26,9 @@
   const inForCtp = usePatchRef(eventPlayer, 'inForCtp')
   const inForAce = usePatchRef(eventPlayer, 'inForAce')
   const score = usePatchRef(eventPlayer, 'score')
+
+  const isRequired: ValidationRule<number | undefined> = (value) => value !== undefined
+  const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
 
   function removePlayer(): void {
     emit('remove', props.eventPlayer.playerId)
@@ -65,9 +68,9 @@
         </template>
       </p-label>
 
-      <p-label label="Score" class="event-player-list-item__score">
+      <p-label label="Score" class="event-player-list-item__score" :message="scoreErrorMessage" :state="scoreState">
         <template #default="{ id }">
-          <p-number-input :id="id" v-model="score" :disabled="disabled" />
+          <p-number-input :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
         </template>
       </p-label>
 
