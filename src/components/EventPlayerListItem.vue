@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { ValidationRule, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
+  import ScoreInput from '@/components/ScoreInput.vue'
   import { EventPlayerRequest, Player } from '@/models'
 
   const props = defineProps<{
@@ -73,7 +74,7 @@
 
       <p-label label="Score" class="event-player-list-item__score" :message="scoreErrorMessage" :state="scoreState">
         <template #default="{ id }">
-          <p-number-input :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
+          <ScoreInput :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
         </template>
       </p-label>
 
