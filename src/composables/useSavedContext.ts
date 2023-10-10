@@ -1,50 +1,29 @@
 import { useLocalStorage } from '@prefecthq/vue-compositions'
-import { Ref, computed } from 'vue'
+import { Ref, computed, ref, watch } from 'vue'
 import { SavedContext } from '@/types'
 
 export type UseSavedContext = {
   courseId: Ref<string | undefined>,
   seasonId: Ref<string | undefined>,
-  setSavedContext: (value: {
-    courseId?: string | undefined,
-    seasonId?: string | undefined,
-  }) => void,
   hasContext: Ref<boolean>,
 }
+
+const courseId = ref<string>()
+const seasonId = ref<string>()
 
 export function useSavedContext(): UseSavedContext {
   const { value: savedContext, set: setSavedContext } = useLocalStorage<SavedContext>('context', {})
 
-  const courseId = computed({
-    get() {
-      return savedContext.value.courseId
-    },
-    set(value) {
-      setSavedContext({
-        ...savedContext.value,
-        courseId: value,
-      })
-    },
-  })
-
-  const seasonId = computed({
-    get() {
-      return savedContext.value.seasonId
-    },
-    set(value) {
-      setSavedContext({
-        ...savedContext.value,
-        seasonId: value,
-      })
-    },
-  })
+  courseId.value = savedContext.value.courseId
+  seasonId.value = savedContext.value.seasonId
 
   const hasContext = computed(() => !!courseId.value && !!seasonId.value)
+
+  watch([courseId, seasonId], ([courseId, seasonId]) => setSavedContext({ courseId, seasonId }))
 
   return {
     courseId,
     seasonId,
-    setSavedContext,
     hasContext,
   }
 }

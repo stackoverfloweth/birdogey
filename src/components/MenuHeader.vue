@@ -4,10 +4,11 @@
   import PlayersManage from '@/components/PlayersManage.vue'
   import SeasonSelectionModal from '@/components/SeasonSelectionModal.vue'
   import { useApi, useSavedContext } from '@/composables'
+  import { SavedContext } from '@/types'
 
   const { value: showSeasonModal, toggle: toggleSeasonModal } = useBoolean()
   const { value: showPlayersModal, toggle: togglePlayersModal } = useBoolean()
-  const { courseId, seasonId, setSavedContext, hasContext } = useSavedContext()
+  const { courseId, seasonId, hasContext } = useSavedContext()
 
   const api = useApi()
 
@@ -24,6 +25,11 @@
 
     return `${courseSubscription.response.name} / ${seasonSubscription.response.name}`
   })
+
+  function setSavedContext(context: SavedContext): void {
+    courseId.value = context.courseId
+    seasonId.value = context.seasonId
+  }
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
-  import { ref, toValue } from 'vue'
+  import { ref, toValue, watch } from 'vue'
   import CourseSelect from '@/components/CourseSelect.vue'
   import SeasonSelect from '@/components/SeasonSelect.vue'
   import { SavedContext } from '@/types'
@@ -16,6 +16,12 @@
   const { validate, pending } = useValidationObserver()
   const courseId = ref(props.initialValues?.courseId)
   const seasonId = ref(props.initialValues?.seasonId)
+
+  watch(courseId, (value, previous) => {
+    if (seasonId.value && value !== previous) {
+      seasonId.value = undefined
+    }
+  })
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: courseErrorMessage, state: courseState } = useValidation(courseId, 'Course', [isRequired])
