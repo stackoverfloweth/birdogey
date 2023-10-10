@@ -16,6 +16,8 @@
   const seasonId = computed(() => props.event.seasonId)
   const eventId = computed(() => props.event.id)
 
+  const eventSubscription = useSubscription(api.events.getList, [seasonId])
+
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const eventCompleted = computed(() => !!props.event.completed)
@@ -44,6 +46,44 @@
   const { error: ctpPlayerIdsErrorMessage, state: ctpPlayerIdsState } = useValidation(ctpPlayerIds, 'Who won ctp', [playerIsInForCtp])
   const { error: acePlayerIdsErrorMessage, state: acePlayerIdsState } = useValidation(acePlayerIds, 'Any aces', [playerIsInForAce])
 
+  const ctpPlayerIdsMessage = computed(() => {
+    if (ctpPlayerIdsErrorMessage.value) {
+      return ctpPlayerIdsErrorMessage.value
+    }
+
+    const numberOfWinners = ctpPlayerIds.value.length
+
+    if (numberOfWinners === 1) {
+      return `Player gets ${penniesToUSD(ctpInPennies.value)}`
+    }
+
+    if (numberOfWinners > 1) {
+      const split = Math.floor(ctpInPennies.value / numberOfWinners)
+      return `Each player gets ${penniesToUSD(split)}`
+    }
+
+    return undefined
+  })
+
+  const acePlayerIdsMessage = computed(() => {
+    if (acePlayerIdsErrorMessage.value) {
+      return acePlayerIdsErrorMessage.value
+    }
+
+    const numberOfWinners = acePlayerIds.value.length
+
+    if (numberOfWinners === 1) {
+      return `Player gets ${penniesToUSD(aceInPennies.value)}`
+    }
+
+    if (numberOfWinners > 1) {
+      const split = Math.floor(aceInPennies.value / numberOfWinners)
+      return `Each player gets ${penniesToUSD(split)}`
+    }
+
+    return undefined
+  })
+
   const playersNotIn = computed(() => players.value.filter(player => eventPlayers.every(eventPlayer => eventPlayer.playerId !== player.id)))
   const playersNotInOptions = computed(() => playersNotIn.value.map<SelectOption>(player => ({
     label: player.name,
@@ -57,21 +97,17 @@
   })))
 
   const ctpInPennies = computed(() => {
-    const value = calculateEventCtpPot({
+    return calculateEventCtpPot({
       ...props.event,
       players: eventPlayers,
     })
-
-    return penniesToUSD(value)
   })
 
   const aceInPennies = computed(() => {
-    const value = calculateEventAcePot({
+    return calculateEventAcePot({
       ...props.event,
       players: eventPlayers,
     })
-
-    return penniesToUSD(value)
   })
 
   function getPlayer(playerId: string): Player | undefined {
@@ -129,14 +165,15 @@
 
     await api.events.complete(eventId.value, request)
     showToast('Event Completed!', 'success')
+    eventSubscription.refresh()
   }
 </script>
 
 <template>
   <p-form class="event-manage" @submit="updateEvent">
     <div class="event-manage__payout-summary">
-      <p-key-value label="CTP" class="event-manage__payout" :value="ctpInPennies" />
-      <p-key-value label="ACE" class="event-manage__payout" :value="aceInPennies" />
+      <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
+      <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
     </div>
 
     <p-list-item v-if="!eventCompleted">
@@ -157,13 +194,13 @@
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
-        <p-label label="Who won ctp?" :message="ctpPlayerIdsErrorMessage" :state="ctpPlayerIdsState">
+        <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
           <template #default="{ id }">
             <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="ctpPlayerIdsState" />
           </template>
         </p-label>
 
-        <p-label label="Any aces?" :message="acePlayerIdsErrorMessage" :state="acePlayerIdsState">
+        <p-label label="Any aces?" :message="acePlayerIdsMessage" :state="acePlayerIdsState">
           <template #default="{ id }">
             <p-select :id="id" v-model="acePlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="acePlayerIdsState" />
           </template>
