@@ -5,6 +5,7 @@
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
+  import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
 
   const props = defineProps<{
@@ -37,25 +38,19 @@
   })))
 
   const ctpInPennies = computed(() => {
-    const value = eventPlayers.reduce((sum, { inForCtp }) => {
-      if (!inForCtp) {
-        return sum
-      }
-
-      return sum + props.event.ctpPerPlayer
-    }, props.event.ctpStartingBalance)
+    const value = calculateEventCtpPot({
+      ...props.event,
+      players: eventPlayers,
+    })
 
     return penniesToUSD(value)
   })
 
   const aceInPennies = computed(() => {
-    const value = eventPlayers.reduce((sum, { inForAce }) => {
-      if (!inForAce) {
-        return sum
-      }
-
-      return sum + props.event.acePerPlayer
-    }, props.event.aceStartingBalance)
+    const value = calculateEventAcePot({
+      ...props.event,
+      players: eventPlayers,
+    })
 
     return penniesToUSD(value)
   })

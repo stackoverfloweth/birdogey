@@ -4,6 +4,7 @@
   import EventCreateForm from '@/components/EventCreateForm.vue'
   import EventManage from '@/components/EventManage.vue'
   import { useApi, useSavedContext } from '@/composables'
+  import { Event } from '@/models'
 
   const { seasonId } = useSavedContext()
 
@@ -11,6 +12,11 @@
   const subscriptionArgs = computed<Parameters<typeof api.events.getList> | null>(() => seasonId.value ? [seasonId.value] : null)
   const eventSubscription = useSubscriptionWithDependencies(api.events.getList, subscriptionArgs)
   const events = computed(() => eventSubscription.response ?? [])
+  const latestEvent = computed<Event | undefined>(() => {
+    const [first] = events.value
+
+    return first
+  })
 
   const canCreateEvent = computed(() => events.value.every(event => !!event.completed))
 
@@ -25,12 +31,15 @@
 
 <template>
   <div class="home-view">
-    <p-tabs v-if="seasonId" :tabs="tabs" class="home-view__tabs">
+    <template v-if="!eventSubscription.executed && eventSubscription.loading">
+      <p-loading-icon />
+    </template>
+    <p-tabs v-else-if="seasonId" :tabs="tabs" class="home-view__tabs">
       <template #add-event-heading>
         <p-icon icon="PlusIcon" />
       </template>
       <template #add-event>
-        <EventCreateForm :disabled="!canCreateEvent" :season-id="seasonId" @submit="eventSubscription.refresh" />
+        <EventCreateForm :disabled="!canCreateEvent" :previous-event="latestEvent" :season-id="seasonId" @submit="eventSubscription.refresh" />
       </template>
       <template #content="{ index }">
         <EventManage :event="tabs[index].event!" />
