@@ -27,7 +27,7 @@
   const inForAce = usePatchRef(eventPlayer, 'inForAce')
   const score = usePatchRef(eventPlayer, 'score')
 
-  const isRequired: ValidationRule<number | undefined> = (value) => value !== undefined
+  const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number'
   const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
 
   function removePlayer(): void {
@@ -77,7 +77,12 @@
         </template>
       </p-label>
 
-      <p-button class="event-player-list-item__trash" dangerous icon="TrashIcon" @click="removePlayer" />
+      <p-label>
+        <template v-if="scoreErrorMessage" #message>
+          <div class="event-player-list-item__message-size-fix" />
+        </template>
+        <p-button class="event-player-list-item__trash" dangerous icon="TrashIcon" @click="removePlayer" />
+      </p-label>
     </div>
   </div>
 </template>
@@ -113,6 +118,10 @@
 
 .event-player-list-item__trash {
   color: var(--p-color-sentiment-negative);
+}
+
+.event-player-list-item__message-size-fix {
+  height: 1.25rem;
 }
 
 .event-player-list-item__name--not-found {
