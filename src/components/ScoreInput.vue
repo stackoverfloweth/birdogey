@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { computed } from 'vue'
+  import { computed, useAttrs } from 'vue'
 
   const props = defineProps<{
     modelValue: number | null | undefined,
@@ -8,6 +8,10 @@
   const emit = defineEmits<{
     'update:modelValue': [value: number | null],
   }>()
+
+  defineOptions({
+    inheritAttrs: false,
+  })
 
   const modelValue = computed({
     get() {
@@ -18,9 +22,11 @@
     },
   })
 
+  const attrs = useAttrs()
+
   const classes = computed(() => ({
-    'score-input__control--positive': modelValue.value && modelValue.value > 0,
-    'score-input__control--negative': modelValue.value && modelValue.value < 0,
+    'score-input__formatted--positive': modelValue.value && modelValue.value > 0,
+    'score-input__formatted--negative': modelValue.value && modelValue.value < 0,
   }))
 
   const formattedValue = computed(() => {
@@ -34,54 +40,27 @@
 
     return modelValue.value?.toLocaleString()
   })
-
-  function decrement(): void {
-    if (modelValue.value === null) {
-      modelValue.value = 0
-    } else {
-      modelValue.value -= 1
-    }
-  }
-
-  function increment(): void {
-    if (modelValue.value === null) {
-      modelValue.value = 0
-    } else {
-      modelValue.value += 1
-    }
-  }
 </script>
 
 <template>
-  <p-base-input class="score-input">
-    <template v-for="(index, name) in $slots" #[name]="scope">
-      <slot :name="name" v-bind="scope" />
-    </template>
-    <template #prepend>
-      <p-button icon="MinusIcon" @click="decrement" />
-    </template>
-    <template #control>
-      <div :class="classes" class="score-input__control">
-        {{ formattedValue }}
-      </div>
-    </template>
-    <template #append>
-      <p-button icon="PlusIcon" @click="increment" />
-    </template>
-  </p-base-input>
+  <div class="score-input">
+    <p-stepper v-bind="attrs" v-model="modelValue" />
+    <div class="score-input__formatted" :class="classes">
+      {{ formattedValue }}
+    </div>
+  </div>
 </template>
 
 <style>
 .score-input {
-  width: max-content;
-  display: flex;
-  border: 0;
-  background: unset;
-  justify-content: space-between;
-  gap: var(--space-md);
+  position: relative;
+  min-width: 116px;
 }
 
-.score-input__control {
+.score-input__formatted {
+  position: absolute;
+  left: calc(50% - 17px);
+  top: calc(50% - 17px);
   width: 34px;
   height: 34px;
   display: flex;
@@ -89,17 +68,17 @@
   align-items: center;
 }
 
-.score-input__control--positive {
+.score-input__formatted--positive {
   background-color:chocolate;
   border-radius: 4px;
 }
 
-.score-input__control--negative {
+.score-input__formatted--negative {
   background-color: var(--p-color-button-primary-bg);
   border-radius: 100%;
 }
 
-.score-input.p-base-input--failed .p-button {
-  border-color: var(--p-color-input-border-invalid);
+.score-input .p-number-input__control {
+  opacity: 0;
 }
 </style>
