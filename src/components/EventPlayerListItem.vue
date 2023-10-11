@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { ValidationRule, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
+  import PlayerTag from '@/components/PlayerTag.vue'
   import ScoreInput from '@/components/ScoreInput.vue'
   import { EventPlayerRequest, Player } from '@/models'
 
@@ -26,6 +27,7 @@
   const inForCtp = usePatchRef(eventPlayer, 'inForCtp')
   const inForAce = usePatchRef(eventPlayer, 'inForAce')
   const score = usePatchRef(eventPlayer, 'score')
+  const tagReplaced = computed(() => typeof props.eventPlayer.outgoingTagId === 'number')
 
   const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number'
   const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
@@ -45,13 +47,9 @@
         Player Deleted
       </div>
 
-      <div class="event-player-list-item__tag">
-        {{ eventPlayer.outgoingTagId }}
-      </div>
+      <PlayerTag :tag="eventPlayer.incomingTagId" class="event-player-list-item__tag" :class="{ 'event-player-list-item__tag--replaced': tagReplaced }" />
 
-      <div class="event-player-list-item__tag" :class="{ 'event-player-list-item__tag--replaced': typeof eventPlayer.outgoingTagId === 'number' }">
-        {{ eventPlayer.incomingTagId }}
-      </div>
+      <PlayerTag v-if="tagReplaced" :tag="eventPlayer.outgoingTagId!" class="event-player-list-item__tag" />
     </div>
 
     <div class="event-player-list-item__form">
@@ -109,16 +107,18 @@
   color: var(--p-color-sentiment-negative);
 }
 
-.event-player-list-item__message-size-fix {
-  height: 1.25rem;
-}
-
 .event-player-list-item__name--not-found {
   color: var(--p-color-sentiment-negative);
 }
 
+.event-player-list-item__tag {
+  height: 28px;
+  width: 28px;
+}
+
 .event-player-list-item__tag--replaced {
   text-decoration: line-through;
+  background-color: var(--contrast-gray-600);
   color: var(--contrast-gray-400);
 }
 </style>

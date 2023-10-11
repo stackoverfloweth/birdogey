@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { computed } from 'vue'
+  import PlayerTag from '@/components/PlayerTag.vue'
   import { Player } from '@/models'
 
   const props = defineProps<{
@@ -29,9 +30,7 @@
           <div class="players-list__item-name">
             {{ player.name }}
           </div>
-          <div class="players-list__item-tag">
-            {{ player.tagId }}
-          </div>
+          <PlayerTag :tag="player.tagId" />
           <p-icon class="players-list__item-paid" :class="{ 'players-list__item-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
         </div>
       </p-list-item-input>
@@ -54,19 +53,6 @@
 
 .players-list__item-name {
   flex-grow: 1;
-}
-
-.players-list__item-tag {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 9px;
-  color: black;
-  font-weight: bold;
-  background: white;
-  border-radius: 100%;
-  height: 18px;
-  width: 18px;
 }
 
 .players-list__item-paid {

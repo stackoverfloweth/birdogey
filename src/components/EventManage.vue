@@ -25,7 +25,23 @@
   const notes = ref(props.event.notes)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
   const acePlayerIds = ref(props.event.acePlayerIds)
-  const selectedPlayers = ref<string[]>()
+  const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
+
+  const selectedPlayers = computed({
+    get() {
+      return eventPlayers.value.map(({ playerId }) => playerId)
+    },
+    set(value) {
+      eventPlayers.value = value.map(playerId => {
+        const player = players.value.find(player => player.id === playerId)
+
+        return {
+          playerId,
+          incomingTagId: player!.tagId,
+        }
+      })
+    },
+  })
 
   const { validate, pending } = useValidationObserver()
 
@@ -46,15 +62,6 @@
 
   const { error: ctpPlayerIdsErrorMessage, state: ctpPlayerIdsState } = useValidation(ctpPlayerIds, 'Who won ctp', [playerIsInForCtp])
   const { error: acePlayerIdsErrorMessage, state: acePlayerIdsState } = useValidation(acePlayerIds, 'Any aces', [playerIsInForAce])
-
-  const eventPlayers = computed<EventPlayerRequest[]>(() => selectedPlayers.value?.map(playerId => {
-    const player = players.value.find(player => player.id === playerId)
-
-    return {
-      playerId,
-      incomingTagId: player!.tagId,
-    }
-  }) ?? [])
 
   const ctpPlayerIdsMessage = computed(() => {
     if (ctpPlayerIdsErrorMessage.value) {
