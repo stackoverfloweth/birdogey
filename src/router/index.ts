@@ -10,7 +10,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
     component: () => import('@/views/LoginView.vue'),
   },
   {
-    path: '/',
+    path: '/:tab?',
     name: 'Home',
     component: () => import('@/views/HomeView.vue'),
     meta: {

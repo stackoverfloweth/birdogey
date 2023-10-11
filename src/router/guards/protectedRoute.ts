@@ -1,8 +1,11 @@
 import { validated } from '@/composables'
+import { routes } from '@/router/routes'
 import { RouteGuard } from '@/types'
 
 export const protectedRoute: RouteGuard = {
   before: () => {
-    return !validated.value
+    if (!validated.value) {
+      return routes.login()
+    }
   },
 }
