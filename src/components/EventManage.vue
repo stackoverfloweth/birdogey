@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { SelectOption, showToast } from '@prefecthq/prefect-design'
   import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
@@ -160,6 +160,13 @@
     showToast('Event Completed!', 'success')
     eventSubscription.refresh()
   }
+
+  watch(() => props.event, event => {
+    notes.value = event.notes
+    ctpPlayerIds.value = event.ctpPlayerIds
+    acePlayerIds.value = event.acePlayerIds
+    eventPlayers.value = event.players
+  })
 </script>
 
 <template>

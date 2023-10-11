@@ -69,7 +69,8 @@
 }
 
 .score-input__formatted--positive {
-  background-color:chocolate;
+  color: var(--p-color-message-warning-text);
+  background-color: var(--p-color-message-warning-bg);
   border-radius: 4px;
 }
 

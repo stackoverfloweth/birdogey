@@ -76,6 +76,7 @@
 
 <style>
 .event-player-list-item__form {
+  --p-color-toggle-bg-checked: var(--p-color-button-primary-bg);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   row-gap: var(--space-md);
@@ -117,8 +118,8 @@
 }
 
 .event-player-list-item__tag--replaced {
-  text-decoration: line-through;
-  background-color: var(--contrast-gray-600);
-  color: var(--contrast-gray-400);
+  position: relative;
+  background-color: var(--contrast-gray-300);
+  color: black;
 }
 </style>
