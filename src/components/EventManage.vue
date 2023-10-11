@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-  import { SelectModelValue, SelectOption, showToast } from '@prefecthq/prefect-design'
+  import { SelectOption, showToast } from '@prefecthq/prefect-design'
   import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
-  import { computed, reactive, ref } from 'vue'
+  import { computed, ref } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
@@ -23,28 +23,38 @@
   const eventCompleted = computed(() => !!props.event.completed)
 
   const notes = ref(props.event.notes)
-  const eventPlayers = reactive<EventPlayerRequest[]>(props.event.players)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
   const acePlayerIds = ref(props.event.acePlayerIds)
+  const selectedPlayers = ref<string[]>()
 
   const { validate, pending } = useValidationObserver()
 
   const playerIsInForCtp: ValidationRule<string[]> = (value) => {
-    if (value.every(playerId => eventPlayers.find(player => player.playerId === playerId)?.inForCtp)) {
+    if (value.every(playerId => eventPlayers.value.find(player => player.playerId === playerId)?.inForCtp)) {
       return true
     }
 
     return value.length === 1 ? 'Player is not in for ctp' : 'Not every player selected is in for ctp'
   }
   const playerIsInForAce: ValidationRule<string[]> = (value) => {
-    if (value.every(playerId => eventPlayers.find(player => player.playerId === playerId)?.inForAce)) {
+    if (value.every(playerId => eventPlayers.value.find(player => player.playerId === playerId)?.inForAce)) {
       return true
     }
 
     return value.length === 1 ? 'Player is not in for ace' : 'Not every player selected is in for ace'
   }
+
   const { error: ctpPlayerIdsErrorMessage, state: ctpPlayerIdsState } = useValidation(ctpPlayerIds, 'Who won ctp', [playerIsInForCtp])
   const { error: acePlayerIdsErrorMessage, state: acePlayerIdsState } = useValidation(acePlayerIds, 'Any aces', [playerIsInForAce])
+
+  const eventPlayers = computed<EventPlayerRequest[]>(() => selectedPlayers.value?.map(playerId => {
+    const player = players.value.find(player => player.id === playerId)
+
+    return {
+      playerId,
+      incomingTagId: player!.tagId,
+    }
+  }) ?? [])
 
   const ctpPlayerIdsMessage = computed(() => {
     if (ctpPlayerIdsErrorMessage.value) {
@@ -84,13 +94,12 @@
     return undefined
   })
 
-  const playersNotIn = computed(() => players.value.filter(player => eventPlayers.every(eventPlayer => eventPlayer.playerId !== player.id)))
-  const playersNotInOptions = computed(() => playersNotIn.value.map<SelectOption>(player => ({
+  const playersOptions = computed(() => players.value.map<SelectOption>(player => ({
     label: player.name,
     value: player.id,
   })))
 
-  const playersIn = computed(() => players.value.filter(player => eventPlayers.some(eventPlayer => eventPlayer.playerId === player.id)))
+  const playersIn = computed(() => players.value.filter(player => eventPlayers.value.some(eventPlayer => eventPlayer.playerId === player.id)))
   const playersInOptions = computed(() => playersIn.value.map<SelectOption>(player => ({
     label: player.name,
     value: player.id,
@@ -99,14 +108,14 @@
   const ctpInPennies = computed(() => {
     return calculateEventCtpPot({
       ...props.event,
-      players: eventPlayers,
+      players: eventPlayers.value,
     })
   })
 
   const aceInPennies = computed(() => {
     return calculateEventAcePot({
       ...props.event,
-      players: eventPlayers,
+      players: eventPlayers.value,
     })
   })
 
@@ -114,32 +123,9 @@
     return players.value.find(({ id }) => playerId === id)
   }
 
-  function removePlayer(playerId: string): void {
-    const playerIndex = eventPlayers.findIndex(eventPlayer => eventPlayer.playerId === playerId)
-
-    eventPlayers.splice(playerIndex, 1)
-  }
-
-  function addPlayer(playerId: SelectModelValue | SelectModelValue[]): void {
-    if (typeof playerId !== 'string') {
-      return
-    }
-
-    const player = players.value.find(({ id }) => playerId === id)
-
-    if (!player) {
-      return
-    }
-
-    eventPlayers.push({
-      playerId: player.id,
-      incomingTagId: player.tagId,
-    })
-  }
-
   async function updateEvent(): Promise<void> {
     const request: Partial<EventRequest> = {
-      players: eventPlayers,
+      players: eventPlayers.value,
       notes: notes.value,
       ctpPlayerIds: ctpPlayerIds.value,
       acePlayerIds: acePlayerIds.value,
@@ -157,7 +143,7 @@
     }
 
     const request: Partial<EventRequest> = {
-      players: eventPlayers,
+      players: eventPlayers.value,
       notes: notes.value,
       ctpPlayerIds: ctpPlayerIds.value,
       acePlayerIds: acePlayerIds.value,
@@ -177,12 +163,12 @@
     </div>
 
     <p-list-item v-if="!eventCompleted">
-      <p-select empty-message="Add Player" :disabled="eventCompleted" :model-value="undefined" :options="playersNotInOptions" @update:model-value="addPlayer" />
+      <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="eventCompleted" :options="playersOptions" multiple />
     </p-list-item>
 
     <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
       <p-list-item>
-        <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventCompleted" :player="getPlayer(eventPlayer.playerId)" @remove="removePlayer" />
+        <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventCompleted" :player="getPlayer(eventPlayer.playerId)" />
       </p-list-item>
     </template>
 

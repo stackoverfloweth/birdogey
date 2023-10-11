@@ -12,7 +12,6 @@
 
   const emit = defineEmits<{
     'update:eventPlayer': [value: EventPlayerRequest],
-    'remove': [playerId: string],
   }>()
 
   const eventPlayer = computed({
@@ -30,10 +29,6 @@
 
   const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number'
   const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
-
-  function removePlayer(): void {
-    emit('remove', props.eventPlayer.playerId)
-  }
 </script>
 
 <template>
@@ -72,17 +67,10 @@
         </template>
       </p-label>
 
-      <p-label label="Score" class="event-player-list-item__score" :message="scoreErrorMessage" :state="scoreState">
+      <p-label class="event-player-list-item__score" :message="scoreErrorMessage" :state="scoreState">
         <template #default="{ id }">
           <ScoreInput :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
         </template>
-      </p-label>
-
-      <p-label>
-        <template v-if="scoreErrorMessage" #message>
-          <div class="event-player-list-item__message-size-fix" />
-        </template>
-        <p-button class="event-player-list-item__trash" dangerous icon="TrashIcon" @click="removePlayer" />
       </p-label>
     </div>
   </div>
@@ -91,7 +79,7 @@
 <style>
 .event-player-list-item__form {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) min-content;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   row-gap: var(--space-md);
   column-gap: var(--space-sm);
   align-items: flex-end;
