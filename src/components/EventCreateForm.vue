@@ -14,7 +14,7 @@
   }>()
 
   const emit = defineEmits<{
-    submit: [value: string],
+    submit: [name: string],
   }>()
 
   const api = useApi()
@@ -54,9 +54,9 @@
       acePerPlayer: Math.floor(acePerPlayer.value * 100),
     } as EventRequest
 
-    const eventId = await api.events.create(request)
+    await api.events.create(request)
     showToast('Event Created!', 'success')
-    emit('submit', eventId)
+    emit('submit', request.name)
   }
 </script>
 
@@ -68,8 +68,7 @@
 
     <p-label label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <!-- todo: make this disabled -->
-        <p-text-input :id="id" v-model="name" :disabled="disabled" :state="nameState" />
+        <p-text-input :id="id" v-model="name" disabled :state="nameState" />
       </template>
     </p-label>
 

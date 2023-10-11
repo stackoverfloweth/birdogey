@@ -41,6 +41,11 @@
   function fromKebabCase(value?: string): string | undefined {
     return value?.replace(/-/g, ' ')
   }
+
+  function eventCreated(name: string): void {
+    eventSubscription.refresh()
+    updateTab(name)
+  }
 </script>
 
 <template>
@@ -58,7 +63,7 @@
         </template>
       </template>
       <template #add-event>
-        <EventCreateForm :disabled="!canCreateEvent" :previous-event="latestEvent" :season-id="seasonId" @submit="eventSubscription.refresh" />
+        <EventCreateForm :disabled="!canCreateEvent" :previous-event="latestEvent" :season-id="seasonId" @submit="eventCreated" />
       </template>
       <template #content="{ index }">
         <EventManage :event="tabs[index].event!" />
