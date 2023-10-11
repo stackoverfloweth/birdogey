@@ -3,7 +3,8 @@
   import { computed } from 'vue'
   import PlayersManage from '@/components/PlayersManage.vue'
   import SeasonSelectionModal from '@/components/SeasonSelectionModal.vue'
-  import { useApi, useSavedContext } from '@/composables'
+  import { useApi, useSavedContext, validated } from '@/composables'
+  import { routes } from '@/router/routes'
   import { SavedContext } from '@/types'
 
   const { value: showSeasonModal, toggle: toggleSeasonModal } = useBoolean()
@@ -12,10 +13,10 @@
 
   const api = useApi()
 
-  const seasonArgs = computed<Parameters<typeof api.seasons.getById> | null>(() => seasonId.value ? [seasonId.value] : null)
+  const seasonArgs = computed<Parameters<typeof api.seasons.getById> | null>(() => validated.value && seasonId.value ? [seasonId.value] : null)
   const seasonSubscription = useSubscriptionWithDependencies(api.seasons.getById, seasonArgs)
 
-  const courseArgs = computed<Parameters<typeof api.courses.getById> | null>(() => courseId.value ? [courseId.value] : null)
+  const courseArgs = computed<Parameters<typeof api.courses.getById> | null>(() => validated.value && courseId.value ? [courseId.value] : null)
   const courseSubscription = useSubscriptionWithDependencies(api.courses.getById, courseArgs)
 
   const contextDisplay = computed(() => {
@@ -30,8 +31,10 @@
 
 <template>
   <div class="menu-header">
-    <p-icon class="menu-header__icon" icon="LifebuoyIcon" />
-    <div class="menu-header__actions">
+    <p-link :to="routes.home()">
+      <p-icon class="menu-header__icon" icon="LifebuoyIcon" />
+    </p-link>
+    <div v-if="validated" class="menu-header__actions">
       <template v-if="hasContext">
         <p-button @click.stop="toggleSeasonModal">
           {{ contextDisplay }}
@@ -43,9 +46,10 @@
           Select Season
         </p-button>
       </template>
+
+      <SeasonSelectionModal v-model:isOpen="showSeasonModal" :course-id="courseId" :season-id="seasonId" @submit="setSavedContext" />
+      <PlayersManage v-if="seasonId" v-model:isOpen="showPlayersModal" :season-id="seasonId" />
     </div>
-    <SeasonSelectionModal v-model:isOpen="showSeasonModal" :course-id="courseId" :season-id="seasonId" @submit="setSavedContext" />
-    <PlayersManage v-if="seasonId" v-model:isOpen="showPlayersModal" :season-id="seasonId" />
   </div>
 </template>
 
