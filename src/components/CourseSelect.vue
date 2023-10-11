@@ -30,7 +30,7 @@
 </script>
 
 <template>
-  <p-select v-model="modelValue" class="course-select" :options="options">
+  <p-select v-model="modelValue" :disabled="courseSubscription.loading" class="course-select" :options="options">
     <template v-if="courseSubscription.loading" #empty-message>
       <p-loading-icon />
     </template>
