@@ -1,4 +1,5 @@
 export * from './currency'
 export * from './env'
+export * from './string'
 export * from './variables'
 export * from './vue'

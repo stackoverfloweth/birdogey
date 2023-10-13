@@ -2,6 +2,7 @@ import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { protectedRoute } from '@/router/guards/protectedRoute'
 import { NamedRoute, NamedRouteRecord } from '@/router/routes'
 import { RouteGuardExecutioner } from '@/services'
+import { capitalize, fromKebabCase } from '@/utilities'
 
 const routes: NamedRouteRecord<NamedRoute>[] = [
   {
@@ -35,7 +36,10 @@ router.beforeEach(async (to, from) => {
 
 router.afterEach((to, from) => {
   if (to.fullPath !== from.fullPath) {
-    document.title = 'Prefect Server'
+    if (typeof to.params.tab === 'string') {
+      const title = fromKebabCase(to.params.tab)
+      document.title = capitalize(title)
+    }
   }
 
   return RouteGuardExecutioner.after(to, from)
