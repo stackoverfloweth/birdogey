@@ -8,6 +8,7 @@
   import { useApi, useSavedContext } from '@/composables'
   import { Event } from '@/models'
   import { routes } from '@/router/routes'
+  import { fromKebabCase } from '@/utilities'
 
   const { seasonId } = useSavedContext()
 
@@ -37,10 +38,6 @@
       label: kebabCase(event.name),
     })),
   ])
-
-  function fromKebabCase(value?: string): string | undefined {
-    return value?.replace(/-/g, ' ')
-  }
 
   function eventCreated(name: string): void {
     eventSubscription.refresh()
@@ -75,5 +72,14 @@
 <style>
 .home-view__tab-heading {
   text-transform: capitalize;
+}
+
+.home-view__tabs .p-tab {
+  white-space: nowrap;
+}
+
+.home-view__tabs .p-tab-navigation.p-tabs--not-mobile {
+  max-width: 100%;
+  overflow-x: auto;
 }
 </style>
