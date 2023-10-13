@@ -55,6 +55,7 @@
 .score-input {
   position: relative;
   min-width: 116px;
+  touch-action: manipulation;
 }
 
 .score-input__formatted {
