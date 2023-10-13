@@ -8,7 +8,7 @@
   import { useApi, useSavedContext } from '@/composables'
   import { Event } from '@/models'
   import { routes } from '@/router/routes'
-  import { fromKebabCase } from '@/utilities'
+  import { capitalize, fromKebabCase } from '@/utilities'
 
   const { seasonId } = useSavedContext()
 
@@ -25,17 +25,25 @@
   const canCreateEvent = computed(() => events.value.every(event => !!event.completed))
 
   const router = useRouter()
-  const selectedTab = useRouteParam('tab')
+  const routeTab = useRouteParam('tab')
+  const selectedTab = computed({
+    get() {
+      return capitalize(fromKebabCase(routeTab.value))
+    },
+    set(value) {
+      routeTab.value = kebabCase(value)
+    },
+  })
 
   function updateTab(tab: string): void {
     router.push(routes.home(kebabCase(tab)))
   }
 
   const tabs = computed(() => [
-    { label: 'add-event', event: null },
+    { label: 'Add Event', event: null },
     ...events.value.map(event => ({
       event,
-      label: kebabCase(event.name),
+      label: event.name,
     })),
   ])
 
@@ -52,10 +60,10 @@
     </template>
     <p-tabs v-else-if="seasonId" :selected="selectedTab" :tabs="tabs" class="home-view__tabs" @update:selected="updateTab">
       <template #heading="{ tab }">
-        <p-icon v-if="tab?.label === 'add-event'" icon="PlusIcon" />
+        <p-icon v-if="tab?.label === 'Add Event'" icon="PlusIcon" />
         <template v-else>
           <span class="home-view__tab-heading">
-            {{ fromKebabCase(tab?.label) }}
+            {{ tab?.label ?? tab }}
           </span>
         </template>
       </template>
