@@ -28,6 +28,10 @@
   const routeTab = useRouteParam('tab')
   const selectedTab = computed({
     get() {
+      if (!routeTab.value) {
+        return routeTab.value
+      }
+
       return capitalize(fromKebabCase(routeTab.value))
     },
     set(value) {

@@ -1,6 +1,6 @@
 import { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
+import { MaybePromise } from '@/types/promise'
 
-export type MaybePromise<T> = T | Promise<T>
 export type RouteGuardReturn = MaybePromise<void | Error | RouteLocationRaw | boolean>
 
 export interface RouteGuard {
