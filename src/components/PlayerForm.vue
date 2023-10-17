@@ -6,10 +6,12 @@
   const props = defineProps<{
     seasonId: string,
     initialValues?: Partial<Player>,
+    showRemoveButton?: boolean,
   }>()
 
   const emit = defineEmits<{
     submit: [value: PlayerRequest],
+    remove: [],
     cancel: [],
   }>()
 
@@ -43,7 +45,7 @@
       </template>
     </p-label>
 
-    <p-label class="player-form__tagId" label="Tag #">
+    <p-label class="player-form__tag-id" label="Tag #">
       <template #default="{ id }">
         <p-number-input :id="id" v-model="tagId" :min="0" />
       </template>
@@ -57,8 +59,14 @@
 
     <template #footer>
       <p-button @click="emit('cancel')">
-        cancel
+        Cancel
       </p-button>
+
+      <template v-if="showRemoveButton">
+        <p-button dangerous @click="emit('remove')">
+          Delete
+        </p-button>
+      </template>
 
       <p-button type="submit" :disabled="pending" primary>
         Save

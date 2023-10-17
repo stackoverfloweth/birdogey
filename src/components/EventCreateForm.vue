@@ -68,7 +68,7 @@
 
     <p-label label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="name" disabled :state="nameState" />
+        <p-text-input :id="id" v-model="name" :state="nameState" />
       </template>
     </p-label>
 

@@ -1,31 +1,20 @@
 <script lang="ts" setup>
-  import { computed } from 'vue'
   import PlayerTag from '@/components/PlayerTag.vue'
   import { Player } from '@/models'
 
-  const props = defineProps<{
+  defineProps<{
     players: Player[],
-    selected: string[],
   }>()
 
   const emit = defineEmits<{
-    'update:selected': [value: string[]],
+    'select': [value: Player],
   }>()
-
-  const selected = computed({
-    get() {
-      return props.selected
-    },
-    set(value) {
-      emit('update:selected', value)
-    },
-  })
 </script>
 
 <template>
   <div class="players-list">
     <template v-for="player in players" :key="player.id">
-      <p-list-item-input v-model:selected="selected" :value="player.id">
+      <p-list-item :value="player.id" @click="emit('select', player)">
         <div class="players-list__item">
           <div class="players-list__item-name">
             {{ player.name }}
@@ -33,7 +22,7 @@
           <PlayerTag :tag="player.tagId" />
           <p-icon class="players-list__item-paid" :class="{ 'players-list__item-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
         </div>
-      </p-list-item-input>
+      </p-list-item>
     </template>
   </div>
 </template>
