@@ -35,11 +35,13 @@
     },
     set(value) {
       eventPlayers.value = value.map(playerId => {
+        const previousEventPlayer = eventPlayers.value.find(player => player.playerId === playerId)
         const player = players.value.find(player => player.id === playerId)
 
         return {
           playerId,
           incomingTagId: player!.tagId,
+          ...previousEventPlayer,
         }
       })
     },
