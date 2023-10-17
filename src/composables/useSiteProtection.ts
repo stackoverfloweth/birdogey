@@ -2,6 +2,7 @@ import { Ref, ref } from 'vue'
 import { env } from '@/utilities'
 
 export const validated = ref(false)
+export const isAdmin = ref(false)
 
 export type UseSiteProtection = {
   validated: Ref<boolean>,
@@ -10,7 +11,8 @@ export type UseSiteProtection = {
 
 export function useSiteProtection(): UseSiteProtection {
   function attempt(value: string): boolean {
-    validated.value = value === env().sitePassword
+    isAdmin.value = env().adminPassword === value
+    validated.value = isAdmin.value || env().readonlyPassword === value
 
     return validated.value
   }

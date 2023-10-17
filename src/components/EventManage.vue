@@ -3,7 +3,7 @@
   import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref, watch } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
-  import { useApi } from '@/composables'
+  import { isAdmin, useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
@@ -20,7 +20,7 @@
 
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-  const eventCompleted = computed(() => !!props.event.completed)
+  const eventDisabled = computed(() => !isAdmin.value || !!props.event.completed)
 
   const notes = ref(props.event.notes)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
@@ -187,50 +187,50 @@
       <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
     </div>
 
-    <p-list-item v-if="!eventCompleted">
-      <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="eventCompleted" :options="playersOptions" multiple />
+    <p-list-item v-if="!eventDisabled">
+      <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="eventDisabled" :options="playersOptions" multiple />
     </p-list-item>
 
     <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
       <p-list-item>
-        <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventCompleted" :player="getPlayer(eventPlayer.playerId)" />
+        <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventDisabled" :player="getPlayer(eventPlayer.playerId)" />
       </p-list-item>
     </template>
 
     <p-list-item class="event-manage__lower-form">
       <p-label label="Notes">
         <template #default="{ id }">
-          <p-textarea :id="id" v-model="notes" :disabled="eventCompleted" />
+          <p-textarea :id="id" v-model="notes" :disabled="eventDisabled" />
         </template>
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
         <p-label label="Ctp" description="starting balance">
           <template #default="{ id }">
-            <p-number-input :id="id" v-model="ctpStartingBalance" prepend="$" />
+            <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="eventDisabled" prepend="$" />
           </template>
         </p-label>
 
         <p-label label="Ace" description="starting balance">
           <template #default="{ id }">
-            <p-number-input :id="id" v-model="aceStartingBalance" prepend="$" />
+            <p-number-input :id="id" v-model="aceStartingBalance" :disabled="eventDisabled" prepend="$" />
           </template>
         </p-label>
 
         <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="ctpPlayerIdsState" />
+            <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventDisabled" :options="playersInOptions" :state="ctpPlayerIdsState" />
           </template>
         </p-label>
 
         <p-label label="Any aces?" :message="acePlayerIdsMessage" :state="acePlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="acePlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="acePlayerIdsState" />
+            <p-select :id="id" v-model="acePlayerIds" :disabled="eventDisabled" :options="playersInOptions" :state="acePlayerIdsState" />
           </template>
         </p-label>
       </div>
 
-      <div v-if="!eventCompleted" class="event-manage__lower-form-actions">
+      <div v-if="!eventDisabled" class="event-manage__lower-form-actions">
         <p-button :loading="pending" type="submit">
           Save
         </p-button>

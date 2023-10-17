@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { ref } from 'vue'
+  import { isAdmin } from '@/composables'
   import { Player, PlayerRequest } from '@/models'
 
   const props = defineProps<{
@@ -41,19 +42,19 @@
   <p-form class="player-form" @submit="submit">
     <p-label class="player-form__name" label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="name" :state="nameState" />
+        <p-text-input :id="id" v-model="name" :disabled="!isAdmin" :state="nameState" />
       </template>
     </p-label>
 
     <p-label class="player-form__tag-id" label="Tag #">
       <template #default="{ id }">
-        <p-number-input :id="id" v-model="tagId" :min="0" />
+        <p-number-input :id="id" v-model="tagId" :disabled="!isAdmin" :min="0" />
       </template>
     </p-label>
 
     <p-label class="player-form__paid" label="Entry Paid?">
       <template #default="{ id }">
-        <p-toggle :id="id" v-model="entryPaid" />
+        <p-toggle :id="id" v-model="entryPaid" :disabled="!isAdmin" />
       </template>
     </p-label>
 
@@ -63,12 +64,12 @@
       </p-button>
 
       <template v-if="showRemoveButton">
-        <p-button dangerous @click="emit('remove')">
+        <p-button dangerous :disabled="!isAdmin" @click="emit('remove')">
           Delete
         </p-button>
       </template>
 
-      <p-button type="submit" :disabled="pending" primary>
+      <p-button type="submit" :disabled="!isAdmin || pending" primary>
         Save
       </p-button>
     </template>

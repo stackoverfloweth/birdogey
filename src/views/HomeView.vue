@@ -5,7 +5,7 @@
   import { useRouter } from 'vue-router'
   import EventCreateForm from '@/components/EventCreateForm.vue'
   import EventManage from '@/components/EventManage.vue'
-  import { useApi, useSavedContext } from '@/composables'
+  import { isAdmin, useApi, useSavedContext } from '@/composables'
   import { Event } from '@/models'
   import { routes } from '@/router/routes'
   import { capitalize, fromKebabCase } from '@/utilities'
@@ -43,13 +43,20 @@
     router.push(routes.home(kebabCase(tab)))
   }
 
-  const tabs = computed(() => [
-    { label: 'Add Event', event: null },
-    ...events.value.map(event => ({
+  type EventTab = { event: Event | null, label: string }
+
+  const tabs = computed(() => {
+    const value: EventTab[] = events.value.map(event => ({
       event,
       label: event.name,
-    })),
-  ])
+    }))
+
+    if (isAdmin.value) {
+      value.unshift({ label: 'Add Event', event: null })
+    }
+
+    return value
+  })
 
   function eventCreated(name: string): void {
     eventSubscription.refresh()

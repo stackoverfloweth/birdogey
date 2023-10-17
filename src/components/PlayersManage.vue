@@ -4,7 +4,7 @@
   import { computed, ref, toRefs } from 'vue'
   import PlayerForm from '@/components/PlayerForm.vue'
   import PlayersList from '@/components/PlayersList.vue'
-  import { useApi } from '@/composables'
+  import { useApi, isAdmin } from '@/composables'
   import { Player, PlayerRequest } from '@/models'
 
   const props = defineProps<{
@@ -106,11 +106,13 @@
     </template>
     <template v-else>
       <PlayersList :players="players" @select="setSelected" />
-      <div class="players-manage__actions">
-        <p-button @click="showPlayerForm">
-          Add new player
-        </p-button>
-      </div>
+      <template v-if="isAdmin">
+        <div class="players-manage__actions">
+          <p-button @click="showPlayerForm">
+            Add new player
+          </p-button>
+        </div>
+      </template>
     </template>
   </p-modal>
 </template>
