@@ -28,6 +28,8 @@ export const handler: Handler = Api<Partial<EventRequest>>('PUT', 'events-update
     const result = await collection.updateOne({ _id: new ObjectId(id) }, {
       $set: {
         notes: body.notes,
+        ctpStartingBalance: body.ctpStartingBalance,
+        aceStartingBalance: body.aceStartingBalance,
         players,
         ctpPlayerIds,
         acePlayerIds,

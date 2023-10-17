@@ -25,6 +25,8 @@
   const notes = ref(props.event.notes)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
   const acePlayerIds = ref(props.event.acePlayerIds)
+  const ctpStartingBalance = ref(props.event.ctpStartingBalance / 100)
+  const aceStartingBalance = ref(props.event.aceStartingBalance / 100)
   const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
 
   const selectedPlayers = computed({
@@ -136,10 +138,13 @@
       notes: notes.value,
       ctpPlayerIds: ctpPlayerIds.value,
       acePlayerIds: acePlayerIds.value,
+      ctpStartingBalance: ctpStartingBalance.value * 100,
+      aceStartingBalance: aceStartingBalance.value * 100,
     }
 
     await api.events.update(eventId.value, request)
     showToast('Event Updated!', 'success')
+    eventSubscription.refresh()
   }
 
   async function completeEvent(): Promise<void> {
@@ -154,6 +159,8 @@
       notes: notes.value,
       ctpPlayerIds: ctpPlayerIds.value,
       acePlayerIds: acePlayerIds.value,
+      ctpStartingBalance: ctpStartingBalance.value * 100,
+      aceStartingBalance: aceStartingBalance.value * 100,
     }
 
     await api.events.complete(eventId.value, request)
@@ -165,6 +172,8 @@
     notes.value = event.notes
     ctpPlayerIds.value = event.ctpPlayerIds
     acePlayerIds.value = event.acePlayerIds
+    ctpStartingBalance.value = event.ctpStartingBalance / 100
+    aceStartingBalance.value = event.aceStartingBalance / 100
     eventPlayers.value = event.players
   })
 </script>
@@ -194,6 +203,18 @@
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
+        <p-label label="Ctp" description="starting balance">
+          <template #default="{ id }">
+            <p-number-input :id="id" v-model="ctpStartingBalance" prepend="$" />
+          </template>
+        </p-label>
+
+        <p-label label="Ace" description="starting balance">
+          <template #default="{ id }">
+            <p-number-input :id="id" v-model="aceStartingBalance" prepend="$" />
+          </template>
+        </p-label>
+
         <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
           <template #default="{ id }">
             <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="ctpPlayerIdsState" />
