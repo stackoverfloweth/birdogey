@@ -1,5 +1,5 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import { protectedRoute } from '@/router/guards/protectedRoute'
+import { protectedRoute, savedRoute } from '@/router/guards'
 import { NamedRoute, NamedRouteRecord } from '@/router/routes'
 import { RouteGuardExecutioner } from '@/services'
 import { capitalize, fromKebabCase } from '@/utilities'
@@ -15,7 +15,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
     name: 'Home',
     component: () => import('@/views/HomeView.vue'),
     meta: {
-      guards: [protectedRoute],
+      guards: [protectedRoute, savedRoute],
     },
   },
   {
