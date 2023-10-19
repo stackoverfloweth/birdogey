@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { showToast } from '@prefecthq/prefect-design'
   import { useBoolean, useSubscription } from '@prefecthq/vue-compositions'
-  import { computed, ref, toRefs } from 'vue'
+  import { computed, ref, toRefs, watch } from 'vue'
   import PlayerForm from '@/components/PlayerForm.vue'
   import PlayersList from '@/components/PlayersList.vue'
   import { useApi, isAdmin } from '@/composables'
@@ -23,6 +23,11 @@
     set(value) {
       emit('update:isOpen', value)
     },
+  })
+
+  watch(isOpen, () => {
+    clearSelected()
+    hidePlayerForm()
   })
 
   const api = useApi()
