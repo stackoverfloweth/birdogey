@@ -17,6 +17,14 @@ export const numberToString: Profile<'number', number, 'string', string> = {
   },
 }
 
+export const numbersArrayToNumbersSet: Profile<'array', unknown[], 'Set', Set<unknown>> = {
+  sourceKey: 'array',
+  destinationKey: 'Set',
+  map: (source) => {
+    return new Set(source)
+  },
+}
+
 export const numberToDate: Profile<'number', number, 'Date', Date> = {
   sourceKey: 'number',
   destinationKey: 'Date',

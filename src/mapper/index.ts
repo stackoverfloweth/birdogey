@@ -5,7 +5,11 @@ const profiles = await loadProfiles(() => import('@/mapper/maps'))
 export const mapper = createMapper(profiles)
 export type Mapper = typeof mapper
 
-export type MapFunction<TSource, TDestination> = (source: TSource, mapper: Mapper) => TDestination
+export type MapFunction<TSource, TDestination> = {
+  sourceKey: string,
+  destinationKey: string,
+  map: (source: TSource, mapper: Mapper) => TDestination,
+}
 
 // [x] does it work with primitives
 // [x] does it work with arrays of primitives
