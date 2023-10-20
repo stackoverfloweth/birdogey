@@ -110,7 +110,7 @@
       <p-loading-icon />
     </template>
     <template v-else>
-      <PlayersList :players="players" @select="setSelected" />
+      <PlayersList class="players-manage__player-list" :players="players" @select="setSelected" />
       <template v-if="isAdmin">
         <div class="players-manage__actions">
           <p-button @click="showPlayerForm">
@@ -123,6 +123,11 @@
 </template>
 
 <style>
+.players-manage__player-list {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
 .players-manage__actions {
   display: flex;
   gap: var(--space-sm);
