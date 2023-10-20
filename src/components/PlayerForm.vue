@@ -19,7 +19,7 @@
   const { validate, pending } = useValidationObserver()
   const name = ref(props.initialValues?.name)
   const tagId = ref(props.initialValues?.tagId)
-  const entryPaid = ref(props.initialValues?.entryPaid)
+  const entryPaid = ref(props.initialValues?.entryPaid ?? true)
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: nameErrorMessage, state: nameState } = useValidation(name, 'Name', [isRequired])
