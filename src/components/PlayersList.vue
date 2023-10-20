@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-  import PlayerTag from '@/components/PlayerTag.vue'
   import { Player } from '@/models'
 
   defineProps<{
@@ -14,15 +13,17 @@
 <template>
   <div class="players-list">
     <template v-for="player in players" :key="player.id">
-      <p-list-item :value="player.id" @click="emit('select', player)">
-        <div class="players-list__item">
-          <div class="players-list__item-name">
+      <div class="player-list__player">
+        <div class="player-list__player-tag">
+          {{ player.tagId }}
+        </div>
+        <p-list-item class="player-list__player-details" :value="player.id" @click="emit('select', player)">
+          <div class="player-list__player-details-name">
             {{ player.name }}
           </div>
-          <PlayerTag :tag="player.tagId" />
-          <p-icon class="players-list__item-paid" :class="{ 'players-list__item-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
-        </div>
-      </p-list-item>
+          <p-icon class="player-list__player-details-paid" :class="{ 'player-list__player-details-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
+        </p-list-item>
+      </div>
     </template>
   </div>
 </template>
@@ -31,24 +32,42 @@
 .players-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
 }
 
-.players-list__item {
+.player-list__player {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: flex-start;
+}
+
+.player-list__player-tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--p-radius-default);
+  padding: .75rem 0;
+  width: 50px;
+  font-weight: bolder;
+  background-color: var(--p-color-bg-floating);
+}
+
+.player-list__player-details {
+  flex-grow: 1;
   display: flex;
   gap: var(--space-sm);
   align-items: center;
 }
 
-.players-list__item-name {
+.player-list__player-details-name {
   flex-grow: 1;
 }
 
-.players-list__item-paid {
+.player-list__player-details-paid {
   color: var(--p-color-sentiment-negative);
 }
 
-.players-list__item-paid--paid {
+.player-list__player-details-paid--paid {
   color: var(--p-color-sentiment-positive);
 }
 </style>

@@ -195,9 +195,7 @@
     </p-list-item>
 
     <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
-      <p-list-item>
-        <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventDisabled" :player="getPlayer(eventPlayer.playerId)" />
-      </p-list-item>
+      <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventDisabled" :player="getPlayer(eventPlayer.playerId)" />
     </template>
 
     <p-list-item class="event-manage__lower-form">

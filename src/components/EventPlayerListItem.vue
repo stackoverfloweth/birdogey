@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import { ValidationRule, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import PlayerTag from '@/components/PlayerTag.vue'
   import ScoreInput from '@/components/ScoreInput.vue'
   import { EventPlayerRequest, Player } from '@/models'
 
@@ -29,13 +28,29 @@
   const score = usePatchRef(eventPlayer, 'score')
   const tagReplaced = computed(() => typeof props.eventPlayer.outgoingTagId === 'number')
 
+  const classes = computed(() => ({
+    tag: {
+      'event-player-list-item__tag--replaced': tagReplaced.value,
+    },
+  }))
+
   const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number'
   const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
 </script>
 
 <template>
   <div class="event-player-list-item">
-    <div class="event-player-list-item__header">
+    <div class="event-player-list-item__tag" :class="classes.tag">
+      <div class="event-player-list-item__tag-outgoing">
+        {{ eventPlayer.outgoingTagId }}
+      </div>
+
+      <div class="event-player-list-item__tag-incoming">
+        {{ eventPlayer.incomingTagId }}
+      </div>
+    </div>
+
+    <p-list-item class="event-player-list-item__player">
       <div v-if="player" class="event-player-list-item__name">
         {{ player.name }}
         <p-tooltip v-if="!player?.entryPaid" text="Player has not paid entry">
@@ -47,19 +62,13 @@
         Player Deleted
       </div>
 
-      <PlayerTag :tag="eventPlayer.incomingTagId" class="event-player-list-item__tag" :class="{ 'event-player-list-item__tag--replaced': tagReplaced }" />
-
-      <PlayerTag v-if="tagReplaced" :tag="eventPlayer.outgoingTagId!" class="event-player-list-item__tag" />
-    </div>
-
-    <div class="event-player-list-item__form">
-      <p-label label="In for Ctp" class="event-player-list-item__in-for-ctp">
+      <p-label label="In for Ctp" class="event-player-list-item__toggle">
         <template #default="{ id }">
           <p-toggle :id="id" v-model="inForCtp" :disabled="disabled" />
         </template>
       </p-label>
 
-      <p-label label="In for Ace" class="event-player-list-item__in-for-ace">
+      <p-label label="In for Ace" class="event-player-list-item__toggle">
         <template #default="{ id }">
           <p-toggle :id="id" v-model="inForAce" :disabled="disabled" />
         </template>
@@ -70,31 +79,65 @@
           <ScoreInput :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
         </template>
       </p-label>
-    </div>
+    </p-list-item>
   </div>
 </template>
 
 <style>
-.event-player-list-item__form {
-  --p-color-toggle-bg-checked: var(--p-color-button-primary-bg);
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  row-gap: var(--space-md);
-  column-gap: var(--space-sm);
-  align-items: flex-end;
-}
-
-.event-player-list-item__header {
+.event-player-list-item {
   display: flex;
   gap: var(--space-xs);
+  align-items: stretch;
+}
+
+.event-player-list-item__tag {
+  --tag-outgoing-tag-color: transparent;
+
+  position: relative;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  font-size: var(--text-lg);
-  font-weight: bold;
+  border-radius: var(--p-radius-default);
+  padding: .75rem 0;
+  width: 72px;
+  overflow: hidden;
+  font-weight: bolder;
+  background: linear-gradient(135deg, var(--tag-outgoing-tag-color) 0%, var(--tag-outgoing-tag-color) 45%, transparent 46%, transparent 54%, var(--p-color-bg-floating) 55%, var(--p-color-bg-floating) 100%);
+}
+
+.event-player-list-item__tag--replaced {
+  --tag-outgoing-tag-color: var(--p-color-button-primary-bg);
+}
+
+.event-player-list-item__tag-outgoing {
+  position: absolute;
+  left: 20%;
+  top: 10%;
+}
+
+.event-player-list-item__tag-incoming {
+  position: absolute;
+  right: 20%;
+  bottom: 10%;
+}
+
+.event-player-list-item__player {
+  --p-color-toggle-bg-checked: var(--p-color-button-primary-bg);
+
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 100px 100px 200px;
+  align-items: center;
 }
 
 .event-player-list-item__name {
   white-space: nowrap;
-  flex-grow: 1;
+  font-size: var(--text-lg);
+  font-weight: bold;
+}
+
+.event-player-list-item__toggle {
+  align-items: center;
 }
 
 .event-player-list-item__entry-not-paid {
@@ -104,22 +147,7 @@
   color: var(--p-color-message-warning-text);
 }
 
-.event-player-list-item__trash {
-  color: var(--p-color-sentiment-negative);
-}
-
 .event-player-list-item__name--not-found {
   color: var(--p-color-sentiment-negative);
-}
-
-.event-player-list-item__tag {
-  height: 28px;
-  width: 28px;
-}
-
-.event-player-list-item__tag--replaced {
-  position: relative;
-  background-color: var(--contrast-gray-300);
-  color: black;
 }
 </style>
