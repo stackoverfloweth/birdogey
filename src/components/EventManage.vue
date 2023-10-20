@@ -1,7 +1,8 @@
 <script lang="ts" setup>
   import { SelectOption, showToast } from '@prefecthq/prefect-design'
-  import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useBoolean, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref, watch } from 'vue'
+  import CardSuggestionModal from '@/components/CardSuggestionModal.vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import { isAdmin, useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
@@ -21,6 +22,8 @@
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const eventDisabled = computed(() => !isAdmin.value || !!props.event.completed)
+
+  const { value: showingCardSuggestions, setTrue: showCardSuggestions } = useBoolean()
 
   const notes = ref(props.event.notes)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
@@ -225,12 +228,23 @@
 
         <p-label label="Any aces?" :message="acePlayerIdsMessage" :state="acePlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="acePlayerIds" :disabled="eventDisabled" :options="playersInOptions" :state="acePlayerIdsState" />
+            <p-select
+              :id="id"
+              v-model="acePlayerIds"
+              empty-message="No Aces"
+              :disabled="eventDisabled"
+              :options="playersInOptions"
+              :state="acePlayerIdsState"
+            />
           </template>
         </p-label>
       </div>
 
       <div v-if="!eventDisabled" class="event-manage__lower-form-actions">
+        <p-button @click="showCardSuggestions">
+          Suggest Cards
+        </p-button>
+
         <p-button :loading="pending" type="submit">
           Save
         </p-button>
@@ -240,6 +254,7 @@
         </p-button>
       </div>
     </p-list-item>
+    <CardSuggestionModal v-model:isOpen="showingCardSuggestions" :players="playersIn" />
   </p-form>
 </template>
 
