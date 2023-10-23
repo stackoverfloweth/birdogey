@@ -27,4 +27,9 @@ export class SeasonApi extends Api {
     return this.delete<string>(`seasons-remove/${id}`)
       .then(({ data }) => data)
   }
+
+  public attemptLogin(password: string): Promise<Season | undefined> {
+    return this.post<SeasonResponse>('seasons-attempt-login', { password })
+      .then(({ data }) => mapper.map('SeasonResponse', data, 'Season'))
+  }
 }

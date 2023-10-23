@@ -2,10 +2,9 @@
   import { useBoolean, useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import Birdogey from '@/assets/birdogey.svg?component'
-  import Club from '@/assets/club.svg?component'
   import PlayersManage from '@/components/PlayersManage.vue'
   import SeasonSelectionModal from '@/components/SeasonSelectionModal.vue'
-  import { useApi, useSavedContext, validated } from '@/composables'
+  import { useApi, useSavedContext, validated, isAdmin } from '@/composables'
   import { routes } from '@/router/routes'
   import { SavedContext } from '@/types'
 
@@ -41,10 +40,12 @@
     </p-link>
     <div v-if="validated" class="menu-header__actions">
       <template v-if="hasContext">
-        <p-button @click.stop="toggleSeasonModal">
+        <p-button :disabled="!isAdmin" @click.stop="toggleSeasonModal">
           {{ contextDisplay }}
         </p-button>
-        <p-button icon="UserCircleIcon" @click.stop="togglePlayersModal" />
+        <template v-if="isAdmin">
+          <p-button icon="UserCircleIcon" @click.stop="togglePlayersModal" />
+        </template>
       </template>
       <template v-else>
         <p-button primary @click.stop="toggleSeasonModal">

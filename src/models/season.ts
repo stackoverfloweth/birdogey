@@ -4,4 +4,5 @@ export type Season = {
   name: string,
   start: Date,
   end?: Date,
+  password: string,
 }

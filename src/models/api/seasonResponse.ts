@@ -6,4 +6,5 @@ export type SeasonResponse = {
   name: string,
   start: Date,
   end?: Date,
+  password: string,
 }
