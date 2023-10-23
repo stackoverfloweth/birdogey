@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import { useBoolean, useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import Birdogey from '@/assets/birdogey.svg?component'
   import PlayersManage from '@/components/PlayersManage.vue'
   import SeasonSelectionModal from '@/components/SeasonSelectionModal.vue'
   import { useApi, useSavedContext, validated, isAdmin } from '@/composables'
@@ -33,10 +32,7 @@
 <template>
   <div class="menu-header">
     <p-link :to="routes.home()">
-      <div class="menu-header__logo">
-        <Birdogey class="menu-header__logo--birdogey" height="80" width="180" />
-        <span class="menu-header__logo--club">Club</span>
-      </div>
+      <img src="/birdogey.png">
     </p-link>
     <div v-if="validated" class="menu-header__actions">
       <template v-if="hasContext">
@@ -62,8 +58,9 @@
 <style>
 .menu-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  row-gap: var(--space-sm);
   flex-wrap: wrap;
 }
 
@@ -71,17 +68,5 @@
   display: flex;
   gap: var(--space-xs);
   align-items: center;
-}
-
-.menu-header__logo {
-  position: relative;
-  color: var(--p-color-button-primary-bg);
-}
-
-.menu-header__logo--club {
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: var(--contrast-gray-800);
 }
 </style>
