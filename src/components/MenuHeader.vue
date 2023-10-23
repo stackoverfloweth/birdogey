@@ -34,6 +34,7 @@
     <p-link :to="routes.home()">
       <img src="/birdogey.png">
     </p-link>
+
     <div v-if="validated" class="menu-header__actions">
       <template v-if="hasContext">
         <p-button :disabled="!isAdmin" @click.stop="toggleSeasonModal">

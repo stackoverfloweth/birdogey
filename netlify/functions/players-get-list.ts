@@ -1,4 +1,5 @@
 import { Handler } from '@netlify/functions'
+import { ObjectId } from 'mongodb'
 import { Api, env, getClient } from '../utilities'
 import { PlayerResponse } from '@/models/api'
 
@@ -10,7 +11,7 @@ export const handler: Handler = Api('GET', '/players-get-list/:seasonId', ([seas
     const collection = db.collection<PlayerResponse>('players')
 
     const players = await collection.find({
-      seasonId,
+      seasonId: new ObjectId(seasonId),
     }).toArray()
 
     return {

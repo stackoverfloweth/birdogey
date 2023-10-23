@@ -16,12 +16,13 @@ export const handler: Handler = Api('POST', 'players-create', (args, body) => as
   try {
     const db = client.db(env().mongodbName)
     const collection = db.collection<PlayerResponse>('players')
+    const seasonId = new ObjectId(body.seasonId)
 
-    const tagId = body.tagId ?? await getNextAvailableTag(body.seasonId, collection)
+    const tagId = body.tagId ?? await getNextAvailableTag(seasonId, collection)
 
     const result = await collection.insertOne({
       _id: new ObjectId(),
-      seasonId: body.seasonId,
+      seasonId,
       name: body.name,
       entryPaid: body.entryPaid ?? false,
       tagId,
@@ -36,6 +37,6 @@ export const handler: Handler = Api('POST', 'players-create', (args, body) => as
   }
 })
 
-function getNextAvailableTag(seasonId: string, collection: Collection<PlayerResponse>): Promise<number> {
+function getNextAvailableTag(seasonId: ObjectId, collection: Collection<PlayerResponse>): Promise<number> {
   return collection.countDocuments({ seasonId }).then(count => count + 1)
 }

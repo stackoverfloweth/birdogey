@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb'
 
 export type PlayerResponse = {
   _id: ObjectId,
-  seasonId: string,
+  seasonId: ObjectId,
   name: string,
   tagId: number,
   entryPaid: boolean,
