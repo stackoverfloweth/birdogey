@@ -13,8 +13,10 @@ export const handler: Handler = Api<Partial<PlayerRequest>>('PUT', 'players-upda
   try {
     const db = client.db(env().mongodbName)
     const collection = db.collection<PlayerResponse>('players')
+    // eslint-disable-next-line no-unused-vars
+    const { seasonId, ...$set } = body
 
-    const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: body })
+    const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set })
 
     return { statusCode: result.acknowledged ? 202 : 400 }
   } finally {
