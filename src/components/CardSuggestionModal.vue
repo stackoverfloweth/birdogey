@@ -40,6 +40,10 @@
   })
 
   const numberOfCards = computed(() => {
+    if (props.players.length <= 1) {
+      return 1
+    }
+
     const value = props.players.length / 4
 
     if (willHaveFiveOnCard.value) {

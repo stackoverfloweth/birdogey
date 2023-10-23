@@ -40,12 +40,16 @@
 
     return modelValue.value?.toLocaleString()
   })
+
+  function toggleValue(): void {
+    modelValue.value = 0
+  }
 </script>
 
 <template>
   <div class="score-input">
     <p-stepper v-bind="attrs" v-model="modelValue" />
-    <div class="score-input__formatted" :class="classes">
+    <div class="score-input__formatted" :class="classes" @click="toggleValue">
       {{ formattedValue }}
     </div>
   </div>
@@ -67,6 +71,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .score-input__formatted--positive {

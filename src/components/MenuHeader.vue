@@ -37,7 +37,7 @@
 
     <div v-if="validated" class="menu-header__actions">
       <template v-if="hasContext">
-        <p-button :disabled="!isAdmin" @click.stop="toggleSeasonModal">
+        <p-button :disabled="!isAdmin" :flat="!isAdmin" @click.stop="toggleSeasonModal">
           {{ contextDisplay }}
         </p-button>
         <template v-if="isAdmin">

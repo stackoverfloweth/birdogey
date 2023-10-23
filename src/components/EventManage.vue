@@ -220,7 +220,13 @@
 
         <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventDisabled" :options="playersInOptions" :state="ctpPlayerIdsState" />
+            <p-select
+              :id="id"
+              v-model="ctpPlayerIds"
+              :disabled="eventDisabled"
+              :options="playersInOptions"
+              :state="ctpPlayerIdsState"
+            />
           </template>
         </p-label>
 
@@ -229,7 +235,6 @@
             <p-select
               :id="id"
               v-model="acePlayerIds"
-              empty-message="No Aces"
               :disabled="eventDisabled"
               :options="playersInOptions"
               :state="acePlayerIdsState"
@@ -239,7 +244,7 @@
       </div>
 
       <div v-if="!eventDisabled" class="event-manage__lower-form-actions">
-        <p-button @click="showCardSuggestions">
+        <p-button :disabled="eventPlayers.length === 0" @click="showCardSuggestions">
           Suggest Cards
         </p-button>
 
@@ -290,6 +295,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  container-type: inline-size;
 }
 
 .event-manage__lower-form-2-col {
@@ -302,5 +308,11 @@
   display: flex;
   gap: var(--space-sm);
   justify-content: flex-end;
+}
+
+@container(max-width: 445px){
+  .event-manage__lower-form-actions {
+    flex-direction: column;
+  }
 }
 </style>
