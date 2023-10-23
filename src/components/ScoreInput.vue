@@ -2,6 +2,7 @@
   import { computed, useAttrs } from 'vue'
 
   const props = defineProps<{
+    disabled?: boolean,
     modelValue: number | null | undefined,
   }>()
 
@@ -42,13 +43,15 @@
   })
 
   function toggleValue(): void {
-    modelValue.value = 0
+    if (!props.disabled) {
+      modelValue.value = 0
+    }
   }
 </script>
 
 <template>
   <div class="score-input">
-    <p-stepper v-bind="attrs" v-model="modelValue" />
+    <p-stepper v-bind="attrs" v-model="modelValue" :disabled="disabled" />
     <div class="score-input__formatted" :class="classes" @click="toggleValue">
       {{ formattedValue }}
     </div>
