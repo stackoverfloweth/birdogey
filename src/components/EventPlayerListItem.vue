@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-  import { ValidationRule, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useBoolean, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
+  import EventPlayerEditModal from '@/components/EventPlayerEditModal.vue'
+  import PlayerEditModal from '@/components/PlayerEditModal.vue'
   import ScoreInput from '@/components/ScoreInput.vue'
   import { EventPlayerRequest, Player } from '@/models'
 
@@ -23,9 +25,14 @@
     },
   })
 
+  const { value: showingEditPlayerModal, setTrue: showEditPlayerModal } = useBoolean()
+  const { value: showingEditTagModal, setTrue: showEditTagModal } = useBoolean()
+
   const inForCtp = usePatchRef(eventPlayer, 'inForCtp')
   const inForAce = usePatchRef(eventPlayer, 'inForAce')
   const score = usePatchRef(eventPlayer, 'score')
+  const incomingTagId = usePatchRef(eventPlayer, 'incomingTagId')
+  const outgoingTagId = usePatchRef(eventPlayer, 'outgoingTagId')
   const tagReplaced = computed(() => typeof props.eventPlayer.outgoingTagId === 'number')
 
   const classes = computed(() => ({
@@ -36,23 +43,35 @@
 
   const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number'
   const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
+
+  function tryShowEditPlayerModal(): void {
+    if (!props.disabled) {
+      showEditPlayerModal()
+    }
+  }
+
+  function tryShowEditTagModal(): void {
+    if (!props.disabled) {
+      showEditTagModal()
+    }
+  }
 </script>
 
 <template>
   <div class="event-player-list-item">
-    <div class="event-player-list-item__tag" :class="classes.tag">
+    <div class="event-player-list-item__tag" :class="classes.tag" @click="tryShowEditTagModal">
       <div class="event-player-list-item__tag-outgoing">
-        {{ eventPlayer.outgoingTagId }}
+        {{ outgoingTagId }}
       </div>
 
       <div class="event-player-list-item__tag-incoming">
-        {{ eventPlayer.incomingTagId }}
+        {{ incomingTagId }}
       </div>
     </div>
 
     <p-list-item class="event-player-list-item__player">
       <div v-if="player" class="event-player-list-item__name">
-        {{ player.name }}
+        <span class="event-player-list-item__name-button" @click="tryShowEditPlayerModal">{{ player.name }}</span>
         <p-tooltip v-if="!player?.entryPaid" text="Player has not paid entry">
           <p-icon class="event-player-list-item__entry-not-paid" icon="ExclamationCircleIcon" />
         </p-tooltip>
@@ -80,6 +99,13 @@
         </template>
       </p-label>
     </p-list-item>
+
+    <template v-if="player && showingEditPlayerModal">
+      <PlayerEditModal v-model:is-open="showingEditPlayerModal" :season-id="player.seasonId" :player-id="player.id" />
+    </template>
+    <template v-if="showingEditTagModal">
+      <EventPlayerEditModal v-model:is-open="showingEditTagModal" v-model:event-player="eventPlayer" />
+    </template>
   </div>
 </template>
 
@@ -143,11 +169,17 @@
 }
 
 .event-player-list-item__name {
+  display: flex;
+  gap: var(--space-xxxs);
   white-space: nowrap;
   font-size: var(--text-lg);
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: bold;
+}
+
+.event-player-list-item__name-button {
+  cursor: pointer;
 }
 
 .event-player-list-item__toggle {

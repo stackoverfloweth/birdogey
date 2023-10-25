@@ -21,7 +21,7 @@
 
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-  const eventDisabled = computed(() => !isAdmin.value || !!props.event.completed)
+  const eventDisabled = computed(() => !isAdmin.value)
 
   const { value: showingCardSuggestions, setTrue: showCardSuggestions } = useBoolean()
 
@@ -252,7 +252,7 @@
           Save
         </p-button>
 
-        <p-button :loading="pending" primary @click="completeEvent">
+        <p-button :loading="pending" :disabled="!!event.completed" primary @click="completeEvent">
           Complete Event
         </p-button>
       </div>

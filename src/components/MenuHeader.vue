@@ -23,6 +23,12 @@
     return `${courseSubscription.response?.name ?? '...'} / ${seasonSubscription.response?.name ?? '...'}`
   })
 
+  const classes = computed(() => ({
+    root: {
+      'menu-header--validated': validated.value,
+    },
+  }))
+
   function setSavedContext(context: SavedContext): void {
     courseId.value = context.courseId
     seasonId.value = context.seasonId
@@ -30,9 +36,9 @@
 </script>
 
 <template>
-  <div class="menu-header">
+  <div class="menu-header" :class="classes.root">
     <p-link :to="routes.home()">
-      <img src="/birdogey.png">
+      <img class="menu-header__logo" src="/birdogey.png">
     </p-link>
 
     <div v-if="validated" class="menu-header__actions">
@@ -59,10 +65,29 @@
 <style>
 .menu-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   row-gap: var(--space-sm);
   flex-wrap: wrap;
+}
+
+.menu-header--validated {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.menu-header__logo {
+  max-width: 50vw;
+}
+
+@media (max-width: 640px) {
+  .menu-header {
+    justify-content: center;
+  }
+
+  .menu-header__logo {
+    max-width: 100%;
+  }
 }
 
 .menu-header__actions {
