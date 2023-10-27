@@ -27,4 +27,9 @@ export class CourseApi extends Api {
     return this.delete<string>(`courses-remove/${id}`)
       .then(({ data }) => data)
   }
+
+  public attemptLogin(password: string): Promise<Course[]> {
+    return this.post<CourseResponse[]>('courses-attempt-login', { password })
+      .then(({ data }) => mapper.map('CourseResponse', data, 'Course'))
+  }
 }
