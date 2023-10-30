@@ -5,7 +5,6 @@
   import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import PlayerForm from '@/components/PlayerForm.vue'
-  import PlayersMenu from '@/components/PlayersMenu.vue'
   import { useApi } from '@/composables'
   import { PlayerRequest } from '@/models'
   import { routes } from '@/router/routes'
@@ -56,7 +55,6 @@
 
 <template>
   <div class="players-edit-view">
-    <PlayersMenu v-if="seasonId" :season-id="seasonId" />
     <ContextBreadCrumbs :crumbs="crumbs" />
 
     <p-card>
