@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <AppMenu class="players-menu" icon="Bars3Icon">
+  <AppMenu class="players-list-view-menu" icon="Bars3Icon">
     <template #default>
       <p-overflow-menu-item icon="UserPlusIcon" label="Create New Player" :to="routes.playerCreate(seasonId)" />
     </template>

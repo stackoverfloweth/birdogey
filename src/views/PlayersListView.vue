@@ -5,7 +5,8 @@
   import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import PlayersList from '@/components/PlayersList.vue'
-  import PlayersMenu from '@/components/PlayersMenu.vue'
+  import PlayersListViewEmptyState from '@/components/PlayersListViewEmptyState.vue'
+  import PlayersListViewMenu from '@/components/PlayersListViewMenu.vue'
   import { useApi } from '@/composables'
   import { Player } from '@/models'
   import { routes } from '@/router/routes'
@@ -27,11 +28,14 @@
 
 <template>
   <div class="players-list-view">
-    <PlayersMenu :season-id="seasonId" />
+    <PlayersListViewMenu :season-id="seasonId" />
     <ContextBreadCrumbs :crumbs="crumbs" />
 
     <template v-if="playerSubscription.loading">
       <p-loading-icon />
+    </template>
+    <template v-else-if="players.length === 0">
+      <PlayersListViewEmptyState :season-id="seasonId" />
     </template>
     <template v-else>
       <PlayersList :players="players" @select="editPlayer" />
