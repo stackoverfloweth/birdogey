@@ -1,4 +1,4 @@
-import { apiKey, CreateApi } from '@/services/createApi'
+import { apiKey, CreateApi } from '@/services'
 import { inject } from '@/utilities'
 
 export function useApi(): CreateApi {

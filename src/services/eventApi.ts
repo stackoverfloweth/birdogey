@@ -1,6 +1,5 @@
 import { Event, EventRequest, EventResponse } from '@/models'
-import { Api } from '@/services/api'
-import { mapper } from '@/services/mapper'
+import { Api, mapper } from '@/services'
 
 export class EventApi extends Api {
   public getById(id: string): Promise<Event> {

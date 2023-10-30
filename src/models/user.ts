@@ -1,4 +1,4 @@
-import { Season } from '@/models/season'
+import { Season } from '@/models'
 
 export type AdminUser = User & {
   id: string,

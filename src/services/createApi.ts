@@ -1,9 +1,6 @@
 import { createActions } from '@prefecthq/vue-compositions'
 import { InjectionKey } from 'vue'
-import { ApiConfig } from '@/services/api'
-import { EventApi } from '@/services/eventApi'
-import { PlayerApi } from '@/services/playerApi'
-import { UserApi } from '@/services/userApi'
+import { ApiConfig, EventApi, PlayerApi, UserApi } from '@/services'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createApi(config: ApiConfig) {

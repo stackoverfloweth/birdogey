@@ -1,6 +1,5 @@
 import { Player, PlayerRequest, PlayerResponse } from '@/models'
-import { Api } from '@/services/api'
-import { mapper } from '@/services/mapper'
+import { Api, mapper } from '@/services'
 
 export class PlayerApi extends Api {
   public getById(id: string): Promise<Player> {

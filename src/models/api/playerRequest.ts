@@ -1,4 +1,4 @@
-import { PlayerResponse } from '@/models/api/playerResponse'
+import { PlayerResponse } from '@/models/api'
 
 export type PlayerRequest = Omit<PlayerResponse, '_id' | 'seasonId' | 'tagId' | 'entryPaid'> & {
   seasonId: string,

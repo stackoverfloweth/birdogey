@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { User } from '@/models'
-import { CreateApi } from '@/services/createApi'
+import { CreateApi } from '@/services'
 
 export const auth = reactive<User>({
   id: undefined,

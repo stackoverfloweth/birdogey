@@ -1,5 +1,4 @@
-import { EventPlayerRequest } from '@/models/api/eventPlayerRequest'
-import { EventResponse } from '@/models/api/eventResponse'
+import { EventPlayerRequest, EventResponse } from '@/models/api'
 
 export type EventRequest = Omit<EventResponse, '_id' | 'seasonId' | 'players' | 'created' | 'ctpStartingBalance' | 'aceStartingBalance' | 'ctpPlayerIds' | 'acePlayerIds'> & {
   seasonId: string,

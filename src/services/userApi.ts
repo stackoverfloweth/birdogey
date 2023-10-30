@@ -1,6 +1,5 @@
 import { User, UserAuthResponse } from '@/models'
-import { Api } from '@/services/api'
-import { mapper } from '@/services/mapper'
+import { Api, mapper } from '@/services'
 
 export class UserApi extends Api {
   public attemptLogin(password: string): Promise<User | undefined> {
