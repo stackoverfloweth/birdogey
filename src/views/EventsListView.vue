@@ -1,23 +1,31 @@
 <script lang="ts" setup>
   import { useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
+  import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
-  import EventList from '@/components/EventList.vue'
+  import EventsList from '@/components/EventsList.vue'
   import EventsListViewMenu from '@/components/EventsListViewMenu.vue'
   import { useApi } from '@/composables'
+  import { Event } from '@/models'
+  import { routes } from '@/router/routes'
 
   const api = useApi()
+  const router = useRouter()
   const seasonId = useRouteParam('seasonId')
 
   const eventSubscription = useSubscription(api.events.getList, [seasonId])
   const events = computed(() => eventSubscription.response ?? [])
+
+  function openEvent(event: Event): void {
+    router.push(routes.event(event.id))
+  }
 </script>
 
 <template>
   <div class="events-list-view">
     <EventsListViewMenu :season-id="seasonId" />
     <ContextBreadCrumbs :crumbs="[{ text: 'Events' }]" />
-    <EventList :events="events" />
+    <EventsList :events="events" @select="openEvent" />
   </div>
 </template>
 

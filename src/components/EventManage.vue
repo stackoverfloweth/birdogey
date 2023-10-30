@@ -193,13 +193,15 @@
     </template>
 
     <template v-else>
-      <p-list-item v-if="!disabled">
+      <p-list-item>
         <div class="event-manage__payout-summary">
           <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
           <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
         </div>
 
-        <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="disabled" :options="playersOptions" multiple />
+        <template v-if="!disabled">
+          <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="disabled" :options="playersOptions" multiple />
+        </template>
       </p-list-item>
 
       <template v-if="eventPlayers.length">
