@@ -64,18 +64,10 @@
   gap: var(--space-lg);
 }
 
-.login-view__logo {
-  max-width: 50vw;
-}
-
+.login-view__logo,
 .login-view__login-form {
+  width: 100%;
   flex-grow: 1;
-  max-width: 360px;
-}
-
-@media (max-width: 640px) {
-  .login-view__login-form {
-    max-width: 100%;
-  }
+  max-width: 400px;
 }
 </style>
