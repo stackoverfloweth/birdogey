@@ -11,7 +11,7 @@
   <AppMenu class="events-list-view-menu" icon="Bars3Icon">
     <template #default>
       <template v-if="seasonId">
-        <p-overflow-menu-item disabled icon="CalendarDaysIcon" label="New Event" :to="routes.eventCreate(seasonId)" />
+        <p-overflow-menu-item icon="CalendarDaysIcon" label="New Event" :to="routes.eventCreate(seasonId)" />
         <p-overflow-menu-item icon="UsersIcon" label="Manage Players" :to="routes.players(seasonId)" />
       </template>
     </template>

@@ -85,6 +85,10 @@
   gap: var(--space-sm);
 }
 
+.event-list-item__payout {
+  white-space: nowrap;
+}
+
 .event-list-item__players {
   grid-area: players;
 }

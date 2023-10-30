@@ -1,9 +1,9 @@
 <script lang="ts" setup>
   import { SelectOption } from '@prefecthq/prefect-design'
-  import { ValidationRule, useBoolean, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref, watch } from 'vue'
-  import CardSuggestionModal from '@/components/CardSuggestionModal.vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
+  import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
@@ -27,8 +27,6 @@
 
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-
-  const { value: showingCardSuggestions, setTrue: showCardSuggestions } = useBoolean()
 
   const notes = ref(props.event.notes)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
@@ -200,6 +198,13 @@
         </div>
 
         <template v-if="!disabled">
+          <EventsEditViewMenu
+            :season-id="seasonId"
+            :players="playersIn"
+            @cancel="emit('cancel')"
+            @save="updateEvent"
+            @complete="completeEvent"
+          />
           <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="disabled" :options="playersOptions" multiple />
         </template>
       </p-list-item>
@@ -263,10 +268,6 @@
           Cancel
         </p-button>
 
-        <p-button :disabled="eventPlayers.length === 0" @click="showCardSuggestions">
-          Suggest Cards
-        </p-button>
-
         <p-button :loading="pending" type="submit">
           Save
         </p-button>
@@ -276,7 +277,6 @@
         </p-button>
       </div>
     </p-list-item>
-    <CardSuggestionModal v-model:isOpen="showingCardSuggestions" :players="playersIn" />
   </p-form>
 </template>
 
