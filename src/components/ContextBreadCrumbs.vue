@@ -36,7 +36,8 @@
   })
 
   const crumbs = computed<Crumb[]>(() => {
-    const openSelection = { ...route, query: { select: 'season' } }
+    const canChangeSeason = auth.seasons.length > 1
+    const openSelection = canChangeSeason ? { ...route, query: { select: 'season' } } : routes.home(seasonId.value)
 
     if (!season.value) {
       return [{ text: 'Select Season', to: openSelection }]
