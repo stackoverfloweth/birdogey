@@ -13,11 +13,11 @@
 <template>
   <div class="players-list">
     <template v-for="player in players" :key="player.id">
-      <div class="player-list__player">
+      <div class="player-list__player" @click="emit('select', player)">
         <div class="player-list__player-tag">
           {{ player.tagId }}
         </div>
-        <p-list-item class="player-list__player-details" :value="player.id" @click="emit('select', player)">
+        <p-list-item class="player-list__player-details" :value="player.id">
           <div class="player-list__player-details-name">
             {{ player.name }}
           </div>
@@ -39,6 +39,7 @@
   display: flex;
   gap: var(--space-xs);
   align-items: flex-start;
+  cursor: pointer;
 }
 
 .player-list__player-tag {

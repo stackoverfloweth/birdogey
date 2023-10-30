@@ -7,5 +7,6 @@ export const mapSeasonResponseToSeason: MapFunction<SeasonResponse, Season> = fu
     ...source,
     id: this.map('ObjectId', source._id, 'string'),
     courseId: this.map('ObjectId', source.courseId, 'string'),
+    course: this.map('CourseResponse', source.course, 'Course'),
   }
 }

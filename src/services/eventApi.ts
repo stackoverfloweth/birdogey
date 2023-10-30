@@ -3,8 +3,9 @@ import { Api } from '@/services/api'
 import { mapper } from '@/services/mapper'
 
 export class EventApi extends Api {
-  public getById(id: string): Promise<void> {
-    return this.get(`/events-get-by-id/${id}`)
+  public getById(id: string): Promise<Event> {
+    return this.get<EventResponse>(`/events-get-by-id/${id}`)
+      .then(({ data }) => mapper.map('EventResponse', data, 'Event'))
   }
 
   public getList(seasonId: string): Promise<Event[]> {

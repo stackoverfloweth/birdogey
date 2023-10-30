@@ -37,6 +37,7 @@
 
   const classes = computed(() => ({
     tag: {
+      'event-player-list-item__tag--disabled': props.disabled,
       'event-player-list-item__tag--replaced': tagReplaced.value,
     },
   }))
@@ -121,6 +122,7 @@
   --tag-outgoing-tag-color: transparent;
 
   position: relative;
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -132,12 +134,17 @@
   background: linear-gradient(135deg, var(--tag-outgoing-tag-color) 0%, var(--tag-outgoing-tag-color) 45%, transparent 46%, transparent 54%, var(--p-color-bg-floating) 55%, var(--p-color-bg-floating) 100%);
 }
 
+.event-player-list-item__tag--disabled {
+  cursor: not-allowed;
+}
+
 .event-player-list-item__tag--replaced {
   --tag-outgoing-tag-color: var(--p-color-button-primary-bg);
 }
 
 .event-player-list-item__tag-outgoing {
   position: absolute;
+  color: var(--p-color-bg-1);
   left: 20%;
   top: 10%;
 }

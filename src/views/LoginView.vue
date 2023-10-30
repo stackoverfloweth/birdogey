@@ -2,14 +2,15 @@
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { useSiteProtection } from '@/composables'
+  import { useApi } from '@/composables'
   import { routes } from '@/router/routes'
+  import { attemptLogin, auth } from '@/services'
 
   const password = ref<string>()
-  const { attempt } = useSiteProtection()
-  const router = useRouter()
 
-  const { validate } = useValidationObserver()
+  const api = useApi()
+  const router = useRouter()
+  const { validate, pending } = useValidationObserver()
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: passwordErrorMessage, state: passwordState } = useValidation(password, 'Password', [isRequired])
 
@@ -20,16 +21,25 @@
       return
     }
 
-    const isAuthenticated = await attempt(password.value)
+    const isAuthenticated = await attemptLogin(api, password.value)
 
     if (isAuthenticated) {
-      router.push(routes.home())
+      router.push(routes.home(getSeasonIdIfOnlyOne()))
+    }
+  }
+
+  function getSeasonIdIfOnlyOne(): string | undefined {
+    if (auth.seasons.length === 1) {
+      const [onlySeason] = auth.seasons
+
+      return onlySeason.id
     }
   }
 </script>
 
 <template>
   <div class="login-view">
+    <img class="login-view__logo" src="/birdogey-logo.png">
     <p-card class="login-view__login-form">
       <p-form @submit="submit">
         <p-label label="Password" :message="passwordErrorMessage" :state="passwordState">
@@ -38,7 +48,7 @@
           </template>
         </p-label>
 
-        <p-button primary type="submit">
+        <p-button :loading="pending" primary type="submit">
           Login
         </p-button>
       </p-form>
@@ -49,11 +59,23 @@
 <style>
 .login-view {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.login-view__logo {
+  max-width: 50vw;
 }
 
 .login-view__login-form {
   flex-grow: 1;
   max-width: 360px;
+}
+
+@media (max-width: 640px) {
+  .login-view__login-form {
+    max-width: 100%;
+  }
 }
 </style>

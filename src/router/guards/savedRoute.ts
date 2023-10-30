@@ -1,13 +1,13 @@
 import { ref } from 'vue'
 import { RouteLocationNormalized } from 'vue-router'
-import { validated } from '@/composables'
+import { auth } from '@/services'
 import { RouteGuard } from '@/types'
 
 export const returnRoute = ref<RouteLocationNormalized>()
 
 export const savedRoute: RouteGuard = {
   before: () => {
-    if (validated.value && returnRoute.value) {
+    if (auth.isAuthorized && returnRoute.value) {
       const override = { ...returnRoute.value }
 
       returnRoute.value = undefined

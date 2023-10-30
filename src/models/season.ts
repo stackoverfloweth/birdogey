@@ -1,3 +1,5 @@
+import { Course } from '@/models/course'
+
 export type Season = {
   id: string,
   courseId: string,
@@ -5,4 +7,5 @@ export type Season = {
   start: Date,
   end?: Date,
   password: string,
+  course: Course,
 }

@@ -26,6 +26,7 @@
   const attrs = useAttrs()
 
   const classes = computed(() => ({
+    'score-input__formatted--disabled': props.disabled,
     'score-input__formatted--positive': modelValue.value && modelValue.value > 0,
     'score-input__formatted--negative': modelValue.value && modelValue.value < 0,
   }))
@@ -84,8 +85,13 @@
 }
 
 .score-input__formatted--negative {
+  color: var(--p-color-bg-1);
   background-color: var(--p-color-button-primary-bg);
   border-radius: 100%;
+}
+
+.score-input__formatted--disabled {
+  cursor: not-allowed;
 }
 
 .score-input .p-number-input__control {

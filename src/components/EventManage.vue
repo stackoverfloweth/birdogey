@@ -1,27 +1,32 @@
 <script lang="ts" setup>
-  import { SelectOption, showToast } from '@prefecthq/prefect-design'
+  import { SelectOption } from '@prefecthq/prefect-design'
   import { ValidationRule, useBoolean, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref, watch } from 'vue'
   import CardSuggestionModal from '@/components/CardSuggestionModal.vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
-  import { isAdmin, useApi } from '@/composables'
+  import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
 
   const props = defineProps<{
     event: Event,
+    disabled?: boolean,
+  }>()
+
+  const emit = defineEmits<{
+    save: [request: Partial<EventRequest>],
+    complete: [request: Partial<EventRequest>],
+    cancel: [],
   }>()
 
   const api = useApi()
   const seasonId = computed(() => props.event.seasonId)
-  const eventId = computed(() => props.event.id)
 
   const eventSubscription = useSubscription(api.events.getList, [seasonId])
 
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-  const eventDisabled = computed(() => !isAdmin.value)
 
   const { value: showingCardSuggestions, setTrue: showCardSuggestions } = useBoolean()
 
@@ -137,7 +142,7 @@
     return players.value.find(({ id }) => playerId === id)
   }
 
-  async function updateEvent(): Promise<void> {
+  function updateEvent(): void {
     const request: Partial<EventRequest> = {
       players: eventPlayers.value,
       notes: notes.value,
@@ -147,8 +152,7 @@
       aceStartingBalance: aceStartingBalance.value * 100,
     }
 
-    await api.events.update(eventId.value, request)
-    showToast('Event Updated!', 'success')
+    emit('save', request)
     eventSubscription.refresh()
   }
 
@@ -168,8 +172,7 @@
       aceStartingBalance: aceStartingBalance.value * 100,
     }
 
-    await api.events.complete(eventId.value, request)
-    showToast('Event Completed!', 'success')
+    emit('complete', request)
     eventSubscription.refresh()
   }
 
@@ -185,36 +188,46 @@
 
 <template>
   <p-form class="event-manage" @submit="updateEvent">
-    <div class="event-manage__payout-summary">
-      <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
-      <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
-    </div>
+    <template v-if="playerSubscription.loading">
+      <p-loading-icon />
+    </template>
 
-    <p-list-item v-if="!eventDisabled">
-      <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="eventDisabled" :options="playersOptions" multiple />
-    </p-list-item>
+    <template v-else>
+      <p-list-item v-if="!disabled">
+        <div class="event-manage__payout-summary">
+          <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
+          <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
+        </div>
 
-    <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
-      <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventDisabled" :player="getPlayer(eventPlayer.playerId)" />
+        <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="disabled" :options="playersOptions" multiple />
+      </p-list-item>
+
+      <template v-if="eventPlayers.length">
+        <div class="event-manage__players">
+          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
+            <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="disabled" :player="getPlayer(eventPlayer.playerId)" />
+          </template>
+        </div>
+      </template>
     </template>
 
     <p-list-item class="event-manage__lower-form">
       <p-label label="Notes">
         <template #default="{ id }">
-          <p-textarea :id="id" v-model="notes" :disabled="eventDisabled" />
+          <p-textarea :id="id" v-model="notes" :disabled="disabled" />
         </template>
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
         <p-label label="Ctp" description="starting balance">
           <template #default="{ id }">
-            <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="eventDisabled" prepend="$" />
+            <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
           </template>
         </p-label>
 
         <p-label label="Ace" description="starting balance">
           <template #default="{ id }">
-            <p-number-input :id="id" v-model="aceStartingBalance" :disabled="eventDisabled" prepend="$" />
+            <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
           </template>
         </p-label>
 
@@ -223,7 +236,7 @@
             <p-select
               :id="id"
               v-model="ctpPlayerIds"
-              :disabled="eventDisabled"
+              :disabled="disabled"
               :options="playersInOptions"
               :state="ctpPlayerIdsState"
             />
@@ -235,7 +248,7 @@
             <p-select
               :id="id"
               v-model="acePlayerIds"
-              :disabled="eventDisabled"
+              :disabled="disabled"
               :options="playersInOptions"
               :state="acePlayerIdsState"
             />
@@ -243,7 +256,11 @@
         </p-label>
       </div>
 
-      <div v-if="!eventDisabled" class="event-manage__lower-form-actions">
+      <div v-if="!disabled" class="event-manage__lower-form-actions">
+        <p-button @click="emit('cancel')">
+          Cancel
+        </p-button>
+
         <p-button :disabled="eventPlayers.length === 0" @click="showCardSuggestions">
           Suggest Cards
         </p-button>
@@ -263,6 +280,12 @@
 
 <style>
 .event-manage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.event-manage__players {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
