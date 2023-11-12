@@ -1,4 +1,4 @@
-import { EventPlayer } from '@/models/eventPlayer'
+import { EventPlayer } from '@/models'
 
 export type Event = {
   id: string,

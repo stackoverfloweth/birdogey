@@ -1,31 +1,73 @@
 <script lang="ts" setup>
-  import { ValidationRule, useValidation } from '@prefecthq/vue-compositions'
-  import { ref, watch } from 'vue'
+  import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { useSiteProtection } from '@/composables'
+  import { useApi } from '@/composables'
   import { routes } from '@/router/routes'
+  import { attemptLogin, auth } from '@/services'
 
   const password = ref<string>()
-  const { attempt, validated } = useSiteProtection()
+
+  const api = useApi()
   const router = useRouter()
-
+  const { validate, pending } = useValidationObserver()
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
-  const isCorrectPassword: ValidationRule<string | undefined> = (value) => value !== undefined && attempt(value)
-  const { error: passwordErrorMessage, state: passwordState } = useValidation(password, 'Password', [isRequired, isCorrectPassword])
+  const { error: passwordErrorMessage, state: passwordState } = useValidation(password, 'Password', [isRequired])
 
-  watch(validated, loggedIn => {
-    if (loggedIn) {
-      router.push(routes.home())
+  async function submit(): Promise<void> {
+    const isValid = await validate()
+
+    if (!isValid || typeof password.value === 'undefined') {
+      return
     }
-  })
+
+    const isAuthenticated = await attemptLogin(api, password.value)
+
+    if (isAuthenticated) {
+      router.push(routes.home(getSeasonIdIfOnlyOne()))
+    }
+  }
+
+  function getSeasonIdIfOnlyOne(): string | undefined {
+    if (auth.seasons.length === 1) {
+      const [onlySeason] = auth.seasons
+
+      return onlySeason.id
+    }
+  }
 </script>
 
 <template>
-  <p-form class="login-view">
-    <p-label label="Password" :message="passwordErrorMessage" :state="passwordState">
-      <template #default="{ id }">
-        <p-text-input :id="id" v-model="password" type="password" :state="passwordState" />
-      </template>
-    </p-label>
-  </p-form>
+  <div class="login-view">
+    <img class="login-view__logo" src="/birdogey-logo.png">
+    <p-card class="login-view__login-form">
+      <p-form @submit="submit">
+        <p-label label="Password" :message="passwordErrorMessage" :state="passwordState">
+          <template #default="{ id }">
+            <p-text-input :id="id" v-model="password" type="password" :state="passwordState" />
+          </template>
+        </p-label>
+
+        <p-button :loading="pending" primary type="submit">
+          Login
+        </p-button>
+      </p-form>
+    </p-card>
+  </div>
 </template>
+
+<style>
+.login-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.login-view__logo,
+.login-view__login-form {
+  width: 100%;
+  flex-grow: 1;
+  max-width: 400px;
+}
+</style>

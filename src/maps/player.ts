@@ -9,6 +9,7 @@ export const mapPlayerResponseToPlayer = {
   map: (source) => {
     return {
       id: mapper.map('ObjectId', source._id, 'string'),
+      seasonId: mapper.map('ObjectId', source.seasonId, 'string'),
       ...source,
     }
   },

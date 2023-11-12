@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-  import { ValidationRule, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useBoolean, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import PlayerTag from '@/components/PlayerTag.vue'
+  import EventPlayerEditModal from '@/components/EventPlayerEditModal.vue'
+  import PlayerEditModal from '@/components/PlayerEditModal.vue'
   import ScoreInput from '@/components/ScoreInput.vue'
   import { EventPlayerRequest, Player } from '@/models'
 
@@ -24,20 +25,54 @@
     },
   })
 
+  const { value: showingEditPlayerModal, setTrue: showEditPlayerModal } = useBoolean()
+  const { value: showingEditTagModal, setTrue: showEditTagModal } = useBoolean()
+
   const inForCtp = usePatchRef(eventPlayer, 'inForCtp')
   const inForAce = usePatchRef(eventPlayer, 'inForAce')
   const score = usePatchRef(eventPlayer, 'score')
+  const incomingTagId = usePatchRef(eventPlayer, 'incomingTagId')
+  const outgoingTagId = usePatchRef(eventPlayer, 'outgoingTagId')
   const tagReplaced = computed(() => typeof props.eventPlayer.outgoingTagId === 'number')
+
+  const classes = computed(() => ({
+    tag: {
+      'event-player-list-item__tag--disabled': props.disabled,
+      'event-player-list-item__tag--replaced': tagReplaced.value,
+    },
+  }))
 
   const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number'
   const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
+
+  function tryShowEditPlayerModal(): void {
+    if (!props.disabled) {
+      showEditPlayerModal()
+    }
+  }
+
+  function tryShowEditTagModal(): void {
+    if (!props.disabled) {
+      showEditTagModal()
+    }
+  }
 </script>
 
 <template>
   <div class="event-player-list-item">
-    <div class="event-player-list-item__header">
+    <div class="event-player-list-item__tag" :class="classes.tag" @click="tryShowEditTagModal">
+      <div class="event-player-list-item__tag-outgoing">
+        {{ outgoingTagId }}
+      </div>
+
+      <div class="event-player-list-item__tag-incoming">
+        {{ incomingTagId }}
+      </div>
+    </div>
+
+    <p-list-item class="event-player-list-item__player">
       <div v-if="player" class="event-player-list-item__name">
-        {{ player.name }}
+        <span class="event-player-list-item__name-button" @click="tryShowEditPlayerModal">{{ player.name }}</span>
         <p-tooltip v-if="!player?.entryPaid" text="Player has not paid entry">
           <p-icon class="event-player-list-item__entry-not-paid" icon="ExclamationCircleIcon" />
         </p-tooltip>
@@ -47,19 +82,13 @@
         Player Deleted
       </div>
 
-      <PlayerTag :tag="eventPlayer.incomingTagId" class="event-player-list-item__tag" :class="{ 'event-player-list-item__tag--replaced': tagReplaced }" />
-
-      <PlayerTag v-if="tagReplaced" :tag="eventPlayer.outgoingTagId!" class="event-player-list-item__tag" />
-    </div>
-
-    <div class="event-player-list-item__form">
-      <p-label label="In for Ctp" class="event-player-list-item__in-for-ctp">
+      <p-label label="In for Ctp" class="event-player-list-item__toggle">
         <template #default="{ id }">
           <p-toggle :id="id" v-model="inForCtp" :disabled="disabled" />
         </template>
       </p-label>
 
-      <p-label label="In for Ace" class="event-player-list-item__in-for-ace">
+      <p-label label="In for Ace" class="event-player-list-item__toggle">
         <template #default="{ id }">
           <p-toggle :id="id" v-model="inForAce" :disabled="disabled" />
         </template>
@@ -70,31 +99,98 @@
           <ScoreInput :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
         </template>
       </p-label>
-    </div>
+    </p-list-item>
+
+    <template v-if="player && showingEditPlayerModal">
+      <PlayerEditModal v-model:is-open="showingEditPlayerModal" :season-id="player.seasonId" :player-id="player.id" />
+    </template>
+    <template v-if="showingEditTagModal">
+      <EventPlayerEditModal v-model:is-open="showingEditTagModal" v-model:event-player="eventPlayer" />
+    </template>
   </div>
 </template>
 
 <style>
-.event-player-list-item__form {
+.event-player-list-item {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: stretch;
+  container-type: inline-size;
+}
+
+.event-player-list-item__tag {
+  --tag-outgoing-tag-color: transparent;
+
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--p-radius-default);
+  padding: .75rem 0;
+  width: 72px;
+  overflow: hidden;
+  font-weight: bolder;
+  background: linear-gradient(135deg, var(--tag-outgoing-tag-color) 0%, var(--tag-outgoing-tag-color) 45%, transparent 46%, transparent 54%, var(--p-color-bg-floating) 55%, var(--p-color-bg-floating) 100%);
+}
+
+.event-player-list-item__tag--disabled {
+  cursor: not-allowed;
+}
+
+.event-player-list-item__tag--replaced {
+  --tag-outgoing-tag-color: var(--p-color-button-primary-bg);
+}
+
+.event-player-list-item__tag-outgoing {
+  position: absolute;
+  color: var(--p-color-bg-1);
+  left: 20%;
+  top: 10%;
+}
+
+.event-player-list-item__tag-incoming {
+  position: absolute;
+  right: 20%;
+  bottom: 10%;
+}
+
+.event-player-list-item__player {
   --p-color-toggle-bg-checked: var(--p-color-button-primary-bg);
+
+  flex-grow: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  row-gap: var(--space-md);
   column-gap: var(--space-sm);
+  grid-template-columns: minmax(140px, 1fr) 100px 100px 120px;
   align-items: flex-end;
 }
 
-.event-player-list-item__header {
-  display: flex;
-  gap: var(--space-xs);
-  align-items: center;
-  font-size: var(--text-lg);
-  font-weight: bold;
+@container (max-width: 600px) {
+  .event-player-list-item__name {
+    grid-column: 1 / -1;
+  }
+
+  .event-player-list-item__player {
+    grid-template-columns: 70px 70px minmax(0, 1fr);
+  }
 }
 
 .event-player-list-item__name {
+  display: flex;
+  gap: var(--space-xxxs);
   white-space: nowrap;
-  flex-grow: 1;
+  font-size: var(--text-lg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+
+.event-player-list-item__name-button {
+  cursor: pointer;
+}
+
+.event-player-list-item__toggle {
+  align-items: center;
 }
 
 .event-player-list-item__entry-not-paid {
@@ -104,22 +200,7 @@
   color: var(--p-color-message-warning-text);
 }
 
-.event-player-list-item__trash {
-  color: var(--p-color-sentiment-negative);
-}
-
 .event-player-list-item__name--not-found {
   color: var(--p-color-sentiment-negative);
-}
-
-.event-player-list-item__tag {
-  height: 28px;
-  width: 28px;
-}
-
-.event-player-list-item__tag--replaced {
-  position: relative;
-  background-color: var(--contrast-gray-300);
-  color: black;
 }
 </style>

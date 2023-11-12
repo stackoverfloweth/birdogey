@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-  import { showToast } from '@prefecthq/prefect-design'
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { format } from 'date-fns'
   import { computed, ref } from 'vue'
-  import { useApi } from '@/composables'
   import { Event, EventRequest } from '@/models'
   import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners } from '@/services'
 
@@ -14,10 +12,10 @@
   }>()
 
   const emit = defineEmits<{
-    submit: [name: string],
+    submit: [request: EventRequest],
+    cancel: [],
   }>()
 
-  const api = useApi()
   const { validate, pending } = useValidationObserver()
   const previousEventBalance = computed(() => ({
     ctpPerPlayer: props.previousEvent?.ctpPerPlayer ?? 0,
@@ -54,9 +52,7 @@
       acePerPlayer: Math.floor(acePerPlayer.value * 100),
     } as EventRequest
 
-    await api.events.create(request)
-    showToast('Event Created!', 'success')
-    emit('submit', request.name)
+    emit('submit', request)
   }
 </script>
 
@@ -68,7 +64,7 @@
 
     <p-label label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="name" disabled :state="nameState" />
+        <p-text-input :id="id" v-model="name" :state="nameState" />
       </template>
     </p-label>
 
@@ -105,6 +101,10 @@
     </div>
 
     <template #footer>
+      <p-button @click="emit('cancel')">
+        Cancel
+      </p-button>
+
       <p-button :disabled="disabled || pending" type="submit" primary>
         Create Event
       </p-button>

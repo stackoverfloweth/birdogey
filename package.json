@@ -1,5 +1,5 @@
 {
-  "name": "leagues-manager",
+  "name": "birdogey-club",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,12 +12,13 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@prefecthq/prefect-design": "2.0.11",
+    "@prefecthq/prefect-design": "2.0.13",
     "@prefecthq/vue-compositions": "1.6.4",
     "@stackoverfloweth/mapper": "0.0.3",
     "axios": "^1.5.1",
     "date-fns": "2.30.0",
     "mongodb": "^6.1.0",
+    "vite-svg-loader": "^4.0.0",
     "vue": "^3.3.4",
     "vue-router": "4.2.4"
   },

@@ -11,6 +11,7 @@ export const mapSeasonResponseToSeason = {
       ...source,
       id: mapper.map('ObjectId', source._id, 'string'),
       courseId: mapper.map('ObjectId', source.courseId, 'string'),
+      course: mapper.map('CourseResponse', source.course, 'Course'),
     }
   },
 } as const satisfies Profile<'SeasonResponse', SeasonResponse, 'Season', Season>

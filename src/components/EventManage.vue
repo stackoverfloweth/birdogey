@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-  import { SelectOption, showToast } from '@prefecthq/prefect-design'
+  import { SelectOption } from '@prefecthq/prefect-design'
   import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref, watch } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
+  import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
@@ -10,21 +11,28 @@
 
   const props = defineProps<{
     event: Event,
+    disabled?: boolean,
+  }>()
+
+  const emit = defineEmits<{
+    save: [request: Partial<EventRequest>],
+    complete: [request: Partial<EventRequest>],
+    cancel: [],
   }>()
 
   const api = useApi()
   const seasonId = computed(() => props.event.seasonId)
-  const eventId = computed(() => props.event.id)
 
   const eventSubscription = useSubscription(api.events.getList, [seasonId])
 
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-  const eventCompleted = computed(() => !!props.event.completed)
 
   const notes = ref(props.event.notes)
   const ctpPlayerIds = ref(props.event.ctpPlayerIds)
   const acePlayerIds = ref(props.event.acePlayerIds)
+  const ctpStartingBalance = ref(props.event.ctpStartingBalance / 100)
+  const aceStartingBalance = ref(props.event.aceStartingBalance / 100)
   const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
 
   const selectedPlayers = computed({
@@ -33,11 +41,13 @@
     },
     set(value) {
       eventPlayers.value = value.map(playerId => {
+        const previousEventPlayer = eventPlayers.value.find(player => player.playerId === playerId)
         const player = players.value.find(player => player.id === playerId)
 
         return {
           playerId,
           incomingTagId: player!.tagId,
+          ...previousEventPlayer,
         }
       })
     },
@@ -130,16 +140,18 @@
     return players.value.find(({ id }) => playerId === id)
   }
 
-  async function updateEvent(): Promise<void> {
+  function updateEvent(): void {
     const request: Partial<EventRequest> = {
       players: eventPlayers.value,
       notes: notes.value,
       ctpPlayerIds: ctpPlayerIds.value,
       acePlayerIds: acePlayerIds.value,
+      ctpStartingBalance: ctpStartingBalance.value * 100,
+      aceStartingBalance: aceStartingBalance.value * 100,
     }
 
-    await api.events.update(eventId.value, request)
-    showToast('Event Updated!', 'success')
+    emit('save', request)
+    eventSubscription.refresh()
   }
 
   async function completeEvent(): Promise<void> {
@@ -154,10 +166,11 @@
       notes: notes.value,
       ctpPlayerIds: ctpPlayerIds.value,
       acePlayerIds: acePlayerIds.value,
+      ctpStartingBalance: ctpStartingBalance.value * 100,
+      aceStartingBalance: aceStartingBalance.value * 100,
     }
 
-    await api.events.complete(eventId.value, request)
-    showToast('Event Completed!', 'success')
+    emit('complete', request)
     eventSubscription.refresh()
   }
 
@@ -165,54 +178,101 @@
     notes.value = event.notes
     ctpPlayerIds.value = event.ctpPlayerIds
     acePlayerIds.value = event.acePlayerIds
+    ctpStartingBalance.value = event.ctpStartingBalance / 100
+    aceStartingBalance.value = event.aceStartingBalance / 100
     eventPlayers.value = event.players
   })
 </script>
 
 <template>
   <p-form class="event-manage" @submit="updateEvent">
-    <div class="event-manage__payout-summary">
-      <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
-      <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
-    </div>
+    <template v-if="playerSubscription.loading">
+      <p-loading-icon />
+    </template>
 
-    <p-list-item v-if="!eventCompleted">
-      <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="eventCompleted" :options="playersOptions" multiple />
-    </p-list-item>
-
-    <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
+    <template v-else>
       <p-list-item>
-        <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="eventCompleted" :player="getPlayer(eventPlayer.playerId)" />
+        <div class="event-manage__payout-summary">
+          <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
+          <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
+        </div>
+
+        <template v-if="!disabled">
+          <EventsEditViewMenu
+            :season-id="seasonId"
+            :players="playersIn"
+            @cancel="emit('cancel')"
+            @save="updateEvent"
+            @complete="completeEvent"
+          />
+          <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="disabled" :options="playersOptions" multiple />
+        </template>
       </p-list-item>
+
+      <template v-if="eventPlayers.length">
+        <div class="event-manage__players">
+          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
+            <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="disabled" :player="getPlayer(eventPlayer.playerId)" />
+          </template>
+        </div>
+      </template>
     </template>
 
     <p-list-item class="event-manage__lower-form">
       <p-label label="Notes">
         <template #default="{ id }">
-          <p-textarea :id="id" v-model="notes" :disabled="eventCompleted" />
+          <p-textarea :id="id" v-model="notes" :disabled="disabled" />
         </template>
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
+        <p-label label="Ctp" description="starting balance">
+          <template #default="{ id }">
+            <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
+          </template>
+        </p-label>
+
+        <p-label label="Ace" description="starting balance">
+          <template #default="{ id }">
+            <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
+          </template>
+        </p-label>
+
         <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="ctpPlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="ctpPlayerIdsState" />
+            <p-select
+              :id="id"
+              v-model="ctpPlayerIds"
+              :disabled="disabled"
+              :options="playersInOptions"
+              :state="ctpPlayerIdsState"
+            />
           </template>
         </p-label>
 
         <p-label label="Any aces?" :message="acePlayerIdsMessage" :state="acePlayerIdsState">
           <template #default="{ id }">
-            <p-select :id="id" v-model="acePlayerIds" :disabled="eventCompleted" :options="playersInOptions" :state="acePlayerIdsState" />
+            <p-select
+              :id="id"
+              v-model="acePlayerIds"
+              :disabled="disabled"
+              :options="playersInOptions"
+              :state="acePlayerIdsState"
+            />
           </template>
         </p-label>
       </div>
 
-      <div v-if="!eventCompleted" class="event-manage__lower-form-actions">
+      <div v-if="!disabled" class="event-manage__lower-form-actions">
+        <p-button @click="emit('cancel')">
+          Cancel
+        </p-button>
+
         <p-button :loading="pending" type="submit">
           Save
         </p-button>
 
-        <p-button :loading="pending" primary @click="completeEvent">
+        <p-button :loading="pending" :disabled="!!event.completed" primary @click="completeEvent">
           Complete Event
         </p-button>
       </div>
@@ -222,6 +282,12 @@
 
 <style>
 .event-manage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.event-manage__players {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -254,6 +320,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  container-type: inline-size;
 }
 
 .event-manage__lower-form-2-col {
@@ -266,5 +333,11 @@
   display: flex;
   gap: var(--space-sm);
   justify-content: flex-end;
+}
+
+@container(max-width: 445px){
+  .event-manage__lower-form-actions {
+    flex-direction: column;
+  }
 }
 </style>

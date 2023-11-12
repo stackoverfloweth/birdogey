@@ -1,18 +1,13 @@
 import { createActions } from '@prefecthq/vue-compositions'
 import { InjectionKey } from 'vue'
-import { ApiConfig } from '@/services/api'
-import { CourseApi } from '@/services/courseApi'
-import { EventApi } from '@/services/eventApi'
-import { PlayerApi } from '@/services/playerApi'
-import { SeasonApi } from '@/services/seasonApi'
+import { ApiConfig, EventApi, PlayerApi, UserApi } from '@/services'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createApi(config: ApiConfig) {
   return {
-    courses: createActions(new CourseApi(config)),
     events: createActions(new EventApi(config)),
     players: createActions(new PlayerApi(config)),
-    seasons: createActions(new SeasonApi(config)),
+    users: createActions(new UserApi(config)),
   }
 }
 

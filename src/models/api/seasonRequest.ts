@@ -1,3 +1,3 @@
-import { SeasonResponse } from '@/models/api/seasonResponse'
+import { SeasonResponse } from '@/models/api'
 
 export type SeasonRequest = Omit<SeasonResponse, '_id'>

@@ -1,10 +1,10 @@
 import { Player, PlayerRequest, PlayerResponse } from '@/models'
-import { Api } from '@/services/api'
-import { mapper } from '@/services/mapper'
+import { Api, mapper } from '@/services'
 
 export class PlayerApi extends Api {
-  public getById(id: string): Promise<void> {
-    return this.get(`/players-get-by-id/${id}`)
+  public getById(id: string): Promise<Player> {
+    return this.get<PlayerResponse>(`/players-get-by-id/${id}`)
+      .then(({ data }) => mapper.map('PlayerResponse', data, 'Player'))
   }
 
   public getList(seasonId: string): Promise<Player[]> {

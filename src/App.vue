@@ -1,8 +1,7 @@
 <script lang="ts" setup>
   import { provide } from 'vue'
-  import MenuHeader from '@/components/MenuHeader.vue'
-  import { ApiConfig } from '@/services/api'
-  import { apiKey, createApi } from '@/services/createApi'
+  import AppHeader from '@/components/AppHeader.vue'
+  import { ApiConfig, apiKey, createApi, auth } from '@/services'
   import { env } from '@/utilities'
 
   const config: ApiConfig = {
@@ -15,7 +14,9 @@
 
 <template>
   <div class="app">
-    <MenuHeader />
+    <template v-if="auth.isAuthorized">
+      <AppHeader />
+    </template>
     <Suspense>
       <router-view :key="$route.fullPath" />
     </Suspense>
