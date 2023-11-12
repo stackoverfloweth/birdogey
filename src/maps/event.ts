@@ -11,9 +11,9 @@ export const mapEventResponseToEvent = {
       ...source,
       id: mapper.map('ObjectId', source._id, 'string'),
       seasonId: mapper.map('ObjectId', source.seasonId, 'string'),
-      players: mapper.map('EventPlayerResponse', source.players, 'EventPlayer'),
-      ctpPlayerIds: mapper.map('ObjectId', source.ctpPlayerIds, 'string'),
-      acePlayerIds: mapper.map('ObjectId', source.acePlayerIds, 'string'),
+      players: mapper.mapMany('EventPlayerResponse', source.players, 'EventPlayer'),
+      ctpPlayerIds: mapper.mapMany('ObjectId', source.ctpPlayerIds, 'string'),
+      acePlayerIds: mapper.mapMany('ObjectId', source.acePlayerIds, 'string'),
     }
   },
 } as const satisfies Profile

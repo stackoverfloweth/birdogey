@@ -6,10 +6,10 @@ import { mapper } from '@/services'
 export const mapUserAuthResponseToUser = {
   sourceKey: 'UserAuthResponse',
   destinationKey: 'User',
-  map: (source: UserAuthResponse): User => {
+  map: (source: UserAuthResponse | null): User => {
     return {
-      id: mapper.map('ObjectId', source?._id, 'string'),
-      seasons: mapper.map('SeasonResponse', source?.seasons ?? [], 'Season'),
+      id: source ? mapper.map('ObjectId', source?._id, 'string') : undefined,
+      seasons: mapper.mapMany('SeasonResponse', source?.seasons ?? [], 'Season'),
       isAuthorized: !!source,
       isAdmin: !!source && 'name' in source,
     }
