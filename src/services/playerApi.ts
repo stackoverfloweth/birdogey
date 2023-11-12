@@ -9,7 +9,7 @@ export class PlayerApi extends Api {
 
   public getList(seasonId: string): Promise<Player[]> {
     return this.get<PlayerResponse[]>(`/players-get-list/${seasonId}`)
-      .then(({ data }) => mapper.map('PlayerResponse', data, 'Player'))
+      .then(({ data }) => mapper.mapMany('PlayerResponse', data, 'Player'))
   }
 
   public create(request: PlayerRequest): Promise<string> {

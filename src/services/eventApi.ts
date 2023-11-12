@@ -9,7 +9,7 @@ export class EventApi extends Api {
 
   public getList(seasonId: string): Promise<Event[]> {
     return this.get<EventResponse[]>(`/events-get-list/${seasonId}`)
-      .then(({ data }) => mapper.map('EventResponse', data, 'Event'))
+      .then(({ data }) => mapper.mapMany('EventResponse', data, 'Event'))
   }
 
   public create(request: EventRequest): Promise<string> {
