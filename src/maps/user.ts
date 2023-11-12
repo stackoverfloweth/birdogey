@@ -6,7 +6,7 @@ import { mapper } from '@/services'
 export const mapUserAuthResponseToUser = {
   sourceKey: 'UserAuthResponse',
   destinationKey: 'User',
-  map: (source) => {
+  map: (source: UserAuthResponse): User => {
     return {
       id: mapper.map('ObjectId', source?._id, 'string'),
       seasons: mapper.map('SeasonResponse', source?.seasons ?? [], 'Season'),
@@ -14,4 +14,4 @@ export const mapUserAuthResponseToUser = {
       isAdmin: !!source && 'name' in source,
     }
   },
-} as const satisfies Profile<'UserAuthResponse', UserAuthResponse | null, 'User', User>
+} as const satisfies Profile

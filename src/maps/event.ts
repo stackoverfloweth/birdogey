@@ -6,7 +6,7 @@ import { mapper } from '@/services'
 export const mapEventResponseToEvent = {
   sourceKey: 'EventResponse',
   destinationKey: 'Event',
-  map: (source) => {
+  map: (source: EventResponse): Event => {
     return {
       ...source,
       id: mapper.map('ObjectId', source._id, 'string'),
@@ -16,4 +16,4 @@ export const mapEventResponseToEvent = {
       acePlayerIds: mapper.map('ObjectId', source.acePlayerIds, 'string'),
     }
   },
-} as const satisfies Profile<'EventResponse', EventResponse, 'Event', Event>
+} as const satisfies Profile

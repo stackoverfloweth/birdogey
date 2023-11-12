@@ -6,7 +6,7 @@ import { mapper } from '@/services'
 export const mapSeasonResponseToSeason = {
   sourceKey: 'SeasonResponse',
   destinationKey: 'Season',
-  map: (source) => {
+  map: (source: SeasonResponse): Season => {
     return {
       ...source,
       id: mapper.map('ObjectId', source._id, 'string'),
@@ -14,4 +14,4 @@ export const mapSeasonResponseToSeason = {
       course: mapper.map('CourseResponse', source.course, 'Course'),
     }
   },
-} as const satisfies Profile<'SeasonResponse', SeasonResponse, 'Season', Season>
+} as const satisfies Profile

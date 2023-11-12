@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 export const mapObjectIdToString = {
   sourceKey: 'ObjectId',
   destinationKey: 'string',
-  map: (source) => {
+  map: (source: ObjectId): string => {
     return source.toString()
   },
-} as const satisfies Profile<'ObjectId', ObjectId, 'string', string>
+} as const satisfies Profile
