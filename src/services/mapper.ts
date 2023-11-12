@@ -1,5 +1,6 @@
-import { createMapper } from '@stackoverfloweth/mapper'
-import * as profiles from '@/maps'
+import { createMapper, loadProfiles } from '@stackoverfloweth/mapper'
 
-export const mapper = createMapper(Object.values(profiles))
+const profiles = loadProfiles(() => import('@/maps'))
+
+export const mapper = createMapper(profiles)
 export type Mapper = typeof mapper
