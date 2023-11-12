@@ -1,6 +1,10 @@
+import { Profile } from '@stackoverfloweth/mapper'
 import { ObjectId } from 'mongodb'
-import { MapFunction } from '@/services/mapper'
 
-export const mapObjectIdToString: MapFunction<ObjectId, string> = function(source) {
-  return source.toString()
-}
+export const mapObjectIdToString = {
+  sourceKey: 'ObjectId',
+  destinationKey: 'string',
+  map: (source) => {
+    return source.toString()
+  },
+} as const satisfies Profile<'ObjectId', ObjectId, 'string', string>

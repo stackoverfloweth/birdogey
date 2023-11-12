@@ -1,11 +1,16 @@
+import { Profile } from '@stackoverfloweth/mapper'
 import { Season } from '@/models'
 import { SeasonResponse } from '@/models/api'
-import { MapFunction } from '@/services/mapper'
+import { mapper } from '@/services'
 
-export const mapSeasonResponseToSeason: MapFunction<SeasonResponse, Season> = function(source) {
-  return {
-    ...source,
-    id: this.map('ObjectId', source._id, 'string'),
-    courseId: this.map('ObjectId', source.courseId, 'string'),
-  }
-}
+export const mapSeasonResponseToSeason = {
+  sourceKey: 'SeasonResponse',
+  destinationKey: 'Season',
+  map: (source) => {
+    return {
+      ...source,
+      id: mapper.map('ObjectId', source._id, 'string'),
+      courseId: mapper.map('ObjectId', source.courseId, 'string'),
+    }
+  },
+} as const satisfies Profile<'SeasonResponse', SeasonResponse, 'Season', Season>

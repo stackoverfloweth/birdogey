@@ -1,14 +1,19 @@
+import { Profile } from '@stackoverfloweth/mapper'
 import { Event } from '@/models'
 import { EventResponse } from '@/models/api'
-import { MapFunction } from '@/services/mapper'
+import { mapper } from '@/services'
 
-export const mapEventResponseToEvent: MapFunction<EventResponse, Event> = function(source) {
-  return {
-    ...source,
-    id: this.map('ObjectId', source._id, 'string'),
-    seasonId: this.map('ObjectId', source.seasonId, 'string'),
-    players: this.map('EventPlayerResponse', source.players, 'EventPlayer'),
-    ctpPlayerIds: this.map('ObjectId', source.ctpPlayerIds, 'string'),
-    acePlayerIds: this.map('ObjectId', source.acePlayerIds, 'string'),
-  }
-}
+export const mapEventResponseToEvent = {
+  sourceKey: 'EventResponse',
+  destinationKey: 'Event',
+  map: (source) => {
+    return {
+      ...source,
+      id: mapper.map('ObjectId', source._id, 'string'),
+      seasonId: mapper.map('ObjectId', source.seasonId, 'string'),
+      players: mapper.map('EventPlayerResponse', source.players, 'EventPlayer'),
+      ctpPlayerIds: mapper.map('ObjectId', source.ctpPlayerIds, 'string'),
+      acePlayerIds: mapper.map('ObjectId', source.acePlayerIds, 'string'),
+    }
+  },
+} as const satisfies Profile<'EventResponse', EventResponse, 'Event', Event>

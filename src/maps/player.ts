@@ -1,10 +1,15 @@
+import { Profile } from '@stackoverfloweth/mapper'
 import { Player } from '@/models'
 import { PlayerResponse } from '@/models/api'
-import { MapFunction } from '@/services/mapper'
+import { mapper } from '@/services'
 
-export const mapPlayerResponseToPlayer: MapFunction<PlayerResponse, Player> = function(source) {
-  return {
-    id: this.map('ObjectId', source._id, 'string'),
-    ...source,
-  }
-}
+export const mapPlayerResponseToPlayer = {
+  sourceKey: 'PlayerResponse',
+  destinationKey: 'Player',
+  map: (source) => {
+    return {
+      id: mapper.map('ObjectId', source._id, 'string'),
+      ...source,
+    }
+  },
+} as const satisfies Profile<'PlayerResponse', PlayerResponse, 'Player', Player>
