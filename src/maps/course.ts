@@ -8,8 +8,8 @@ export const mapCourseResponseToCourse = {
   destinationKey: 'Course',
   map: (source) => {
     return {
-      id: mapper.map('ObjectId', source._id, 'string'),
       ...source,
+      id: mapper.map('ObjectId', source._id, 'string'),
     }
   },
 } as const satisfies Profile<'CourseResponse', CourseResponse, 'Course', Course>

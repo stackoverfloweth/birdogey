@@ -8,9 +8,9 @@ export const mapPlayerResponseToPlayer = {
   destinationKey: 'Player',
   map: (source) => {
     return {
+      ...source,
       id: mapper.map('ObjectId', source._id, 'string'),
       seasonId: mapper.map('ObjectId', source.seasonId, 'string'),
-      ...source,
     }
   },
 } as const satisfies Profile<'PlayerResponse', PlayerResponse, 'Player', Player>
