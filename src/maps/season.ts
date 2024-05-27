@@ -1,7 +1,6 @@
-import { Profile } from '@stackoverfloweth/mapper'
+import mapper, { Profile } from '@kitbag/mapper'
 import { Season } from '@/models'
 import { SeasonResponse } from '@/models/api'
-import { mapper } from '@/services'
 
 export const mapSeasonResponseToSeason = {
   sourceKey: 'SeasonResponse',

@@ -1,7 +1,6 @@
-import { Profile } from '@stackoverfloweth/mapper'
+import mapper, { Profile } from '@kitbag/mapper'
 import { EventPlayer } from '@/models'
 import { EventPlayerResponse } from '@/models/api'
-import { mapper } from '@/services'
 
 export const mapEventPlayerResponseToEventPlayer = {
   sourceKey: 'EventPlayerResponse',

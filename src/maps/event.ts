@@ -1,12 +1,11 @@
-import { Profile } from '@stackoverfloweth/mapper'
+import mapper, { Profile } from '@kitbag/mapper'
 import { Event } from '@/models'
 import { EventResponse } from '@/models/api'
-import { mapper } from '@/services'
 
 export const mapEventResponseToEvent = {
   sourceKey: 'EventResponse',
   destinationKey: 'Event',
-  map: (source: EventResponse): Event => {
+  map: function(source: EventResponse): Event {
     return {
       ...source,
       id: mapper.map('ObjectId', source._id, 'string'),
