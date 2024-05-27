@@ -1,5 +1,6 @@
+import mapper from '@kitbag/mapper'
 import { Event, EventRequest, EventResponse } from '@/models'
-import { Api, mapper } from '@/services'
+import { Api } from '@/services'
 
 export class EventApi extends Api {
   public getById(id: string): Promise<Event> {

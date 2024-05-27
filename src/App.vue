@@ -24,19 +24,21 @@
 </template>
 
 <style>
-  html, body, dialog {
+html,
+body,
+dialog {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: var(--text-base-size);
-  }
+}
 
-  .app {
+.app {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
     padding: var(--space-md);
-  }
+}
 
-  .app > * {
+.app>* {
     flex-grow: 1;
-  }
+}
 </style>
