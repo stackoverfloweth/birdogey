@@ -1,12 +1,16 @@
+import mapper, { Profile } from '@kitbag/mapper'
 import { Season } from '@/models'
 import { SeasonResponse } from '@/models/api'
-import { MapFunction } from '@/services/mapper'
 
-export const mapSeasonResponseToSeason: MapFunction<SeasonResponse, Season> = function(source) {
-  return {
-    ...source,
-    id: this.map('ObjectId', source._id, 'string'),
-    courseId: this.map('ObjectId', source.courseId, 'string'),
-    course: this.map('CourseResponse', source.course, 'Course'),
-  }
-}
+export const mapSeasonResponseToSeason = {
+  sourceKey: 'SeasonResponse',
+  destinationKey: 'Season',
+  map: (source: SeasonResponse): Season => {
+    return {
+      ...source,
+      id: mapper.map('ObjectId', source._id, 'string'),
+      courseId: mapper.map('ObjectId', source.courseId, 'string'),
+      course: mapper.map('CourseResponse', source.course, 'Course'),
+    }
+  },
+} as const satisfies Profile

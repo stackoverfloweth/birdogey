@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-  import { useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
+  import { useBoolean, useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventManage from '@/components/EventManage.vue'
   import EventsViewMenu from '@/components/EventsViewMenu.vue'
+  import PlayerCheckinModal from '@/components/PlayerCheckinModal.vue'
   import { useApi } from '@/composables'
   import { routes } from '@/router/routes'
 
@@ -13,6 +14,8 @@
 
   const eventSubscription = useSubscription(api.events.getById, [eventId])
   const event = computed(() => eventSubscription.response ?? null)
+
+  const { value: checkinModalVisible, setTrue: showCheckinModal } = useBoolean()
 </script>
 
 <template>
@@ -21,14 +24,23 @@
     <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: routes.events(seasonId) }, { text: event?.name ?? '...' }]" />
 
     <template v-if="event">
+      <template v-if="!event.completed">
+        <p-button class="events-view__checkin" icon="CheckCircleIcon" @click="showCheckinModal">
+          Check in
+        </p-button>
+      </template>
+
       <EventManage :event="event" disabled />
     </template>
+
+    <PlayerCheckinModal v-model:isOpen="checkinModalVisible" :season-id="seasonId" :event-id="eventId" @update:is-open="eventSubscription.refresh" />
   </div>
 </template>
 
 <style>
 .events-view {
   display: flex;
+  align-items: flex-start;
   flex-direction: column;
   gap: var(--space-lg);
 }

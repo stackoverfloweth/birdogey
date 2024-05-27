@@ -6,4 +6,5 @@ export type PlayerResponse = {
   name: string,
   tagId: number,
   entryPaid: boolean,
+  udiscId?: string,
 }

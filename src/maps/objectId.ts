@@ -1,6 +1,10 @@
+import { Profile } from '@kitbag/mapper'
 import { ObjectId } from 'mongodb'
-import { MapFunction } from '@/services/mapper'
 
-export const mapObjectIdToString: MapFunction<ObjectId, string> = function(source) {
-  return source.toString()
-}
+export const mapObjectIdToString = {
+  sourceKey: 'ObjectId',
+  destinationKey: 'string',
+  map: function(source: ObjectId): string {
+    return source.toString()
+  },
+} as const satisfies Profile

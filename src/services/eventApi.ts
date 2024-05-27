@@ -1,5 +1,6 @@
+import mapper from '@kitbag/mapper'
 import { Event, EventRequest, EventResponse } from '@/models'
-import { Api, mapper } from '@/services'
+import { Api } from '@/services'
 
 export class EventApi extends Api {
   public getById(id: string): Promise<Event> {
@@ -9,7 +10,7 @@ export class EventApi extends Api {
 
   public getList(seasonId: string): Promise<Event[]> {
     return this.get<EventResponse[]>(`/events-get-list/${seasonId}`)
-      .then(({ data }) => mapper.map('EventResponse', data, 'Event'))
+      .then(({ data }) => mapper.mapMany('EventResponse', data, 'Event'))
   }
 
   public create(request: EventRequest): Promise<string> {

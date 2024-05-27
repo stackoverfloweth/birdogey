@@ -1,10 +1,14 @@
+import mapper, { Profile } from '@kitbag/mapper'
 import { Course } from '@/models'
 import { CourseResponse } from '@/models/api'
-import { MapFunction } from '@/services/mapper'
 
-export const mapCourseResponseToCourse: MapFunction<CourseResponse, Course> = function(source) {
-  return {
-    id: this.map('ObjectId', source._id, 'string'),
-    ...source,
-  }
-}
+export const mapCourseResponseToCourse = {
+  sourceKey: 'CourseResponse',
+  destinationKey: 'Course',
+  map: function(source: CourseResponse): Course {
+    return {
+      ...source,
+      id: mapper.map('ObjectId', source._id, 'string'),
+    }
+  },
+} as const satisfies Profile

@@ -1,5 +1,6 @@
+import mapper from '@kitbag/mapper'
 import { User, UserAuthResponse } from '@/models'
-import { Api, mapper } from '@/services'
+import { Api } from '@/services'
 
 export class UserApi extends Api {
   public attemptLogin(password: string): Promise<User | undefined> {

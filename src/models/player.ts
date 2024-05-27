@@ -4,4 +4,5 @@ export type Player = {
   name: string,
   tagId: number,
   entryPaid?: boolean,
+  udiscId?: string,
 }
