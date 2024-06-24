@@ -111,16 +111,20 @@
     return undefined
   })
 
-  const playersOptions = computed(() => players.value.map<SelectOption>(player => ({
-    label: player.name,
-    value: player.id,
-  })))
+  const playersOptions = computed(() => sortByName(players.value)
+    .map<SelectOption>(player => ({
+      label: player.name,
+      value: player.id,
+    })),
+  )
 
   const playersIn = computed(() => players.value.filter(player => eventPlayers.value.some(eventPlayer => eventPlayer.playerId === player.id)))
-  const playersInOptions = computed(() => playersIn.value.map<SelectOption>(player => ({
-    label: player.name,
-    value: player.id,
-  })))
+  const playersInOptions = computed(() => sortByName(playersIn.value)
+    .map<SelectOption>(player => ({
+      label: player.name,
+      value: player.id,
+    })),
+  )
 
   const ctpInPennies = computed(() => {
     return calculateEventCtpPot({
@@ -140,6 +144,10 @@
     return players.value.find(({ id }) => playerId === id)
   }
 
+  function sortByName(players: Player[]): Player[] {
+    return players.sort((aPlayer, bPlayer) => aPlayer.name > bPlayer.name ? 1 : -1)
+  }
+
   function updateEvent(): void {
     const request: Partial<EventRequest> = {
       players: eventPlayers.value,
@@ -151,7 +159,6 @@
     }
 
     emit('save', request)
-    eventSubscription.refresh()
   }
 
   async function completeEvent(): Promise<void> {

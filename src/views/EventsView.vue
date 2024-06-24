@@ -7,6 +7,7 @@
   import PlayerCheckinModal from '@/components/PlayerCheckinModal.vue'
   import { useApi } from '@/composables'
   import { routes } from '@/router/routes'
+  import { auth } from '@/services'
 
   const api = useApi()
   const seasonId = useRouteParam('seasonId')
@@ -24,11 +25,19 @@
     <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: routes.events(seasonId) }, { text: event?.name ?? '...' }]" />
 
     <template v-if="event">
-      <template v-if="!event.completed">
-        <p-button class="events-view__checkin" icon="CheckCircleIcon" @click="showCheckinModal">
-          Check in
-        </p-button>
-      </template>
+      <div class="events-view__quick-actions">
+        <template v-if="!event.completed">
+          <p-button icon="CheckCircleIcon" @click="showCheckinModal">
+            Check in
+          </p-button>
+        </template>
+
+        <template v-if="auth.isAdmin">
+          <p-button icon="PencilSquareIcon" :to="routes.eventEdit(eventId)">
+            Edit
+          </p-button>
+        </template>
+      </div>
 
       <EventManage :event="event" disabled />
     </template>
@@ -43,5 +52,11 @@
   align-items: flex-start;
   flex-direction: column;
   gap: var(--space-lg);
+}
+
+.events-view__quick-actions {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center
 }
 </style>

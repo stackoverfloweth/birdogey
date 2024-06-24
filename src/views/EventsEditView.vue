@@ -29,6 +29,8 @@
     router.push(routes.event(eventId.value))
 
     showToast('Event Completed!', 'success')
+
+    eventSubscription.refresh()
   }
 </script>
 
