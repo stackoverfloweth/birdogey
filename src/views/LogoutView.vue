@@ -1,10 +1,6 @@
 <script lang="ts" setup>
-  import { useRouter } from 'vue-router'
-  import { returnRoute } from '@/router/guards'
-  import { routes } from '@/router/routes'
+  import { useRouter } from '@kitbag/router'
   import { auth } from '@/services'
-
-  returnRoute.value = undefined
 
   auth.id = undefined
   auth.isAdmin = false
@@ -13,7 +9,7 @@
 
   const router = useRouter()
 
-  router.push(routes.login())
+  router.push('login')
 </script>
 
 <template>

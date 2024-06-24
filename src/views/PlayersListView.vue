@@ -2,14 +2,13 @@
   import { Crumb } from '@prefecthq/prefect-design'
   import { useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import PlayersList from '@/components/PlayersList.vue'
   import PlayersListViewEmptyState from '@/components/PlayersListViewEmptyState.vue'
   import PlayersListViewMenu from '@/components/PlayersListViewMenu.vue'
   import { useApi } from '@/composables'
   import { Player } from '@/models'
-  import { routes } from '@/router/routes'
+import { useRouter } from '@kitbag/router'
 
   const seasonId = useRouteParam('seasonId')
 
@@ -22,7 +21,7 @@
   const crumbs = computed<Crumb[]>(() => [{ text: 'Players' }])
 
   function editPlayer(player: Player): void {
-    router.push(routes.playerEdit(seasonId.value, player.id))
+    router.push()
   }
 </script>
 

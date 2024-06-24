@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import { computed, ref } from 'vue'
-  import { useRoute, RouteLocationNormalized } from 'vue-router'
   import { Season } from '@/models'
   import { auth } from '@/services'
   import { isSame } from '@/utilities'

@@ -1,15 +1,14 @@
 <script lang="ts" setup>
   import { useRouteParam } from '@prefecthq/vue-compositions'
-  import { routes } from '@/router/routes'
 
   const seasonId = useRouteParam('seasonId')
 </script>
 
 <template>
   <div class="app-header">
-    <p-link :to="routes.home(seasonId)">
-      <img class="app-header__logo" src="/birdogey-logo.png">
-    </p-link>
+    <router-link :to="(resolve) => resolve('')">
+      <img class="app-header__logo" src="/birdogey-logo.png" alt="Birdogey Logo">
+    </router-link>
   </div>
 </template>
 

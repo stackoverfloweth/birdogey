@@ -1,10 +1,8 @@
 <script lang="ts" setup>
+  import { useRoute, useRouter, isRoute } from '@kitbag/router'
   import { Crumb } from '@prefecthq/prefect-design'
-  import { useRouteParam, useRouteQueryParam } from '@prefecthq/vue-compositions'
   import { computed, useAttrs } from 'vue'
-  import { useRoute } from 'vue-router'
   import SeasonRouteSelect from '@/components/SeasonRouteSelect.vue'
-  import { routes } from '@/router/routes'
   import { auth } from '@/services'
 
   defineOptions({
@@ -16,19 +14,40 @@
   }>()
 
   const attrs = useAttrs()
+  const router = useRouter()
   const route = useRoute()
-  const selection = useRouteQueryParam('select')
-  const seasonId = useRouteParam('seasonId')
 
-  const showModal = computed({
+  const selection = computed({
     get() {
-      return !!selection.value
+      if (isRoute(route, 'home', { exact: false })) {
+        return !!route.params.selection
+      }
+
+      return false
     },
     set(value) {
-      if (!value) {
-        selection.value = undefined
+      if (isRoute(route, 'home', { exact: false })) {
+        return route.params.select = value
       }
+
+      return false
     },
+  })
+
+  const seasonId = computed(() => {
+    if (isRoute(route, 'home', { exact: false })) {
+      return route.params
+    }
+
+    if (isRoute(route, 'players', { exact: false })) {
+      return route.params.seasonId
+    }
+
+    if (isRoute(route, 'events', { exact: false })) {
+      return route.params.seasonId
+    }
+
+    return undefined
   })
 
   const season = computed(() => {
@@ -36,8 +55,9 @@
   })
 
   const crumbs = computed<Crumb[]>(() => {
+    const homeHref = router.resolve('home', { seasonId: seasonId.value })
     const canChangeSeason = auth.seasons.length > 1
-    const openSelection = canChangeSeason ? { ...route, query: { select: 'season' } } : routes.home(seasonId.value)
+    const openSelection = canChangeSeason ? { ...route, query: { select: 'season' } } : homeHref
 
     if (!season.value) {
       return [{ text: 'Select Season', to: openSelection }]
@@ -45,7 +65,7 @@
 
     return [
       { text: season.value.course.name, to: openSelection },
-      { text: season.value.name, to: routes.home(seasonId.value) },
+      { text: season.value.name, to: homeHref },
       ...props.crumbs,
     ]
   })
@@ -53,7 +73,7 @@
 
 <template>
   <p-bread-crumbs v-bind="attrs" :crumbs="crumbs" class="context-bread-crumbs" />
-  <p-modal v-model:show-modal="showModal" title="Select Season" auto-close>
+  <p-modal v-model:show-modal="selection" title="Select Season" auto-close>
     <template v-if="selection">
       <SeasonRouteSelect :season-id="seasonId" />
     </template>

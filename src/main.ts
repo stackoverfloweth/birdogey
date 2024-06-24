@@ -17,6 +17,13 @@ declare module '@kitbag/mapper' {
   }
 }
 
+declare module '@kitbag/router' {
+  interface Register {
+    router: typeof router,
+    rejections: ['NotAuthorized'],
+  }
+}
+
 // We want components imported last because import order determines style order
 // eslint-disable-next-line import/order
 import App from '@/App.vue'

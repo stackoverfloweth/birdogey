@@ -1,16 +1,15 @@
 <script lang="ts" setup>
   import { useRouteParam } from '@prefecthq/vue-compositions'
   import { watch } from 'vue'
-  import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
-  import { routes } from '@/router/routes'
+import { useRouter } from '@kitbag/router';
 
   const router = useRouter()
   const seasonId = useRouteParam('seasonId')
 
   watch(seasonId, value => {
     if (value) {
-      router.push(routes.events(seasonId.value))
+      router.push('events', {seasonId: seasonId.value})
     }
   }, { immediate: true })
 </script>

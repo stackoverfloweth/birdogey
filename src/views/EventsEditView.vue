@@ -2,7 +2,6 @@
   import { showToast } from '@prefecthq/prefect-design'
   import { useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventManage from '@/components/EventManage.vue'
   import { useApi } from '@/composables'

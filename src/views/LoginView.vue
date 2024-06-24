@@ -1,9 +1,8 @@
 <script lang="ts" setup>
+  import { useRouter } from '@kitbag/router'
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { ref } from 'vue'
-  import { useRouter } from 'vue-router'
   import { useApi } from '@/composables'
-  import { routes } from '@/router/routes'
   import { attemptLogin, auth } from '@/services'
 
   const password = ref<string>()
@@ -24,7 +23,7 @@
     const isAuthenticated = await attemptLogin(api, password.value)
 
     if (isAuthenticated) {
-      router.push(routes.home(getSeasonIdIfOnlyOne()))
+      router.push('home', { seasonId: getSeasonIdIfOnlyOne() })
     }
   }
 
@@ -39,7 +38,7 @@
 
 <template>
   <div class="login-view">
-    <img class="login-view__logo" src="/birdogey-logo.png">
+    <img class="login-view__logo" src="/birdogey-logo.png" alt="Birdogey Logo">
     <p-card class="login-view__login-form">
       <p-form @submit="submit">
         <p-label label="Password" :message="passwordErrorMessage" :state="passwordState">

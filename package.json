@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@kitbag/mapper": "0.0.3-alpha",
+    "@kitbag/router": "0.4.2",
     "@prefecthq/prefect-design": "2.0.13",
     "@prefecthq/vue-compositions": "1.6.4",
     "@stackoverfloweth/mapper": "0.0.4",
@@ -21,8 +22,7 @@
     "mongodb": "^6.1.0",
     "string-ts": "^2.0.0",
     "vite-svg-loader": "^4.0.0",
-    "vue": "^3.3.4",
-    "vue-router": "4.2.4"
+    "vue": "^3.3.4"
   },
   "devDependencies": {
     "@netlify/functions": "^1.4.0",

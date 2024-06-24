@@ -1,9 +1,9 @@
-import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import { protectedRoute, savedRoute, adminRoute } from '@/router/guards'
-import { NamedRoute, NamedRouteRecord } from '@/router/routes'
-import { RouteGuardExecutioner } from '@/services'
+import { createRouter, createRoutes, query } from '@kitbag/router'
+import { protectedRoute, adminRoute } from '@/router/guards'
+import Login from '@/views/LoginView.vue'
+import NotFound from '@/views/NotFoundView.vue'
 
-const routes: NamedRouteRecord<NamedRoute>[] = [
+const routes = createRoutes([
   {
     path: '/',
     name: 'login',
@@ -16,98 +16,83 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
   },
   {
     path: '/',
-    meta: {
-      guards: [protectedRoute, savedRoute],
-    },
-    children: [
+    onBeforeRouteEnter: [protectedRoute],
+    children: createRoutes([
       {
-        path: ':seasonId?',
         name: 'home',
+        path: '[?seasonId]',
+        query: query('selection=[?selection]', { selection: Boolean }),
         component: () => import('@/views/HomeView.vue'),
       },
       {
-        path: ':seasonId',
-        children: [
+        path: '[seasonId]',
+        query: query('selection=[?selection]', { selection: Boolean }),
+        children: createRoutes([
           {
+            name: 'players',
             path: 'players',
-            children: [
+            children: createRoutes([
               {
                 path: '',
-                name: 'players.list',
+                name: 'list',
                 component: () => import('@/views/PlayersListView.vue'),
               },
               {
                 path: 'create',
-                name: 'players.create',
+                name: 'create',
                 component: () => import('@/views/PlayersCreateView.vue'),
               },
               {
-                path: ':playerId/edit',
-                name: 'players.edit',
+                path: '[playerId]/edit',
+                name: 'edit',
                 component: () => import('@/views/PlayersEditView.vue'),
                 meta: {
                   guards: [adminRoute],
                 },
               },
-            ],
+            ]),
           },
           {
+            name: 'events',
             path: 'events',
-            children: [
+            children: createRoutes([
               {
                 path: '',
-                name: 'events.list',
+                name: 'list',
                 component: () => import('@/views/EventsListView.vue'),
               },
               {
                 path: 'create',
-                name: 'events.create',
+                name: 'create',
                 component: () => import('@/views/EventsCreateView.vue'),
                 meta: {
                   guards: [adminRoute],
                 },
               },
               {
-                path: ':eventId',
-                name: 'events.view',
+                path: '[eventId]',
+                name: 'view',
                 component: () => import('@/views/EventsView.vue'),
               },
               {
-                path: ':eventId/edit',
-                name: 'events.edit',
+                path: '[eventId]/edit',
+                name: 'edit',
                 component: () => import('@/views/EventsEditView.vue'),
                 meta: {
                   guards: [adminRoute],
                 },
               },
-            ],
+            ]),
           },
-        ],
+        ]),
       },
-    ],
+    ]),
   },
-  {
-    path: '/:pathMatch(.*)*',
-    name: 'notFound',
-    component: () => import('@/views/NotFoundView.vue'),
+])
+
+export const router = createRouter(routes, {
+  rejections: {
+    NotFound: NotFound,
+    NotAuthorized: Login,
   },
-]
-
-export const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: routes as RouteRecordRaw[],
-})
-
-router.beforeEach(async (to, from) => {
-  return await RouteGuardExecutioner.before(to, from)
-})
-
-router.afterEach((to, from) => {
-  if (to.fullPath !== from.fullPath) {
-    if (typeof to.params.event === 'string') {
-      // todo: get event name
-    }
-  }
-
-  return RouteGuardExecutioner.after(to, from)
 })

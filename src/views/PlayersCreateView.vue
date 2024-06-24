@@ -2,12 +2,11 @@
   import { showToast, Crumb } from '@prefecthq/prefect-design'
   import { useBoolean, useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import PlayerForm from '@/components/PlayerForm.vue'
   import { useApi } from '@/composables'
   import { PlayerRequest } from '@/models'
-  import { routes } from '@/router/routes'
+import { useRouter } from '@kitbag/router'
 
   const api = useApi()
   const router = useRouter()
@@ -29,7 +28,7 @@
     playerSubscription.refresh()
     stopLoading()
 
-    router.push(routes.players(seasonId.value))
+    router.push('players', {seasonId: seasonId.value})
   }
 </script>
 

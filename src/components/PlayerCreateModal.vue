@@ -2,7 +2,6 @@
   import { showToast } from '@prefecthq/prefect-design'
   import { useBoolean, useSubscription } from '@prefecthq/vue-compositions'
   import { computed, toRefs } from 'vue'
-  import { useRouter } from 'vue-router'
   import PlayerForm from '@/components/PlayerForm.vue'
   import { useApi } from '@/composables'
   import { PlayerRequest } from '@/models'

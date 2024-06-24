@@ -1,14 +1,12 @@
 <script lang="ts" setup>
   import { useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventsList from '@/components/EventsList.vue'
   import EventsListViewEmptyState from '@/components/EventsListViewEmptyState.vue'
   import EventsListViewMenu from '@/components/EventsListViewMenu.vue'
   import { useApi } from '@/composables'
   import { Event } from '@/models'
-  import { routes } from '@/router/routes'
 
   const api = useApi()
   const router = useRouter()
@@ -18,7 +16,7 @@
   const events = computed(() => eventSubscription.response ?? [])
 
   function openEvent(event: Event): void {
-    router.push(routes.event(event.id))
+    router.push('event', {eventId:event.id})
   }
 </script>
 
