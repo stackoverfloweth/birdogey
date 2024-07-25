@@ -1,94 +1,38 @@
-import { createRouter, createRoutes, query } from '@kitbag/router'
-import { protectedRoute, adminRoute } from '@/router/guards'
+import { createRouter, createRoute, query } from '@kitbag/router'
+import { createEventsRoutes } from '@/router/events'
+import { protectedRoute } from '@/router/guards'
+import { loginRoutes } from '@/router/login'
+import { createPlayersRoutes } from '@/router/players'
 import Login from '@/views/LoginView.vue'
 import NotFound from '@/views/NotFoundView.vue'
 
-const routes = createRoutes([
-  {
-    path: '/',
-    name: 'login',
-    component: () => import('@/views/LoginView.vue'),
-  },
-  {
-    path: '/',
-    name: 'logout',
-    component: () => import('@/views/LogoutView.vue'),
-  },
-  {
-    path: '/',
-    onBeforeRouteEnter: [protectedRoute],
-    children: createRoutes([
-      {
-        name: 'home',
-        path: '[?seasonId]',
-        query: query('select=[?select]', { select: Boolean }),
-        component: () => import('@/views/HomeView.vue'),
-      },
-      {
-        path: '[seasonId]',
-        query: query('select=[?select]', { select: Boolean }),
-        children: createRoutes([
-          {
-            name: 'players',
-            path: '/players',
-            children: createRoutes([
-              {
-                path: '/create',
-                name: 'create',
-                component: () => import('@/views/PlayersCreateView.vue'),
-              },
-              {
-                path: '/[playerId]/edit',
-                name: 'edit',
-                component: () => import('@/views/PlayersEditView.vue'),
-                meta: {
-                  guards: [adminRoute],
-                },
-              },
-              {
-                path: '',
-                name: 'list',
-                component: () => import('@/views/PlayersListView.vue'),
-              },
-            ]),
-          },
-          {
-            name: 'events',
-            path: '/events',
-            children: createRoutes([
-              {
-                path: '/create',
-                name: 'create',
-                component: () => import('@/views/EventsCreateView.vue'),
-                meta: {
-                  guards: [adminRoute],
-                },
-              },
-              {
-                path: '/[eventId]/edit',
-                name: 'edit',
-                component: () => import('@/views/EventsEditView.vue'),
-                meta: {
-                  guards: [adminRoute],
-                },
-              },
-              {
-                path: '/[eventId]',
-                name: 'view',
-                component: () => import('@/views/EventsView.vue'),
-              },
-              {
-                path: '',
-                name: 'list',
-                component: () => import('@/views/EventsListView.vue'),
-              },
-            ]),
-          },
-        ]),
-      },
-    ]),
-  },
-])
+const authenticated = createRoute({
+  path: '/',
+  onBeforeRouteEnter: [protectedRoute],
+})
+
+const home = createRoute({
+  name: 'home',
+  parent: authenticated,
+  path: '[?seasonId]',
+  query: query('select=[?select]', { select: Boolean }),
+  component: () => import('@/views/HomeView.vue'),
+})
+
+const dashboard = createRoute({
+  parent: authenticated,
+  path: '[seasonId]',
+  query: query('select=[?select]', { select: Boolean }),
+})
+
+const routes = [
+  ...loginRoutes,
+  authenticated,
+  home,
+  dashboard,
+  ...createPlayersRoutes(dashboard),
+  ...createEventsRoutes(dashboard),
+] as const
 
 export const router = createRouter(routes, {
   rejections: {

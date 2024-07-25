@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@kitbag/mapper": "0.0.6",
-    "@kitbag/router": "^0.5.4",
+    "@kitbag/router": "^0.6.0",
     "@stackoverfloweth/mapper": "0.0.4",
     "@stackoverfloweth/prefect-design": "2.11.7",
     "@stackoverfloweth/vue-compositions": "1.11.4",
