@@ -1,28 +1,32 @@
 <script lang="ts" setup>
-  import { useBoolean, useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
+  import { useRoute, useRouter } from '@kitbag/router'
+  import { useBoolean, useSubscription } from '@stackoverfloweth/vue-compositions'
   import { computed } from 'vue'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventManage from '@/components/EventManage.vue'
   import EventsViewMenu from '@/components/EventsViewMenu.vue'
   import PlayerCheckinModal from '@/components/PlayerCheckinModal.vue'
   import { useApi } from '@/composables'
-  import { routes } from '@/router/routes'
   import { auth } from '@/services'
 
   const api = useApi()
-  const seasonId = useRouteParam('seasonId')
-  const eventId = useRouteParam('eventId')
+  const route = useRoute('events.view')
+  const router = useRouter()
 
-  const eventSubscription = useSubscription(api.events.getById, [eventId])
+  const eventSubscription = useSubscription(api.events.getById, [route.params.eventId])
   const event = computed(() => eventSubscription.response ?? null)
 
   const { value: checkinModalVisible, setTrue: showCheckinModal } = useBoolean()
+
+  function editEvent(): void {
+    router.push('events.edit', route.params)
+  }
 </script>
 
 <template>
   <div class="events-view">
-    <EventsViewMenu :event-id="eventId" />
-    <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: routes.events(seasonId) }, { text: event?.name ?? '...' }]" />
+    <EventsViewMenu :event-id="route.params.eventId" />
+    <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: '' }, { text: event?.name ?? '...' }]" />
 
     <template v-if="event">
       <div class="events-view__quick-actions">
@@ -33,7 +37,7 @@
         </template>
 
         <template v-if="auth.isAdmin">
-          <p-button icon="PencilSquareIcon" :to="routes.eventEdit(eventId)">
+          <p-button icon="PencilSquareIcon" @click="editEvent">
             Edit
           </p-button>
         </template>
@@ -42,7 +46,7 @@
       <EventManage :event="event" disabled />
     </template>
 
-    <PlayerCheckinModal v-model:isOpen="checkinModalVisible" :season-id="seasonId" :event-id="eventId" @update:is-open="eventSubscription.refresh" />
+    <PlayerCheckinModal v-model:isOpen="checkinModalVisible" :season-id="route.params.seasonId" :event-id="route.params.eventId" @update:is-open="eventSubscription.refresh" />
   </div>
 </template>
 

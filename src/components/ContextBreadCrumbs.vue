@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { useRoute, useRouter, isRoute } from '@kitbag/router'
-  import { Crumb } from '@prefecthq/prefect-design'
+  import { Crumb } from '@stackoverfloweth/prefect-design'
   import { computed, useAttrs } from 'vue'
   import SeasonRouteSelect from '@/components/SeasonRouteSelect.vue'
   import { auth } from '@/services'
@@ -17,16 +17,16 @@
   const router = useRouter()
   const route = useRoute()
 
-  const selection = computed({
+  const select = computed({
     get() {
-      if (isRoute(route, 'home', { exact: false })) {
-        return !!route.params.selection
+      if (isRoute(route, 'home') || isRoute(route, 'players') || isRoute(route, 'events')) {
+        return !!route.params.select
       }
 
       return false
     },
     set(value) {
-      if (isRoute(route, 'home', { exact: false })) {
+      if (isRoute(route, 'home') || isRoute(route, 'players') || isRoute(route, 'events')) {
         return route.params.select = value
       }
 
@@ -35,15 +35,7 @@
   })
 
   const seasonId = computed(() => {
-    if (isRoute(route, 'home', { exact: false })) {
-      return route.params
-    }
-
-    if (isRoute(route, 'players', { exact: false })) {
-      return route.params.seasonId
-    }
-
-    if (isRoute(route, 'events', { exact: false })) {
+    if (isRoute(route, 'home') || isRoute(route, 'players') || isRoute(route, 'events')) {
       return route.params.seasonId
     }
 
@@ -55,26 +47,43 @@
   })
 
   const crumbs = computed<Crumb[]>(() => {
-    const homeHref = router.resolve('home', { seasonId: seasonId.value })
     const canChangeSeason = auth.seasons.length > 1
-    const openSelection = canChangeSeason ? { ...route, query: { select: 'season' } } : homeHref
+    const to = canChangeSeason ? '/' : null
 
     if (!season.value) {
-      return [{ text: 'Select Season', to: openSelection }]
+      return [{ text: 'Select Season', to }]
     }
 
     return [
-      { text: season.value.course.name, to: openSelection },
-      { text: season.value.name, to: homeHref },
+      { text: 'Change Course', to },
+      { text: 'Change Season', to },
       ...props.crumbs,
     ]
   })
+
+  function openSelect(): void {
+    select.value = true
+  }
 </script>
 
 <template>
-  <p-bread-crumbs v-bind="attrs" :crumbs="crumbs" class="context-bread-crumbs" />
-  <p-modal v-model:show-modal="selection" title="Select Season" auto-close>
-    <template v-if="selection">
+  <p-bread-crumbs v-bind="attrs" :crumbs="crumbs" class="context-bread-crumbs">
+    <template #select-season>
+      <span @click="openSelect">
+        Select Season
+      </span>
+    </template>
+
+    <template #change-course>
+      <span @click="openSelect">{{ season?.course.name }}</span>
+    </template>
+
+    <template #change-season>
+      <span @click="openSelect">{{ season?.name }}</span>
+    </template>
+  </p-bread-crumbs>
+  <p-modal v-model:show-modal="select" title="Select Season" auto-close>
+    <template v-if="select">
       <SeasonRouteSelect :season-id="seasonId" />
     </template>
   </p-modal>

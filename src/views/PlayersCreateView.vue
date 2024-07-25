@@ -1,24 +1,28 @@
 <script lang="ts" setup>
-  import { showToast, Crumb } from '@prefecthq/prefect-design'
-  import { useBoolean, useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
+  import { useRoute, useRouter } from '@kitbag/router'
+  import { showToast, Crumb } from '@stackoverfloweth/prefect-design'
+  import { useBoolean, useSubscription } from '@stackoverfloweth/vue-compositions'
   import { computed } from 'vue'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import PlayerForm from '@/components/PlayerForm.vue'
   import { useApi } from '@/composables'
   import { PlayerRequest } from '@/models'
-import { useRouter } from '@kitbag/router'
 
   const api = useApi()
   const router = useRouter()
-  const seasonId = useRouteParam('seasonId')
+  const route = useRoute('players.create')
 
-  const playerSubscription = useSubscription(api.players.getList, [seasonId])
+  const playerSubscription = useSubscription(api.players.getList, [route.params.seasonId])
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
-  const crumbs = computed<Crumb[]>(() => [
-    { text: 'Players', to: routes.players(seasonId.value) },
-    { text: 'Create' },
-  ])
+  const crumbs = computed<Crumb[]>(() => {
+    const to = router.resolve('players', { seasonId: route.params.seasonId })
+
+    return [
+      { text: 'Players', to },
+      { text: 'Create' },
+    ]
+  })
 
   async function addPlayer(request: PlayerRequest): Promise<void> {
     startLoading()
@@ -28,7 +32,7 @@ import { useRouter } from '@kitbag/router'
     playerSubscription.refresh()
     stopLoading()
 
-    router.push('players', {seasonId: seasonId.value})
+    router.push('players', { seasonId: route.params.seasonId })
   }
 </script>
 
@@ -39,7 +43,7 @@ import { useRouter } from '@kitbag/router'
     <p-card>
       <PlayerForm
         :loading="loading"
-        :season-id="seasonId"
+        :season-id="route.params.seasonId"
         @submit="addPlayer"
         @cancel="router.back"
       />

@@ -9,7 +9,7 @@
 
   const router = useRouter()
 
-  router.push('login')
+  // router.push('login')
 </script>
 
 <template>

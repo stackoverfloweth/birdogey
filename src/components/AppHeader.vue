@@ -1,12 +1,21 @@
 <script lang="ts" setup>
-  import { useRouteParam } from '@prefecthq/vue-compositions'
+  import { useRoute } from '@kitbag/router'
+  import { computed } from 'vue'
 
-  const seasonId = useRouteParam('seasonId')
+  const route = useRoute()
+
+  const seasonId = computed(() => {
+    if ('seasonId' in route.params) {
+      return route.params.seasonId
+    }
+
+    return undefined
+  })
 </script>
 
 <template>
   <div class="app-header">
-    <router-link :to="(resolve) => resolve('')">
+    <router-link :to="(resolve) => resolve('home', { seasonId })">
       <img class="app-header__logo" src="/birdogey-logo.png" alt="Birdogey Logo">
     </router-link>
   </div>

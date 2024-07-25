@@ -1,9 +1,15 @@
 <script lang="ts" setup>
-  import { routes } from '@/router/routes'
+  import { useRouter } from '@kitbag/router'
 
-  defineProps<{
+  const props = defineProps<{
     seasonId: string,
   }>()
+
+  const router = useRouter()
+
+  function createPlayer(): void {
+    router.push('players.create', { seasonId: props.seasonId })
+  }
 </script>
 
 <template>
@@ -15,7 +21,7 @@
       Add players to this season
     </template>
     <template #actions>
-      <p-button icon="PlusIcon" :to="routes.playerCreate(seasonId)">
+      <p-button icon="PlusIcon" @click="createPlayer">
         Add Player
       </p-button>
     </template>

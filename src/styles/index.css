@@ -40,3 +40,8 @@
 .p-modal__card {
   flex-grow: 1;
 }
+
+.light {
+  --p-primary-hue: 204;
+  --p-color-button-primary-bg: hsl(var(--p-primary));
+}

@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-  import { routes } from '@/router/routes'
+  import { useRouter } from '@kitbag/router'
+
+  const router = useRouter()
+
+  function logout(): void {
+    router.push('logout')
+  }
 </script>
 
 <template>
@@ -7,7 +13,7 @@
     <template #default="{ close }">
       <slot name="default" :close="close" />
 
-      <p-overflow-menu-item icon="ArrowRightOnRectangleIcon" label="Logout" :to="routes.logout()" />
+      <p-overflow-menu-item icon="ArrowRightOnRectangleIcon" label="Logout" @click="logout" />
     </template>
   </p-icon-button-menu>
 </template>

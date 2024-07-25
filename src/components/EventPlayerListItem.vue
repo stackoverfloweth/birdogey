@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ValidationRule, useBoolean, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useBoolean, usePatchRef, useValidation } from '@stackoverfloweth/vue-compositions'
   import { computed } from 'vue'
   import EventPlayerEditModal from '@/components/EventPlayerEditModal.vue'
   import PlayerEditModal from '@/components/PlayerEditModal.vue'

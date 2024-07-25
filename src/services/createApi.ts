@@ -1,4 +1,4 @@
-import { createActions } from '@prefecthq/vue-compositions'
+import { createActions } from '@stackoverfloweth/vue-compositions'
 import { InjectionKey } from 'vue'
 import { ApiConfig, EventApi, PlayerApi, UserApi } from '@/services'
 

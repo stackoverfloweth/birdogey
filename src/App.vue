@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import { useColorTheme } from '@stackoverfloweth/prefect-design'
   import { provide } from 'vue'
   import AppHeader from '@/components/AppHeader.vue'
   import { ApiConfig, apiKey, createApi, auth } from '@/services'
@@ -10,6 +11,9 @@
 
   const api = createApi(config)
   provide(apiKey, api)
+
+  const { setTheme } = useColorTheme()
+  setTheme('light')
 </script>
 
 <template>
@@ -18,7 +22,7 @@
       <AppHeader />
     </template>
     <Suspense>
-      <router-view :key="$route.fullPath" />
+      <router-view />
     </Suspense>
   </div>
 </template>

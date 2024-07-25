@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { useSubscription } from '@prefecthq/vue-compositions'
+  import { useSubscription } from '@stackoverfloweth/vue-compositions'
   import { computed } from 'vue'
   import { useApi } from '@/composables'
   import { Event } from '@/models'

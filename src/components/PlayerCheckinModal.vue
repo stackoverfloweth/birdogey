@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-  import { SelectOption, showToast } from '@prefecthq/prefect-design'
-  import { usePatchRef, useSubscription } from '@prefecthq/vue-compositions'
+  import { SelectOption, showToast } from '@stackoverfloweth/prefect-design'
+  import { usePatchRef, useSubscription } from '@stackoverfloweth/vue-compositions'
   import { computed, ref, toRefs, watch } from 'vue'
   import { useApi } from '@/composables'
   import { PlayerCheckInRequest } from '@/models/api'

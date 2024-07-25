@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import { useRoute, useRouter } from '@kitbag/router'
   import { computed, ref } from 'vue'
   import { Season } from '@/models'
   import { auth } from '@/services'
@@ -9,6 +10,22 @@
   }>()
 
   const route = useRoute()
+  const router = useRouter()
+
+  const seasonIdParam = computed({
+    get: () => {
+      if ('seasonId' in route.params) {
+        return route.params.seasonId
+      }
+
+      return undefined
+    },
+    set: (value) => {
+      if ('seasonId' in route.params) {
+        return route.params.seasonId = value
+      }
+    },
+  })
 
   const seasons = ref<Season[]>([])
 
@@ -26,8 +43,12 @@
     }, new Map<string, Season[]>())
   })
 
-  function routeWithSeason(seasonId: string): RouteLocationNormalized {
-    return { ...route, params: { seasonId }, query: {} }
+  function setSeason(seasonId: string): void {
+    if (route.key === 'home') {
+      router.push('events', { seasonId })
+    } else {
+      seasonIdParam.value = seasonId
+    }
   }
 </script>
 
@@ -48,7 +69,7 @@
       <template #value>
         <div class="season-route-select__options">
           <template v-for="season in seasons" :key="season.id">
-            <p-button :selected="season.id === seasonId" class="season-route-select__item" :to="routeWithSeason(season.id)">
+            <p-button :selected="season.id === seasonId" class="season-route-select__item" @click="setSeason(season.id)">
               {{ season.name }}
             </p-button>
           </template>

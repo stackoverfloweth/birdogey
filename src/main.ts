@@ -1,10 +1,10 @@
 import mapper, { loadProfiles } from '@kitbag/mapper'
-import { plugin as PrefectDesign } from '@prefecthq/prefect-design'
+import { plugin as PrefectDesign } from '@stackoverfloweth/prefect-design'
 import { createApp } from 'vue'
 import * as loaded from '@/maps'
 import { router } from '@/router'
 
-import '@prefecthq/prefect-design/dist/style.css'
+import '@stackoverfloweth/prefect-design/dist/style.css'
 import '@/styles/index.css'
 
 const profiles = loadProfiles(loaded)

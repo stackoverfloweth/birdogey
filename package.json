@@ -12,11 +12,11 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@kitbag/mapper": "0.0.3-alpha",
-    "@kitbag/router": "0.4.2",
-    "@prefecthq/prefect-design": "2.0.13",
-    "@prefecthq/vue-compositions": "1.6.4",
+    "@kitbag/mapper": "0.0.6",
+    "@kitbag/router": "^0.5.4",
     "@stackoverfloweth/mapper": "0.0.4",
+    "@stackoverfloweth/prefect-design": "2.11.7",
+    "@stackoverfloweth/vue-compositions": "1.11.4",
     "axios": "^1.5.1",
     "date-fns": "2.30.0",
     "mongodb": "^6.1.0",
@@ -31,10 +31,10 @@
     "@types/node": "^20.6.2",
     "@vitejs/plugin-vue": "^4.2.3",
     "eslint": "^8.49.0",
-    "typescript": "^5.0.2",
+    "typescript": "5.5.3",
     "vite": "^4.4.5",
     "vite-plugin-vue-devtools": "^7.2.1",
     "vitest": "^0.34.4",
-    "vue-tsc": "^1.8.5"
+    "vue-tsc": "2.0.26"
   }
 }

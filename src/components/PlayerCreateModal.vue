@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-  import { showToast } from '@prefecthq/prefect-design'
-  import { useBoolean, useSubscription } from '@prefecthq/vue-compositions'
+  import { useRouter } from '@kitbag/router'
+  import { showToast } from '@stackoverfloweth/prefect-design'
+  import { useBoolean, useSubscription } from '@stackoverfloweth/vue-compositions'
   import { computed, toRefs } from 'vue'
   import PlayerForm from '@/components/PlayerForm.vue'
   import { useApi } from '@/composables'
   import { PlayerRequest } from '@/models'
-  import { routes } from '@/router/routes'
 
   const props = defineProps<{
     isOpen: boolean,
@@ -40,7 +40,7 @@
     playerSubscription.refresh()
     stopLoading()
 
-    router.push(routes.players(seasonId.value))
+    router.push('players', { seasonId: props.seasonId })
   }
 </script>
 

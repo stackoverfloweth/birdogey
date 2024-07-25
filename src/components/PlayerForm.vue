@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useValidation, useValidationObserver } from '@stackoverfloweth/vue-compositions'
   import { ref } from 'vue'
   import { Player, PlayerRequest } from '@/models'
   import { auth } from '@/services'

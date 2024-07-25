@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { randomId } from '@prefecthq/prefect-design'
+  import { randomId } from '@stackoverfloweth/prefect-design'
   import { computed, ref, watch } from 'vue'
   import { Card, Player } from '@/models'
 

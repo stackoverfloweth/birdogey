@@ -1,9 +1,15 @@
 <script lang="ts" setup>
-  import { routes } from '@/router/routes'
+  import { useRouter } from '@kitbag/router'
 
-  defineProps<{
+  const props = defineProps<{
     seasonId: string,
   }>()
+
+  const router = useRouter()
+
+  function createEvent(): void {
+    router.push('events.create', { seasonId: props.seasonId })
+  }
 </script>
 
 <template>
@@ -15,7 +21,7 @@
       Create your first event
     </template>
     <template #actions>
-      <p-button icon="PlusIcon" :to="routes.eventCreate(seasonId)">
+      <p-button icon="PlusIcon" @click="createEvent">
         Create Event
       </p-button>
     </template>

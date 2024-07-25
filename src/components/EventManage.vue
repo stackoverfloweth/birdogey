@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-  import { SelectOption } from '@prefecthq/prefect-design'
-  import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { SelectOption } from '@stackoverfloweth/prefect-design'
+  import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@stackoverfloweth/vue-compositions'
   import { computed, ref, watch } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'

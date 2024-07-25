@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-  import { showToast } from '@prefecthq/prefect-design'
-  import { useBoolean, useSubscription } from '@prefecthq/vue-compositions'
+  import { showToast } from '@stackoverfloweth/prefect-design'
+  import { useBoolean, useSubscription } from '@stackoverfloweth/vue-compositions'
   import { computed, toRefs } from 'vue'
   import PlayerForm from '@/components/PlayerForm.vue'
   import { useApi } from '@/composables'

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { useRouter } from '@kitbag/router'
-  import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useValidation, useValidationObserver } from '@stackoverfloweth/vue-compositions'
   import { ref } from 'vue'
   import { useApi } from '@/composables'
   import { attemptLogin, auth } from '@/services'

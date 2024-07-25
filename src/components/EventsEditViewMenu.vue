@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { useBoolean } from '@prefecthq/vue-compositions'
+  import { useBoolean } from '@stackoverfloweth/vue-compositions'
   import AppMenu from '@/components/AppMenu.vue'
   import CardSuggestionModal from '@/components/CardSuggestionModal.vue'
   import PlayerCreateModal from '@/components/PlayerCreateModal.vue'

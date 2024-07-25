@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useValidation, useValidationObserver } from '@stackoverfloweth/vue-compositions'
   import { format } from 'date-fns'
   import { computed, ref } from 'vue'
   import { Event, EventRequest } from '@/models'
