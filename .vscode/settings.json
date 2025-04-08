@@ -10,6 +10,8 @@
     "checkin",
     "composables",
     "esbuild",
+    "imagekit",
+    "imagekitio",
     "prefecthq",
     "stackoverfloweth",
     "udisc",

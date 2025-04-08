@@ -5,4 +5,5 @@ export type Player = {
   tagId: number,
   entryPaid?: boolean,
   udiscId?: string,
+  imageUrl?: string,
 }

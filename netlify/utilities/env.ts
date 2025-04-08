@@ -2,6 +2,9 @@ export type Env = {
   url: string,
   mongodbUrl: string,
   mongodbName: string,
+  imagekitUrl: string,
+  imagekitPublicKey: string,
+  imagekitPrivateKey: string,
 }
 
 export function env(): Env {
@@ -9,5 +12,8 @@ export function env(): Env {
     url: process.env.URL ?? '',
     mongodbUrl: process.env.MONGODB_URI ?? '',
     mongodbName: process.env.MONGODB_NAME ?? '',
+    imagekitUrl: process.env.IMAGEKIT_URL ?? '',
+    imagekitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY ?? '',
+    imagekitPrivateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? '',
   }
 }

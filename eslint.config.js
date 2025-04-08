@@ -6,9 +6,9 @@ export default [
   {
     rules: {
       '@typescript-eslint/no-explicit-any': ['off'],
-      "vue/component-tags-order": ["error", {
-          order: [['script', 'template'], 'style'],
-        },
+      'vue/component-tags-order': ['error', {
+        order: ['script', 'template', 'style'],
+      },
       ],
     },
   },

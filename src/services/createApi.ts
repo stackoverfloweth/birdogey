@@ -1,6 +1,7 @@
 import { createActions } from '@prefecthq/vue-compositions'
 import { InjectionKey } from 'vue'
 import { ApiConfig, EventApi, PlayerApi, UserApi } from '@/services'
+import { ImageKitApi } from '@/services/imageKitApi'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createApi(config: ApiConfig) {
@@ -8,6 +9,7 @@ export function createApi(config: ApiConfig) {
     events: createActions(new EventApi(config)),
     players: createActions(new PlayerApi(config)),
     users: createActions(new UserApi(config)),
+    imagekit: createActions(new ImageKitApi(config)),
   }
 }
 
