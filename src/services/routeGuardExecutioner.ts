@@ -1,6 +1,7 @@
 import { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import { RouteGuard, RouteGuardReturn } from '@/types'
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class RouteGuardExecutioner {
   private static readonly global: RouteGuard[] = []
 

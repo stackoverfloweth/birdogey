@@ -46,7 +46,7 @@
 
         return {
           playerId,
-          incomingTagId: player!.tagId,
+          incomingTagId: player?.tagId ?? Infinity,
           ...previousEventPlayer,
         }
       })
@@ -145,7 +145,9 @@
   }
 
   function sortByName(players: Player[]): Player[] {
-    return players.sort((aPlayer, bPlayer) => (aPlayer.name > bPlayer.name ? 1 : -1))
+    return players.sort((aPlayer, bPlayer) => {
+      return aPlayer.name > bPlayer.name ? 1 : -1
+    })
   }
 
   function updateEvent(): void {

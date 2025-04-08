@@ -17,8 +17,6 @@ declare module '@kitbag/mapper' {
   }
 }
 
-// We want components imported last because import order determines style order
-// eslint-disable-next-line import/order
 import App from '@/App.vue'
 
 const app = createApp(App)
