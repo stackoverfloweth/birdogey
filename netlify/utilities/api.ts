@@ -1,15 +1,6 @@
 import { Handler } from '@netlify/functions'
 import { Pattern } from '../types'
 
-export const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Methods': '*',
-  'Access-Control-Max-Age': '2592000',
-  'Access-Control-Allow-Credentials': 'true',
-}
-
 export type ApiMethod = 'GET'|'POST'|'PUT'|'DELETE'
 export type ApiHandler<T> = (args: string[], body: T | null) => Handler
 export type ApiContext = Parameters<Handler>[1]
@@ -31,7 +22,6 @@ export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T
     if (event.httpMethod === 'OPTIONS') {
       return {
         statusCode: 200,
-        headers,
       }
     }
 
@@ -44,7 +34,6 @@ export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T
 
       if (result) {
         return {
-          headers,
           ...result,
         }
       }
@@ -54,7 +43,6 @@ export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T
 
     return {
       statusCode: 404,
-      headers,
     }
   }
 }

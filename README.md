@@ -11,6 +11,13 @@
 5. run the project with `npm run dev`
 6. enjoy!
 
+## Running Server Functions Locally
+
+1. install Netlify-cli `npm install -g netlify-cli`
+2. create .env.local and set variables MONGODB_URI and MONGODB_NAME
+3. set `VITE_BASE_API_URL` to `/.netlify/functions/`
+4. run `netlify dev`
+
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
