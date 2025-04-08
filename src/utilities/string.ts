@@ -5,5 +5,5 @@ export function fromKebabCase(value?: string): string | undefined {
 }
 
 export function capitalize(value: string): string {
-  return value.replace(/\b\w/g, letter => letter.toUpperCase())
+  return value.replace(/\b\w/g, (letter) => letter.toUpperCase())
 }

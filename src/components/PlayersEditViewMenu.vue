@@ -3,8 +3,8 @@
   import { auth } from '@/services'
 
   const emit = defineEmits<{
-    'save': [],
-    'cancel': [],
+    save: [],
+    cancel: [],
   }>()
 </script>
 

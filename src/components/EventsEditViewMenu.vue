@@ -12,9 +12,9 @@
   }>()
 
   const emit = defineEmits<{
-    'complete': [],
-    'save': [],
-    'cancel': [],
+    complete: [],
+    save: [],
+    cancel: [],
   }>()
 
   const { value: showingAddPlayer, setTrue: showAddPlayer } = useBoolean()
@@ -33,6 +33,6 @@
       </template>
     </template>
   </AppMenu>
-  <PlayerCreateModal v-model:isOpen="showingAddPlayer" :season-id="seasonId" />
-  <CardSuggestionModal v-model:isOpen="showingCardSuggestions" :players="players" />
+  <PlayerCreateModal v-model:is-open="showingAddPlayer" :season-id="seasonId" />
+  <CardSuggestionModal v-model:is-open="showingCardSuggestions" :players="players" />
 </template>

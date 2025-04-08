@@ -1,6 +1,5 @@
 import { RouteLocationRaw, RouteRecordRaw } from 'vue-router'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RouteFunction = (...args: any[]) => RouteLocationRaw
 
 type RouteFunctionRecord = Record<string, RouteFunction>

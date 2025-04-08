@@ -8,7 +8,7 @@
   const router = useRouter()
   const seasonId = useRouteParam('seasonId')
 
-  watch(seasonId, value => {
+  watch(seasonId, (value) => {
     if (value) {
       router.push(routes.events(seasonId.value))
     }

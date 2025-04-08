@@ -12,29 +12,30 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@kitbag/mapper": "0.0.3-alpha",
+    "@kitbag/eslint-config": "1.0.2",
+    "@kitbag/mapper": "0.0.6",
     "@prefecthq/prefect-design": "2.0.13",
-    "@prefecthq/vue-compositions": "1.6.4",
-    "@stackoverfloweth/mapper": "0.0.4",
-    "axios": "^1.5.1",
-    "date-fns": "2.30.0",
-    "mongodb": "^6.1.0",
-    "string-ts": "^2.0.0",
-    "vite-svg-loader": "^4.0.0",
-    "vue": "^3.3.4",
-    "vue-router": "4.2.4"
+    "@prefecthq/vue-compositions": "^1.11.5",
+    "axios": "^1.6.7",
+    "date-fns": "3.3.1",
+    "imagekitio-vue": "^3.1.0",
+    "mongodb": "^6.3.0",
+    "string-ts": "^2.1.0",
+    "vite-svg-loader": "^5.1.0",
+    "vue": "^3.5.13",
+    "vue-router": "4.3.0"
   },
   "devDependencies": {
-    "@netlify/functions": "^1.4.0",
-    "@netlify/plugin-emails": "^1.0.3",
-    "@prefecthq/eslint-config": "1.0.31",
-    "@types/node": "^20.6.2",
-    "@vitejs/plugin-vue": "^4.2.3",
-    "eslint": "^8.49.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5",
+    "@netlify/functions": "^2.4.1",
+    "@netlify/plugin-emails": "^1.1.1",
+    "@types/node": "^20.11.24",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "eslint": "^9.23.0",
+    "imagekit": "^4.1.4",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
     "vite-plugin-vue-devtools": "^7.2.1",
-    "vitest": "^0.34.4",
-    "vue-tsc": "^1.8.5"
+    "vitest": "^1.2.1",
+    "vue-tsc": "^2.0.4"
   }
 }

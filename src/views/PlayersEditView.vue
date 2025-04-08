@@ -38,7 +38,6 @@
   }
 
   async function deletePlayer(): Promise<void> {
-    // eslint-disable-next-line no-alert
     if (!confirm('Are you sure?')) {
       return
     }

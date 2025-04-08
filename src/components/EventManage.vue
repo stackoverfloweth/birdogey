@@ -40,9 +40,9 @@
       return eventPlayers.value.map(({ playerId }) => playerId)
     },
     set(value) {
-      eventPlayers.value = value.map(playerId => {
-        const previousEventPlayer = eventPlayers.value.find(player => player.playerId === playerId)
-        const player = players.value.find(player => player.id === playerId)
+      eventPlayers.value = value.map((playerId) => {
+        const previousEventPlayer = eventPlayers.value.find((player) => player.playerId === playerId)
+        const player = players.value.find((player) => player.id === playerId)
 
         return {
           playerId,
@@ -56,14 +56,14 @@
   const { validate, pending } = useValidationObserver()
 
   const playerIsInForCtp: ValidationRule<string[]> = (value) => {
-    if (value.every(playerId => eventPlayers.value.find(player => player.playerId === playerId)?.inForCtp)) {
+    if (value.every((playerId) => eventPlayers.value.find((player) => player.playerId === playerId)?.inForCtp)) {
       return true
     }
 
     return value.length === 1 ? 'Player is not in for ctp' : 'Not every player selected is in for ctp'
   }
   const playerIsInForAce: ValidationRule<string[]> = (value) => {
-    if (value.every(playerId => eventPlayers.value.find(player => player.playerId === playerId)?.inForAce)) {
+    if (value.every((playerId) => eventPlayers.value.find((player) => player.playerId === playerId)?.inForAce)) {
       return true
     }
 
@@ -112,15 +112,15 @@
   })
 
   const playersOptions = computed(() => sortByName(players.value)
-    .map<SelectOption>(player => ({
+    .map<SelectOption>((player) => ({
       label: player.name,
       value: player.id,
     })),
   )
 
-  const playersIn = computed(() => players.value.filter(player => eventPlayers.value.some(eventPlayer => eventPlayer.playerId === player.id)))
+  const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.playerId === player.id)))
   const playersInOptions = computed(() => sortByName(playersIn.value)
-    .map<SelectOption>(player => ({
+    .map<SelectOption>((player) => ({
       label: player.name,
       value: player.id,
     })),
@@ -145,7 +145,7 @@
   }
 
   function sortByName(players: Player[]): Player[] {
-    return players.sort((aPlayer, bPlayer) => aPlayer.name > bPlayer.name ? 1 : -1)
+    return players.sort((aPlayer, bPlayer) => (aPlayer.name > bPlayer.name ? 1 : -1))
   }
 
   function updateEvent(): void {
@@ -181,7 +181,7 @@
     eventSubscription.refresh()
   }
 
-  watch(() => props.event, event => {
+  watch(() => props.event, (event) => {
     notes.value = event.notes
     ctpPlayerIds.value = event.ctpPlayerIds
     acePlayerIds.value = event.acePlayerIds

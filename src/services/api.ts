@@ -82,7 +82,7 @@ export class Api<T extends ApiConfig = ApiConfig> {
   }
 
   // axios uses any for the data argument
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   protected post<T, R = AxiosResponse<T>>(route?: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
@@ -90,7 +90,7 @@ export class Api<T extends ApiConfig = ApiConfig> {
   }
 
   // axios uses any for the data argument
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   protected put<T, R = AxiosResponse<T>>(route?: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
@@ -98,7 +98,7 @@ export class Api<T extends ApiConfig = ApiConfig> {
   }
 
   // axios uses any for the data argument
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   protected patch<T, R = AxiosResponse<T>>(route?: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 

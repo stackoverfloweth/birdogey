@@ -109,5 +109,5 @@ router.afterEach((to, from) => {
     }
   }
 
-  return RouteGuardExecutioner.after(to, from)
+  RouteGuardExecutioner.after(to, from)
 })

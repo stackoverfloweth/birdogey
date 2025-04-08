@@ -30,7 +30,7 @@
   const api = useApi()
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-  const playersOptions = computed(() => players.value.map<SelectOption>(player => ({
+  const playersOptions = computed(() => players.value.map<SelectOption>((player) => ({
     label: player.name,
     value: player.id,
   })))
@@ -39,8 +39,8 @@
   const tagId = usePatchRef(editingPlayer, 'tagId')
   const udiscId = usePatchRef(editingPlayer, 'udiscId')
 
-  watch(selectedPlayer, id => {
-    const player = players.value.find(player => player.id === id)
+  watch(selectedPlayer, (id) => {
+    const player = players.value.find((player) => player.id === id)
 
     if (player) {
       editingPlayer.value = player

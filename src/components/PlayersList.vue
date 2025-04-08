@@ -6,7 +6,7 @@
   }>()
 
   const emit = defineEmits<{
-    'select': [value: Player],
+    select: [value: Player],
   }>()
 </script>
 

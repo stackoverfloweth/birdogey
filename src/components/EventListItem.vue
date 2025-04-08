@@ -16,7 +16,7 @@
   const players = computed(() => playerSubscription.response ?? [])
 
   const playerNames = computed(() => props.event.players.map(({ playerId }) => {
-    return players.value.find(player => player.id === playerId)?.name ?? 'Player Deleted'
+    return players.value.find((player) => player.id === playerId)?.name ?? 'Player Deleted'
   }))
 
   const ctp = computed(() => calculateEventCtpPot(props.event))

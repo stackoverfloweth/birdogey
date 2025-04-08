@@ -55,16 +55,17 @@
 
   const cards = ref<Card[]>([])
 
-  watch(isOpen, value => {
+  watch(isOpen, (value) => {
     if (!value) {
       return
     }
 
-    const newCards = new Array(numberOfCards.value).fill(null).map<Card>((__, index) => ({
-      id: randomId(),
-      players: [],
-      maxPlayersCount: index === 0 && willHaveFiveOnCard.value ? 5 : 4,
-    }))
+    const newCards = new Array(numberOfCards.value).fill(null)
+      .map<Card>((__, index) => ({
+        id: randomId(),
+        players: [],
+        maxPlayersCount: index === 0 && willHaveFiveOnCard.value ? 5 : 4,
+      }))
 
     const players = [...props.players]
 
@@ -97,7 +98,7 @@
       return
     }
 
-    cards.value = cards.value.map(card => {
+    cards.value = cards.value.map((card) => {
       const players = card.players.filter(({ id }) => player.id !== id)
       const newCard = {
         ...card,

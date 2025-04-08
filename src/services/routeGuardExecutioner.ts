@@ -9,7 +9,7 @@ export class RouteGuardExecutioner {
 
     for (const guard of guards) {
       // this is intentional to allow each guard to cancel navigation
-      // eslint-disable-next-line no-await-in-loop
+
       const result = await guard.before?.(to, from)
 
       if (this.isRouteLocation(result)) {
@@ -31,7 +31,7 @@ export class RouteGuardExecutioner {
   }
 
   private static getRouteGuards(route: RouteLocationNormalized): RouteGuard[] {
-    const guards = route.matched.flatMap(route => route.meta.guards ?? [])
+    const guards = route.matched.flatMap((route) => route.meta.guards ?? [])
 
     return [...this.global, ...guards]
   }
@@ -40,5 +40,4 @@ export class RouteGuardExecutioner {
   private static isRouteLocation(result: RouteGuardReturn): result is RouteLocationRaw {
     return typeof result === 'string' || typeof result == 'object'
   }
-
 }
