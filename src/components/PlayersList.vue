@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { Player } from '@/models'
+  import PlayerImage from '@/components/PlayerImage.vue'
 
   defineProps<{
     players: Player[],
@@ -21,6 +22,7 @@
           <div class="player-list__player-details-name">
             {{ player.name }}
           </div>
+          <PlayerImage :image-url="player.imageUrl" height="30" width="30" />
           <p-icon class="player-list__player-details-paid" :class="{ 'player-list__player-details-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
         </p-list-item>
       </div>

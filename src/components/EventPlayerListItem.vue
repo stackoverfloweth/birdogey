@@ -4,6 +4,7 @@
   import EventPlayerEditModal from '@/components/EventPlayerEditModal.vue'
   import PlayerEditModal from '@/components/PlayerEditModal.vue'
   import ScoreInput from '@/components/ScoreInput.vue'
+  import PlayerImage from '@/components/PlayerImage.vue'
   import { EventPlayerRequest, Player } from '@/models'
 
   const props = defineProps<{
@@ -72,6 +73,9 @@
 
     <p-list-item class="event-player-list-item__player">
       <div v-if="player" class="event-player-list-item__name">
+        <div class="event-player-list-item__name-image">
+          <PlayerImage :image-url="player.imageUrl" height="30" width="30" />
+        </div>
         <span class="event-player-list-item__name-button" @click="tryShowEditPlayerModal">{{ player.name }}</span>
         <p-tooltip v-if="!player?.entryPaid" text="Player has not paid entry">
           <p-icon class="event-player-list-item__entry-not-paid" icon="ExclamationCircleIcon" />

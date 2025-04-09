@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { SelectOption } from '@prefecthq/prefect-design'
-  import { ValidationRule, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
+  import { ValidationRule, useBoolean, useSubscription, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref, watch } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
@@ -8,6 +8,7 @@
   import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
+  import EventPlayersModal from './EventPlayersModal.vue'
 
   const props = defineProps<{
     event: Event,
@@ -34,24 +35,6 @@
   const ctpStartingBalance = ref(props.event.ctpStartingBalance / 100)
   const aceStartingBalance = ref(props.event.aceStartingBalance / 100)
   const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
-
-  const selectedPlayers = computed({
-    get() {
-      return eventPlayers.value.map(({ playerId }) => playerId)
-    },
-    set(value) {
-      eventPlayers.value = value.map((playerId) => {
-        const previousEventPlayer = eventPlayers.value.find((player) => player.playerId === playerId)
-        const player = players.value.find((player) => player.id === playerId)
-
-        return {
-          playerId,
-          incomingTagId: player?.tagId ?? Infinity,
-          ...previousEventPlayer,
-        }
-      })
-    },
-  })
 
   const { validate, pending } = useValidationObserver()
 
@@ -111,12 +94,7 @@
     return undefined
   })
 
-  const playersOptions = computed(() => sortByName(players.value)
-    .map<SelectOption>((player) => ({
-      label: player.name,
-      value: player.id,
-    })),
-  )
+  const { value: showingPlayersModal, setTrue: showPlayersModal } = useBoolean()
 
   const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.playerId === player.id)))
   const playersInOptions = computed(() => sortByName(playersIn.value)
@@ -214,9 +192,12 @@
             @save="updateEvent"
             @complete="completeEvent"
           />
-          <p-select v-model="selectedPlayers" empty-message="Add Player" :disabled="disabled" :options="playersOptions" multiple />
         </template>
       </p-list-item>
+
+      <p-button @click="showPlayersModal">
+        Choose Players
+      </p-button>
 
       <template v-if="eventPlayers.length">
         <div class="event-manage__players">
@@ -286,6 +267,10 @@
         </p-button>
       </div>
     </p-list-item>
+
+    <template v-if="showingPlayersModal">
+      <EventPlayersModal v-model:is-open="showingPlayersModal" v-model="eventPlayers" :players="players" />
+    </template>
   </p-form>
 </template>
 

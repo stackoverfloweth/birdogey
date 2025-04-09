@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { ref } from 'vue'
-  import PlayerImage from '@/components/PlayerImage.vue'
+  import PlayerImageUpload from '@/components/PlayerImageUpload.vue'
   import { Player, PlayerRequest } from '@/models'
   import { auth } from '@/services'
 
@@ -44,9 +44,7 @@
 
 <template>
   <p-form class="player-form" @submit="submit">
-    <PlayerImage
-      v-model="imageUrl"
-    />
+    <PlayerImageUpload v-model="imageUrl" />
 
     <p-label class="player-form__name" label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
