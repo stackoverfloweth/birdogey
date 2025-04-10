@@ -95,6 +95,7 @@
   })
 
   const { value: showingPlayersModal, setTrue: showPlayersModal } = useBoolean()
+  const { value: inScoringMode, toggle: toggleScoringMode } = useBoolean()
 
   const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.playerId === player.id)))
   const playersInOptions = computed(() => sortByName(playersIn.value)
@@ -178,6 +179,20 @@
     </template>
 
     <template v-else>
+      <div v-if="!disabled" class="event-manage__actions">
+        <p-button icon="UserGroupIcon" @click="showPlayersModal">
+          Players
+        </p-button>
+
+        <p-button icon="PencilSquareIcon" @click="toggleScoringMode">
+          {{ inScoringMode ? 'Setup' : 'Scoring' }}
+        </p-button>
+
+        <p-button icon="CloudArrowDownIcon" @click="updateEvent">
+          Save
+        </p-button>
+      </div>
+
       <p-list-item>
         <div class="event-manage__payout-summary">
           <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
@@ -195,14 +210,15 @@
         </template>
       </p-list-item>
 
-      <p-button @click="showPlayersModal">
-        Choose Players
-      </p-button>
-
       <template v-if="eventPlayers.length">
         <div class="event-manage__players">
           <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
-            <EventPlayerListItem v-model:event-player="eventPlayers[index]" :disabled="disabled" :player="getPlayer(eventPlayer.playerId)" />
+            <EventPlayerListItem
+              v-model:event-player="eventPlayers[index]"
+              :disabled="disabled"
+              :player="getPlayer(eventPlayer.playerId)"
+              :in-scoring-mode="inScoringMode"
+            />
           </template>
         </div>
       </template>
@@ -279,6 +295,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+.event-manage__actions {
+  display: flex;
+  gap: var(--space-sm);
 }
 
 .event-manage__players {

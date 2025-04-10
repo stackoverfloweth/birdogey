@@ -51,7 +51,7 @@
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .events-view__quick-actions {

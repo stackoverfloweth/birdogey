@@ -48,6 +48,6 @@
 .events-edit-view {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 </style>
