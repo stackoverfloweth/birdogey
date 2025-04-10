@@ -174,6 +174,15 @@
 
 <template>
   <p-form class="event-manage" @submit="updateEvent">
+    <EventsEditViewMenu
+      v-if="!disabled"
+      :season-id="seasonId"
+      :players="playersIn"
+      @cancel="emit('cancel')"
+      @save="updateEvent"
+      @complete="completeEvent"
+    />
+
     <template v-if="playerSubscription.loading">
       <p-loading-icon />
     </template>
@@ -192,23 +201,6 @@
           Save
         </p-button>
       </div>
-
-      <p-list-item>
-        <div class="event-manage__payout-summary">
-          <p-key-value label="CTP" class="event-manage__payout" :value="penniesToUSD(ctpInPennies)" />
-          <p-key-value label="ACE" class="event-manage__payout" :value="penniesToUSD(aceInPennies)" />
-        </div>
-
-        <template v-if="!disabled">
-          <EventsEditViewMenu
-            :season-id="seasonId"
-            :players="playersIn"
-            @cancel="emit('cancel')"
-            @save="updateEvent"
-            @complete="completeEvent"
-          />
-        </template>
-      </p-list-item>
 
       <template v-if="eventPlayers.length">
         <div class="event-manage__players">
@@ -232,13 +224,13 @@
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
-        <p-label label="Ctp" description="starting balance">
+        <p-label :label="`CTP (${penniesToUSD(ctpInPennies)})`" description="starting balance">
           <template #default="{ id }">
             <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
           </template>
         </p-label>
 
-        <p-label label="Ace" description="starting balance">
+        <p-label :label="`ACE (${penniesToUSD(aceInPennies)})`" description="starting balance">
           <template #default="{ id }">
             <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
           </template>
@@ -306,21 +298,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-}
-
-.event-manage__payout-summary {
-  padding: var(--space-md) 0;
-  display: flex;
-  gap: var(--space-xl);
-  align-items: center;
-  justify-content: center;
-}
-
-.event-manage__payout {
-  width: min-content;
-  align-items: center;
-  white-space: nowrap;
-  font-size: var(--text-lg);
 }
 
 .event-manage__item-paid {
