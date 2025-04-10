@@ -2,14 +2,11 @@
   import { useRouter } from 'vue-router'
   import { returnRoute } from '@/router/guards'
   import { routes } from '@/router/routes'
-  import { auth } from '@/services'
+  import { clearStoredAuth } from '@/services/auth'
 
   returnRoute.value = undefined
 
-  auth.id = undefined
-  auth.isAdmin = false
-  auth.isAuthorized = false
-  auth.seasons = []
+  clearStoredAuth()
 
   const router = useRouter()
 
