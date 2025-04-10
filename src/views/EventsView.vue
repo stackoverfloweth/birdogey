@@ -42,7 +42,7 @@
       <EventManage :event="event" disabled />
     </template>
 
-    <PlayerCheckinModal v-model:is-open="checkinModalVisible" :season-id="seasonId" :event-id="eventId" @update:is-open="eventSubscription.refresh" />
+    <PlayerCheckinModal v-model:is-open="checkinModalVisible" :season-id="seasonId" :event-id="eventId" @update:is-open="() => eventSubscription.refresh()" />
   </div>
 </template>
 
