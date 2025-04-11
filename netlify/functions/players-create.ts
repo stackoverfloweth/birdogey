@@ -2,14 +2,17 @@ import { Handler } from '@netlify/functions'
 import { Collection, ObjectId } from 'mongodb'
 import { Api, env, getClient, isValidRequest } from '../utilities'
 import { PlayerRequest, PlayerResponse } from '@/models'
+import { checkSeasonAccess } from '../utilities/seasonAccess'
 
-export const handler: Handler = Api('POST', 'players-create', (args, body) => async () => {
+export const handler: Handler = Api('POST', 'players-create', (args, body, token) => async () => {
   if (!isValidRequest<PlayerRequest>(body, [
     ['seasonId', 'string'],
     ['name', 'string'],
   ])) {
     return { statusCode: 400 }
   }
+
+  checkSeasonAccess(body.seasonId, token)
 
   const client = await getClient()
 
@@ -38,5 +41,5 @@ export const handler: Handler = Api('POST', 'players-create', (args, body) => as
 })
 
 function getNextAvailableTag(seasonId: ObjectId, collection: Collection<PlayerResponse>): Promise<number> {
-  return collection.countDocuments({ seasonId }).then(count => count + 1)
+  return collection.countDocuments({ seasonId }).then((count) => count + 1)
 }

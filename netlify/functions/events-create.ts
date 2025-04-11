@@ -2,8 +2,9 @@ import { Handler } from '@netlify/functions'
 import { ObjectId } from 'mongodb'
 import { Api, env, getClient, isValidRequest } from '../utilities'
 import { EventRequest, EventResponse } from '@/models'
+import { checkSeasonAccess } from '../utilities/seasonAccess'
 
-export const handler: Handler = Api('POST', 'events-create', (args, body) => async () => {
+export const handler: Handler = Api('POST', 'events-create', (args, body, token) => async () => {
   if (!isValidRequest<EventRequest>(body, [
     ['seasonId', 'string'],
     ['name', 'string'],
@@ -11,13 +12,15 @@ export const handler: Handler = Api('POST', 'events-create', (args, body) => asy
     return { statusCode: 400 }
   }
 
+  checkSeasonAccess(body.seasonId, token)
+
   const client = await getClient()
 
   try {
     const db = client.db(env().mongodbName)
     const collection = db.collection<EventResponse>('events')
 
-    const players = body.players?.map(eventPlayer => ({
+    const players = body.players?.map((eventPlayer) => ({
       ...eventPlayer,
       _id: new ObjectId(),
       playerId: new ObjectId(eventPlayer.playerId),

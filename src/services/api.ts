@@ -1,5 +1,6 @@
 import axios, { AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios'
 import { isDefined } from '@/utilities'
+import { showToast } from '@prefecthq/prefect-design'
 
 export type ApiConfig = {
   baseUrl: string,
@@ -62,25 +63,58 @@ export class Api<T extends ApiConfig = ApiConfig> {
   protected get<T, R = AxiosResponse<T>>(route?: string, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
-    return this.instance().get(path, config)
+    return this.instance()
+      .get<T, R>(path, config)
+      .catch((error: unknown) => {
+        console.log({ error })
+        if (error instanceof Error) {
+          showToast(error.message, 'error')
+        }
+
+        throw error
+      })
   }
 
   protected delete<T, R = AxiosResponse<T>>(route?: string, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
-    return this.instance().delete(path, config)
+    return this.instance()
+      .delete(path, config)
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          showToast(error.message, 'error')
+        }
+
+        throw error
+      }) as Promise<R>
   }
 
   protected head<T, R = AxiosResponse<T>>(route?: string, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
-    return this.instance().head(path, config)
+    return this.instance()
+      .head(path, config)
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          showToast(error.message, 'error')
+        }
+
+        throw error
+      }) as Promise<R>
   }
 
   protected options<T, R = AxiosResponse<T>>(route?: string, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
-    return this.instance().options(path, config)
+    return this.instance()
+      .options(path, config)
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          showToast(error.message, 'error')
+        }
+
+        throw error
+      }) as Promise<R>
   }
 
   // axios uses any for the data argument
@@ -88,7 +122,15 @@ export class Api<T extends ApiConfig = ApiConfig> {
   protected post<T, R = AxiosResponse<T>>(route?: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
-    return this.instance().post(path, data, config)
+    return this.instance()
+      .post(path, data, config)
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          showToast(error.message, 'error')
+        }
+
+        throw error
+      }) as Promise<R>
   }
 
   // axios uses any for the data argument
@@ -96,7 +138,15 @@ export class Api<T extends ApiConfig = ApiConfig> {
   protected put<T, R = AxiosResponse<T>>(route?: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
-    return this.instance().put(path, data, config)
+    return this.instance()
+      .put(path, data, config)
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          showToast(error.message, 'error')
+        }
+
+        throw error
+      }) as Promise<R>
   }
 
   // axios uses any for the data argument
@@ -104,6 +154,14 @@ export class Api<T extends ApiConfig = ApiConfig> {
   protected patch<T, R = AxiosResponse<T>>(route?: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     const path = this.combinePath(route)
 
-    return this.instance().patch(path, data, config)
+    return this.instance()
+      .patch(path, data, config)
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          showToast(error.message, 'error')
+        }
+
+        throw error
+      }) as Promise<R>
   }
 }

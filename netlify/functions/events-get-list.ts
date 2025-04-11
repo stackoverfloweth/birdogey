@@ -2,8 +2,11 @@ import { Handler } from '@netlify/functions'
 import { ObjectId } from 'mongodb'
 import { Api, env, getClient } from '../utilities'
 import { EventResponse } from '@/models/api'
+import { checkSeasonAccess } from '../utilities/seasonAccess'
 
-export const handler: Handler = Api('GET', '/events-get-list/:seasonId', ([seasonId]) => async () => {
+export const handler: Handler = Api('GET', '/events-get-list/:seasonId', ([seasonId], _, token) => async () => {
+  checkSeasonAccess(seasonId, token)
+
   const client = await getClient()
 
   try {
