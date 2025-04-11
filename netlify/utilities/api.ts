@@ -1,23 +1,29 @@
 import { Handler } from '@netlify/functions'
-import { Pattern } from '../types'
+import { Pattern, HttpError } from '../types'
+import { extractTokenFromHeader, JwtPayload, verifyToken } from './jwt'
 
-export type ApiMethod = 'GET'|'POST'|'PUT'|'DELETE'
-export type ApiHandler<T> = (args: string[], body: T | null) => Handler
+export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+export type ApiHandler<T> = (args: string[], body: T | null, jwtPayload?: any) => Handler
 export type ApiContext = Parameters<Handler>[1]
 
-function tryParseBody<T>(...[event]: Parameters<Handler>): T | null {
+export type ApiOptions = {
+  isPublic?: boolean,
+  requireAdmin?: boolean,
+}
+
+function tryParseBody(...[event]: Parameters<Handler>): unknown {
   if (event.body === null) {
     return null
   }
 
   try {
-    return JSON.parse(event.body) as T
+    return JSON.parse(event.body)
   } catch {
     return null
   }
 }
 
-export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T>): Handler {
+export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T>, options: ApiOptions = {}): Handler {
   return async (event, context) => {
     if (event.httpMethod === 'OPTIONS') {
       return {
@@ -27,22 +33,49 @@ export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T
 
     const pattern = new Pattern(method, path)
 
-    if (pattern.matches([event, context])) {
-      const [, ...args] = pattern.regexp.exec(event.path) ?? []
-      const body = tryParseBody<T>(event, context)
-      const result = await apiHandler(args, body)(event, context)
+    try {
+      const jwtPayload = options.isPublic ? null : getJwtPayload(event.headers, options)
 
-      if (result) {
-        return {
-          ...result,
+      if (pattern.matches([event, context])) {
+        const [, ...args] = pattern.regexp.exec(event.path) ?? []
+        const body = tryParseBody(event, context) as T | null
+        const result = await apiHandler(args, body, jwtPayload)(event, context)
+
+        if (result) {
+          return result
         }
       }
-    }
 
-    console.error('NO MATCH')
+      console.error('NO MATCH')
 
-    return {
-      statusCode: 404,
+      throw new HttpError(404, 'Not found')
+    } catch (error) {
+      if (error instanceof HttpError) {
+        return {
+          statusCode: error.statusCode,
+          body: JSON.stringify({ error: error.message }),
+        }
+      }
+
+      throw error
     }
   }
+}
+
+function getJwtPayload(headers: Record<string, string | undefined>, options: ApiOptions): JwtPayload {
+  const token = extractTokenFromHeader(headers.authorization)
+  if (!token) {
+    throw new HttpError(401, 'Authentication required')
+  }
+
+  const jwtPayload = verifyToken(token)
+  if (!jwtPayload) {
+    throw new HttpError(401, 'Invalid or expired token')
+  }
+
+  if (options.requireAdmin && !jwtPayload.isAdmin) {
+    throw new HttpError(403, 'Admin access required')
+  }
+
+  return jwtPayload
 }

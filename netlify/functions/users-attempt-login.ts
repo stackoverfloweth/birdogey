@@ -1,6 +1,6 @@
 import { Handler } from '@netlify/functions'
 import { Db, ObjectId } from 'mongodb'
-import { Api, env, getClient, isValidRequest } from '../utilities'
+import { Api, env, getClient, isValidRequest, generateToken } from '../utilities'
 import { SeasonResponse, UserAuthResponse, UserResponse } from '@/models/api'
 
 export const handler: Handler = Api('POST', '/users-attempt-login', (__, body) => async () => {
@@ -31,14 +31,33 @@ export const handler: Handler = Api('POST', '/users-attempt-login', (__, body) =
 
     const userAccount = getFirst(users) ?? await checkReadonlyPassword(body.password, db)
 
+    if (!userAccount) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ error: 'Invalid credentials' }),
+      }
+    }
+
+    const user = {
+      ...userAccount,
+      isAdmin: 'name' in userAccount,
+      isAuthorized: true,
+      seasons: userAccount.seasons ?? [],
+    }
+
+    const token = generateToken(user)
+
     return {
       statusCode: 200,
-      body: JSON.stringify(userAccount),
+      body: JSON.stringify({
+        ...user,
+        token,
+      }),
     }
   } finally {
     await client.close()
   }
-})
+}, { isPublic: true })
 
 async function checkReadonlyPassword(password: string, db: Db): Promise<UserAuthResponse | null> {
   const collection = db.collection<SeasonResponse>('seasons')
@@ -50,6 +69,7 @@ async function checkReadonlyPassword(password: string, db: Db): Promise<UserAuth
 
   return {
     _id: new ObjectId(),
+    isAuthorized: true,
     seasons: [season],
   }
 }

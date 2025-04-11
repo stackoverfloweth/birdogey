@@ -15,7 +15,7 @@ export class Pattern {
   private readonly afterPath = '[/]?$'
 
   public get regexp(): RegExp {
-    const path = this.path.replace(/(:[\w-]+)/g, `${this.idRegexp}`)
+    const path = this.path.replace(/(:[\w-]+)/g, this.idRegexp)
     const value = `${this.beforePath}${path}${this.afterPath}`.replace(/(\/)\1+/, '/')
     return new RegExp(value)
   }

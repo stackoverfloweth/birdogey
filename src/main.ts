@@ -3,6 +3,11 @@ import { plugin as PrefectDesign } from '@prefecthq/prefect-design'
 import { createApp } from 'vue'
 import * as loaded from '@/maps'
 import { router } from '@/router'
+import App from '@/App.vue'
+import { auth, initAuthFromStorage } from '@/services/auth'
+import { ApiConfig } from '@/services/api'
+import { apiKey, createApi } from '@/services/createApi'
+import { env } from '@/utilities/env'
 
 import '@prefecthq/prefect-design/dist/style.css'
 import '@/styles/index.css'
@@ -17,10 +22,17 @@ declare module '@kitbag/mapper' {
   }
 }
 
-import App from '@/App.vue'
+const config: ApiConfig = {
+  baseUrl: env().baseApiUrl,
+  token: () => auth.token,
+}
+
+const api = createApi(config)
+
+await initAuthFromStorage(api)
 
 const app = createApp(App)
-
+app.provide(apiKey, api)
 app.use(router)
 app.use(PrefectDesign)
 app.mount('#app')

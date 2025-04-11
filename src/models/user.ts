@@ -7,6 +7,7 @@ export type AdminUser = User & {
 }
 
 export type User = {
+  token?: string,
   id?: string,
   name?: string,
   isAdmin: boolean,

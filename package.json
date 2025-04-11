@@ -19,6 +19,7 @@
     "axios": "^1.6.7",
     "date-fns": "3.3.1",
     "imagekitio-vue": "^3.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
     "string-ts": "^2.1.0",
     "vite-svg-loader": "^5.1.0",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@netlify/functions": "^2.4.1",
     "@netlify/plugin-emails": "^1.1.1",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.11.24",
     "@vitejs/plugin-vue": "^5.0.4",
     "eslint": "^9.23.0",

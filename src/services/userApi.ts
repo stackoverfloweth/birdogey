@@ -7,4 +7,9 @@ export class UserApi extends Api {
     return this.post<UserAuthResponse>('users-attempt-login', { password })
       .then(({ data }) => mapper.map('UserAuthResponse', data, 'User'))
   }
+
+  public refreshLogin(): Promise<User> {
+    return this.post<UserAuthResponse>('users-refresh-login')
+      .then(({ data }) => mapper.map('UserAuthResponse', data, 'User'))
+  }
 }

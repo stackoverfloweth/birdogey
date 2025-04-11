@@ -7,10 +7,11 @@ export const mapUserAuthResponseToUser = {
   destinationKey: 'User',
   map: (source: UserAuthResponse | null): User => {
     return {
+      ...source,
       id: source ? mapper.map('ObjectId', source._id, 'string') : undefined,
       seasons: mapper.mapMany('SeasonResponse', source?.seasons ?? [], 'Season'),
-      isAuthorized: !!source,
-      isAdmin: !!source && 'name' in source,
+      isAuthorized: source?.isAuthorized ?? false,
+      isAdmin: source?.isAdmin ?? false,
     }
   },
 } as const satisfies Profile

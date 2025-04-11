@@ -1,15 +1,9 @@
 <script lang="ts" setup>
-  import { provide } from 'vue'
   import AppHeader from '@/components/AppHeader.vue'
-  import { ApiConfig, apiKey, createApi, auth } from '@/services'
-  import { env } from '@/utilities'
+  import { auth } from '@/services'
+  import { useRoute } from 'vue-router'
 
-  const config: ApiConfig = {
-    baseUrl: env().baseApiUrl,
-  }
-
-  const api = createApi(config)
-  provide(apiKey, api)
+  const route = useRoute()
 </script>
 
 <template>
@@ -18,7 +12,7 @@
       <AppHeader />
     </template>
     <Suspense>
-      <router-view :key="$route.fullPath" />
+      <router-view :key="route.fullPath" />
     </Suspense>
   </div>
 </template>

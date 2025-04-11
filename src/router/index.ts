@@ -5,12 +5,12 @@ import { RouteGuardExecutioner } from '@/services'
 
 const routes: NamedRouteRecord<NamedRoute>[] = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     component: () => import('@/views/LoginView.vue'),
   },
   {
-    path: '/',
+    path: '/logout',
     name: 'logout',
     component: () => import('@/views/LogoutView.vue'),
   },

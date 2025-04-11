@@ -2,69 +2,65 @@ import { reactive } from 'vue'
 import { User } from '@/models'
 import { CreateApi } from '@/services'
 
-const AUTH_STORAGE_KEY = 'birdogey_auth'
-const TOKEN_EXPIRY_KEY = 'birdogey_auth_expiry'
-const TTL_HOURS = 2
+const TOKEN_STORAGE_KEY = 'birdogey_token'
 
 export const auth = reactive<User>({
   id: undefined,
   isAdmin: false,
   isAuthorized: false,
   seasons: [],
+  token: undefined,
 })
 
-initAuthFromStorage()
-
-function initAuthFromStorage(): void {
+export async function initAuthFromStorage(api: CreateApi): Promise<void> {
   try {
-    const storedExpiry = localStorage.getItem(TOKEN_EXPIRY_KEY)
-    const storedAuth = localStorage.getItem(AUTH_STORAGE_KEY)
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY)
 
-    if (storedExpiry && storedAuth) {
-      const expiryTime = parseInt(storedExpiry, 10)
-      const authStillValid = Date.now() < expiryTime
+    if (token) {
+      Object.assign(auth, { token })
 
-      if (!authStillValid) {
-        throw new Error('Auth expired')
-      }
-
-      const userData = JSON.parse(storedAuth) as User
-      Object.assign(auth, userData)
+      const user = await api.users.refreshLogin()
+      Object.assign(auth, user)
     }
-  } catch {
+  } catch (error) {
+    console.error('Error initializing auth from storage:', error)
     clearStoredAuth()
   }
 }
 
 function saveAuthToStorage(userData: User): void {
   try {
-    const expiryTime = Date.now() + TTL_HOURS * 60 * 60 * 1_000
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData))
-    localStorage.setItem(TOKEN_EXPIRY_KEY, expiryTime.toString())
+    if (userData.token) {
+      localStorage.setItem(TOKEN_STORAGE_KEY, userData.token)
+    }
   } catch (error) {
     console.error('Error saving auth to storage:', error)
   }
 }
 
 export function clearStoredAuth(): void {
-  localStorage.removeItem(AUTH_STORAGE_KEY)
-  localStorage.removeItem(TOKEN_EXPIRY_KEY)
+  localStorage.removeItem(TOKEN_STORAGE_KEY)
 
   Object.assign(auth, {
     id: undefined,
     isAdmin: false,
     isAuthorized: false,
     seasons: [],
+    token: undefined,
   })
 }
 
 export async function attemptLogin(api: CreateApi, value: string): Promise<boolean> {
-  const user = await api.users.attemptLogin(value)
+  const response = await api.users.attemptLogin(value)
 
-  if (user) {
-    Object.assign(auth, user)
-    saveAuthToStorage(user)
+  if (response) {
+    Object.assign(auth, response)
+    saveAuthToStorage(auth)
   }
 
   return auth.isAuthorized
+}
+
+export function getAuthToken(): string | undefined {
+  return auth.token
 }

@@ -5,4 +5,7 @@ export type UserAuthResponse = {
   _id: ObjectId,
   name?: string,
   seasons: SeasonResponse[],
+  isAdmin?: boolean,
+  isAuthorized?: boolean,
+  token?: string,
 }

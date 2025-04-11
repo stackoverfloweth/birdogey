@@ -3,7 +3,7 @@ import { isDefined } from '@/utilities'
 
 export type ApiConfig = {
   baseUrl: string,
-  token?: string,
+  token?: string | (() => string | undefined),
 }
 
 type ConfigFunction<R, T extends ApiConfig = ApiConfig> = (config: T) => R
@@ -30,9 +30,11 @@ export class Api<T extends ApiConfig = ApiConfig> {
   }
 
   protected composeHeaders(): RawAxiosRequestHeaders | AxiosHeaders {
-    if (this.apiConfig.token) {
+    const token = typeof this.apiConfig.token === 'function' ? this.apiConfig.token() : this.apiConfig.token
+
+    if (token) {
       return {
-        Authorization: `bearer ${this.apiConfig.token}`,
+        Authorization: `Bearer ${token}`,
       }
     }
 

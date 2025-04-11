@@ -5,6 +5,7 @@ export type Env = {
   imagekitUrl: string,
   imagekitPublicKey: string,
   imagekitPrivateKey: string,
+  jwtSecret: string,
 }
 
 export function env(): Env {
@@ -15,5 +16,6 @@ export function env(): Env {
     imagekitUrl: process.env.IMAGEKIT_URL ?? '',
     imagekitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY ?? '',
     imagekitPrivateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? '',
+    jwtSecret: process.env.JWT_SECRET ?? '',
   }
 }
