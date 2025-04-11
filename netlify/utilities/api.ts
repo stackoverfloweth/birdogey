@@ -3,7 +3,8 @@ import { Pattern, HttpError } from '../types'
 import { extractTokenFromHeader, JwtPayload, verifyToken } from './jwt'
 
 export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
-export type ApiHandler<T> = (args: string[], body: T | null, jwtPayload?: any) => Handler
+export type ApiHandlerPublic<T> = (args: string[], body: T | null, jwtPayload: null) => Handler
+export type ApiHandler<T> = (args: string[], body: T | null, jwtPayload: JwtPayload) => Handler
 export type ApiContext = Parameters<Handler>[1]
 
 export type ApiOptions = {
@@ -23,7 +24,9 @@ function tryParseBody(...[event]: Parameters<Handler>): unknown {
   }
 }
 
-export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T>, options: ApiOptions = {}): Handler {
+export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T>, options?: ApiOptions & { isPublic?: false }): Handler
+export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandlerPublic<T>, options: ApiOptions & { isPublic: true }): Handler
+export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandlerPublic<T> | ApiHandler<T>, options: ApiOptions = {}): Handler {
   return async (event, context) => {
     if (event.httpMethod === 'OPTIONS') {
       return {
@@ -34,12 +37,12 @@ export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T
     const pattern = new Pattern(method, path)
 
     try {
-      const jwtPayload = options.isPublic ? null : getJwtPayload(event.headers, options)
-
       if (pattern.matches([event, context])) {
         const [, ...args] = pattern.regexp.exec(event.path) ?? []
         const body = tryParseBody(event, context) as T | null
-        const result = await apiHandler(args, body, jwtPayload)(event, context)
+        const handler = getHandler(apiHandler, args, body, event.headers, options)
+
+        const result = await handler(event, context)
 
         if (result) {
           return result
@@ -60,6 +63,14 @@ export function Api<T>(method: ApiMethod, path: string, apiHandler: ApiHandler<T
       throw error
     }
   }
+}
+
+function getHandler<T>(apiHandler: ApiHandlerPublic<T> | ApiHandler<T>, args: string[], body: T | null, headers: Record<string, string | undefined>, options: ApiOptions): Handler {
+  if (options.isPublic) {
+    return (apiHandler as ApiHandlerPublic<T>)(args, body, null)
+  }
+
+  return (apiHandler as ApiHandler<T>)(args, body, getJwtPayload(headers, options))
 }
 
 function getJwtPayload(headers: Record<string, string | undefined>, options: ApiOptions): JwtPayload {

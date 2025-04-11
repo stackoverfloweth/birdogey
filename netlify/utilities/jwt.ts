@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken'
-import { User } from '@/models'
+import { UserResponse } from '@/models'
 import { env } from './env'
 
 const TOKEN_EXPIRY = '2h'
 
-export type JwtPayload = Required<User> & {
+export type JwtPayload = Required<UserResponse> & {
   iat?: number,
   exp?: number,
 }
 
-export function generateToken(user: User): string {
+export function generateToken(user: UserResponse): string {
   return jwt.sign(user, env().jwtSecret, { expiresIn: TOKEN_EXPIRY })
 }
 

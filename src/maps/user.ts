@@ -9,9 +9,9 @@ export const mapUserAuthResponseToUser = {
     return {
       ...source,
       id: source ? mapper.map('ObjectId', source._id, 'string') : undefined,
-      seasons: mapper.mapMany('SeasonResponse', source?.seasons ?? [], 'Season'),
       isAuthorized: source?.isAuthorized ?? false,
       isAdmin: source?.isAdmin ?? false,
+      seasons: mapper.mapMany('SeasonResponse', source?.seasons ?? [], 'Season'),
     }
   },
 } as const satisfies Profile
