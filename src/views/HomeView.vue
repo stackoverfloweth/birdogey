@@ -3,8 +3,8 @@
   import { watch } from 'vue'
   import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
+  import AppMenu from '@/components/AppMenu.vue'
   import { routes } from '@/router/routes'
-
   const router = useRouter()
   const seasonId = useRouteParam('seasonId')
 
@@ -17,7 +17,13 @@
 
 <template>
   <div class="home-view">
+    <h1 class="home-view__title">
+      Birdogey
+    </h1>
+
     <ContextBreadCrumbs class="home-view__breadcrumbs" :crumbs="[]" />
+
+    <AppMenu icon="Bars3Icon" />
   </div>
 </template>
 
@@ -27,5 +33,13 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-lg);
+}
+
+.home-view__title {
+  font-family: "Ephesis", cursive;
+  font-weight: 400;
+  font-style: normal;
+  text-align: center;
+  font-size: 3rem;
 }
 </style>
