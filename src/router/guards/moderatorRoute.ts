@@ -2,9 +2,9 @@ import { routes } from '@/router/routes'
 import { auth } from '@/services'
 import { RouteGuard } from '@/types'
 
-export const adminRoute: RouteGuard = {
+export const moderatorRoute: RouteGuard = {
   before: () => {
-    if (!auth.isAdmin) {
+    if (auth.isReadonly) {
       return routes.logout()
     }
   },

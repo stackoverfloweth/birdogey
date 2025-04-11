@@ -32,7 +32,7 @@
           </p-button>
         </template>
 
-        <template v-if="auth.isAdmin">
+        <template v-if="!auth.isReadonly">
           <p-button icon="PencilSquareIcon" :to="routes.eventEdit(eventId)">
             Edit
           </p-button>

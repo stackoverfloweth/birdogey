@@ -40,7 +40,6 @@
 .player-list__player {
   display: flex;
   gap: var(--space-xs);
-  align-items: flex-start;
   cursor: pointer;
 }
 

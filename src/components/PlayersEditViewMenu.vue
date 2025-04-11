@@ -11,7 +11,7 @@
 <template>
   <AppMenu class="players-edit-view-menu" icon="Bars3Icon">
     <template #default>
-      <template v-if="auth.isAdmin">
+      <template v-if="!auth.isReadonly">
         <p-overflow-menu-item icon="ArrowLeftIcon" label="Cancel" @click="emit('cancel')" />
         <p-overflow-menu-item icon="CloudArrowDownIcon" label="Save" @click="emit('save')" />
         <p-overflow-menu-item icon="CheckCircleIcon" label="Complete" @click="emit('save')" />

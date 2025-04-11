@@ -48,19 +48,19 @@
 
     <p-label class="player-form__name" label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="name" :disabled="!auth.isAdmin" :state="nameState" />
+        <p-text-input :id="id" v-model="name" :disabled="auth.isReadonly" :state="nameState" />
       </template>
     </p-label>
 
     <p-label class="player-form__tag-id" label="Tag #">
       <template #default="{ id }">
-        <p-number-input :id="id" v-model="tagId" :disabled="!auth.isAdmin" :min="0" />
+        <p-number-input :id="id" v-model="tagId" :disabled="auth.isReadonly" :min="0" />
       </template>
     </p-label>
 
     <p-label class="player-form__paid" label="Entry Paid?">
       <template #default="{ id }">
-        <p-toggle :id="id" v-model="entryPaid" :disabled="!auth.isAdmin" />
+        <p-toggle :id="id" v-model="entryPaid" :disabled="auth.isReadonly" />
       </template>
     </p-label>
 
@@ -70,12 +70,12 @@
       </p-button>
 
       <template v-if="showRemoveButton">
-        <p-button dangerous :disabled="!auth.isAdmin" @click="emit('remove')">
+        <p-button dangerous :disabled="auth.isReadonly" @click="emit('remove')">
           Delete
         </p-button>
       </template>
 
-      <p-button :loading="loading" type="submit" :disabled="!auth.isAdmin || pending" primary>
+      <p-button :loading="loading" type="submit" :disabled="auth.isReadonly || pending" primary>
         Save
       </p-button>
     </template>

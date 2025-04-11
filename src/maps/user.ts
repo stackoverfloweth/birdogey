@@ -11,6 +11,7 @@ export const mapUserAuthResponseToUser = {
       id: source ? mapper.map('ObjectId', source._id, 'string') : undefined,
       isAuthorized: source?.isAuthorized ?? false,
       isAdmin: source?.isAdmin ?? false,
+      isReadonly: source?.isReadonly ?? false,
       seasons: mapper.mapMany('SeasonResponse', source?.seasons ?? [], 'Season'),
     }
   },

@@ -24,7 +24,7 @@
 <template>
   <AppMenu class="events-edit-view-menu" icon="Bars3Icon">
     <template #default>
-      <template v-if="auth.isAdmin">
+      <template v-if="!auth.isReadonly">
         <p-overflow-menu-item icon="ArrowLeftIcon" label="Cancel" @click="emit('cancel')" />
         <p-overflow-menu-item icon="UserPlusIcon" label="Create New Player" @click="showAddPlayer" />
         <p-overflow-menu-item icon="RectangleStackIcon" label="Suggest Cards" @click="showCardSuggestions" />

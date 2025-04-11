@@ -1,5 +1,5 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import { protectedRoute, savedRoute, adminRoute } from '@/router/guards'
+import { protectedRoute, savedRoute, moderatorRoute } from '@/router/guards'
 import { NamedRoute, NamedRouteRecord } from '@/router/routes'
 import { RouteGuardExecutioner } from '@/services'
 
@@ -46,7 +46,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
                 name: 'players.edit',
                 component: () => import('@/views/PlayersEditView.vue'),
                 meta: {
-                  guards: [adminRoute],
+                  guards: [moderatorRoute],
                 },
               },
             ],
@@ -64,7 +64,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
                 name: 'events.create',
                 component: () => import('@/views/EventsCreateView.vue'),
                 meta: {
-                  guards: [adminRoute],
+                  guards: [moderatorRoute],
                 },
               },
               {
@@ -77,7 +77,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
                 name: 'events.edit',
                 component: () => import('@/views/EventsEditView.vue'),
                 meta: {
-                  guards: [adminRoute],
+                  guards: [moderatorRoute],
                 },
               },
             ],

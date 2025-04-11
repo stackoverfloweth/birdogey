@@ -40,8 +40,9 @@ export const handler: Handler = Api('POST', '/users-attempt-login', (__, body) =
 
     const user = {
       ...userAccount,
-      isAdmin: 'name' in userAccount,
       isAuthorized: true,
+      isAdmin: userAccount.isAdmin ?? false,
+      isReadonly: userAccount.isReadonly ?? false,
       seasons: userAccount.seasons ?? [],
     }
 
@@ -70,6 +71,7 @@ async function checkReadonlyPassword(password: string, db: Db): Promise<UserAuth
   return {
     _id: new ObjectId(),
     isAuthorized: true,
+    isReadonly: true,
     seasons: [season],
   }
 }

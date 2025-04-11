@@ -8,6 +8,7 @@ export const auth = reactive<User>({
   id: undefined,
   isAdmin: false,
   isAuthorized: false,
+  isReadonly: true,
   seasons: [],
   token: undefined,
 })
@@ -45,6 +46,7 @@ export function clearStoredAuth(): void {
     id: undefined,
     isAdmin: false,
     isAuthorized: false,
+    isReadonly: true,
     seasons: [],
     token: undefined,
   })

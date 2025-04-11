@@ -6,5 +6,6 @@ export type User = {
   name?: string,
   isAdmin: boolean,
   isAuthorized: boolean,
+  isReadonly: boolean,
   seasons: Season[],
 }
