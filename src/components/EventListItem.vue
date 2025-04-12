@@ -75,8 +75,20 @@
   flex-shrink: 0;
   border-radius: 100%;
   margin: 3px;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.5);
   background-color: var(--p-color-sentiment-positive);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5);
+  }
 }
 
 .event-list-item__payout-summary {
