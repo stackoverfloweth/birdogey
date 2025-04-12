@@ -32,6 +32,12 @@
 
     eventSubscription.refresh()
   }
+
+  function cancel(): void {
+    eventSubscription.refresh()
+
+    router.push(routes.event(eventId.value))
+  }
 </script>
 
 <template>
@@ -39,7 +45,7 @@
     <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: routes.events(seasonId) }, { text: event?.name ?? '...' }]" />
 
     <template v-if="event">
-      <EventManage :event="event" @save="saveEvent" @complete="completeEvent" @cancel="router.back" />
+      <EventManage :event="event" @save="saveEvent" @complete="completeEvent" @cancel="cancel" />
     </template>
   </div>
 </template>
