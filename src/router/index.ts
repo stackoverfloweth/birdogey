@@ -2,6 +2,7 @@ import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { protectedRoute, savedRoute, moderatorRoute } from '@/router/guards'
 import { NamedRoute, NamedRouteRecord } from '@/router/routes'
 import { RouteGuardExecutioner } from '@/services'
+import { cacheSeasonId } from '@/router/guards/cacheSeasonId'
 
 const routes: NamedRouteRecord<NamedRoute>[] = [
   {
@@ -17,7 +18,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
   {
     path: '/',
     meta: {
-      guards: [protectedRoute, savedRoute],
+      guards: [protectedRoute, savedRoute, cacheSeasonId],
     },
     children: [
       {

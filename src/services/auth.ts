@@ -1,8 +1,7 @@
 import { reactive } from 'vue'
 import { User } from '@/models'
 import { CreateApi } from '@/services'
-
-const TOKEN_STORAGE_KEY = 'birdogey_token'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 
 export const auth = reactive<User>({
   id: undefined,
@@ -13,12 +12,12 @@ export const auth = reactive<User>({
   token: undefined,
 })
 
+const { value: storedToken, set: setStoredToken, remove: removeStoredToken } = useLocalStorage('BIRDOGEY_TOKEN')
+
 export async function initAuthFromStorage(api: CreateApi): Promise<void> {
   try {
-    const token = localStorage.getItem(TOKEN_STORAGE_KEY)
-
-    if (token) {
-      Object.assign(auth, { token })
+    if (storedToken.value) {
+      Object.assign(auth, { token: storedToken })
 
       const user = await api.users.refreshLogin()
       Object.assign(auth, user)
@@ -32,7 +31,7 @@ export async function initAuthFromStorage(api: CreateApi): Promise<void> {
 function saveAuthToStorage(userData: User): void {
   try {
     if (userData.token) {
-      localStorage.setItem(TOKEN_STORAGE_KEY, userData.token)
+      setStoredToken(userData.token)
     }
   } catch (error) {
     console.error('Error saving auth to storage:', error)
@@ -40,7 +39,7 @@ function saveAuthToStorage(userData: User): void {
 }
 
 export function clearStoredAuth(): void {
-  localStorage.removeItem(TOKEN_STORAGE_KEY)
+  removeStoredToken()
 
   Object.assign(auth, {
     id: undefined,
