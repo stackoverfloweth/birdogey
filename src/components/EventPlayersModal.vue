@@ -54,7 +54,13 @@
 </script>
 
 <template>
-  <p-modal v-model:show-modal="isOpen" title="Event Players" class="event-players-modal" auto-close>
+  <p-modal
+    v-model:show-modal="isOpen"
+    title="Event Players"
+    class="event-players-modal"
+    auto-close
+    hide-close-button
+  >
     <div class="event-players-modal__players">
       <template v-for="player in players.toSorted(sortPlayers)" :key="player.id">
         <button type="button" class="event-players-modal__player" :class="{ 'event-players-modal__player--selected': isSelected(player.id) }" @click="togglePlayer(player.id)">
@@ -66,6 +72,16 @@
         </button>
       </template>
     </div>
+
+    <template #cancel>
+      <span />
+    </template>
+
+    <template #actions="{ close }">
+      <p-button @click="close">
+        Done
+      </p-button>
+    </template>
   </p-modal>
 </template>
 
@@ -95,5 +111,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+}
+
+.event-players-modal .p-modal__footer {
+  display: flex;
 }
 </style>
