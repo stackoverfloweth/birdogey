@@ -1,15 +1,14 @@
 <script lang="ts" setup>
   import { computed, ref } from 'vue'
-  import { useRoute, RouteLocationNormalized } from 'vue-router'
+  import { RouteLocationRaw } from 'vue-router'
   import { Season } from '@/models'
   import { auth } from '@/services'
   import { isSame } from '@/utilities'
+  import { routes } from '@/router/routes'
 
   defineProps<{
     seasonId: string | null | undefined,
   }>()
-
-  const route = useRoute()
 
   const seasons = ref<Season[]>([])
 
@@ -27,8 +26,8 @@
     }, new Map<string, Season[]>())
   })
 
-  function routeWithSeason(seasonId: string): RouteLocationNormalized {
-    return { ...route, params: { seasonId }, query: {} }
+  function routeWithSeason(seasonId: string): RouteLocationRaw {
+    return routes.home(seasonId)
   }
 </script>
 
