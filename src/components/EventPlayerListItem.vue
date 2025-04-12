@@ -11,7 +11,6 @@
     disabled?: boolean,
     eventPlayer: EventPlayerRequest,
     player?: Player,
-    inScoringMode?: boolean,
   }>()
 
   const emit = defineEmits<{
@@ -44,7 +43,6 @@
     tag: {
       'event-player-list-item__tag--disabled': props.disabled,
       'event-player-list-item__tag--has-new-tag': hasNewTag.value,
-      'event-player-list-item__tag--in-scoring-mode': props.inScoringMode,
     },
   }))
 
@@ -66,13 +64,13 @@
 
 <template>
   <div class="event-player-list-item">
-    <div class="event-player-list-item__tags-container">
-      <div class="event-player-list-item__tag" :class="classes.tag" @click="tryShowEditTagModal">
+    <div class="event-player-list-item__tags-container" @click="tryShowEditTagModal">
+      <div class="event-player-list-item__tag event-player-list-item__tag--incoming" :class="classes.tag">
         {{ incomingTagId }}
       </div>
 
-      <div v-if="outgoingTagId" class="event-player-list-item__tag event-player-list-item__tag--outgoing" :class="classes.tag">
-        {{ outgoingTagId }}
+      <div class="event-player-list-item__tag event-player-list-item__tag--outgoing" :class="classes.tag">
+        {{ outgoingTagId ?? '--' }}
       </div>
     </div>
 
@@ -90,25 +88,23 @@
       </div>
 
       <div class="event-player-list-item__score-container">
-        <p-label v-if="disabled || inScoringMode" class="event-player-list-item__score-input" :message="scoreErrorMessage" :state="scoreState">
+        <p-label class="event-player-list-item__score-input" :message="scoreErrorMessage" :state="scoreState">
           <template #default="{ id }">
             <ScoreInput :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
           </template>
         </p-label>
 
-        <template v-if="disabled || !inScoringMode">
-          <p-label label="Ctp" class="event-player-list-item__toggle">
-            <template #default="{ id }">
-              <p-toggle :id="id" v-model="inForCtp" :disabled="disabled" />
-            </template>
-          </p-label>
+        <p-label label="Ctp" class="event-player-list-item__toggle">
+          <template #default="{ id }">
+            <p-toggle :id="id" v-model="inForCtp" :disabled="disabled" />
+          </template>
+        </p-label>
 
-          <p-label label="Ace" class="event-player-list-item__toggle">
-            <template #default="{ id }">
-              <p-toggle :id="id" v-model="inForAce" :disabled="disabled" />
-            </template>
-          </p-label>
-        </template>
+        <p-label label="Ace" class="event-player-list-item__toggle">
+          <template #default="{ id }">
+            <p-toggle :id="id" v-model="inForAce" :disabled="disabled" />
+          </template>
+        </p-label>
       </div>
     </p-list-item>
 
@@ -136,7 +132,7 @@
 .event-player-list-item__tags-container {
   grid-area: tag;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .event-player-list-item__tag {
@@ -158,9 +154,16 @@
   background: var(--tag-bg-color);
 }
 
+.event-player-list-item__tag--incoming {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 .event-player-list-item__tag--outgoing {
   --tag-color: var(--p-color-bg-1);
   --tag-bg-color: var(--p-color-button-primary-bg);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .event-player-list-item__tag--disabled {

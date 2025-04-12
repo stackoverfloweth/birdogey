@@ -92,6 +92,7 @@
 
 .score-input__formatted--disabled {
   cursor: not-allowed;
+  opacity: .5;
 }
 
 .score-input .p-number-input__control {

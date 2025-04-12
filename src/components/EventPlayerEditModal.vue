@@ -51,15 +51,15 @@
   <p-modal v-model:show-modal="isOpen" title="Set Tag #" class="event-player-edit-modal" auto-close>
     <p-form @submit="submit">
       <div class="event-player-edit-modal__form">
-        <p-label class="event-player-edit-modal__form-outgoing-tag-id" label="Outgoing Tag #">
-          <template #default="{ id }">
-            <p-number-input :id="id" v-model="outgoingTagId" :min="0" />
-          </template>
-        </p-label>
-
         <p-label class="event-player-edit-modal__form-incoming-tag-id" label="Incoming Tag #">
           <template #default="{ id }">
             <p-number-input :id="id" v-model="incomingTagId" :min="0" />
+          </template>
+        </p-label>
+
+        <p-label class="event-player-edit-modal__form-outgoing-tag-id" label="Outgoing Tag #">
+          <template #default="{ id }">
+            <p-number-input :id="id" v-model="outgoingTagId" :min="0" />
           </template>
         </p-label>
       </div>

@@ -95,7 +95,6 @@
   })
 
   const { value: showingPlayersModal, setTrue: showPlayersModal } = useBoolean()
-  const { value: inScoringMode, toggle: toggleScoringMode } = useBoolean()
 
   const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.playerId === player.id)))
   const playersInOptions = computed(() => sortByName(playersIn.value)
@@ -189,12 +188,12 @@
 
     <template v-else>
       <div v-if="!disabled" class="event-manage__actions">
-        <p-button icon="UserGroupIcon" @click="showPlayersModal">
-          Players
+        <p-button icon="ArrowLeftIcon" @click="emit('cancel')">
+          Cancel
         </p-button>
 
-        <p-button icon="PencilSquareIcon" @click="toggleScoringMode">
-          {{ inScoringMode ? 'Setup' : 'Scoring' }}
+        <p-button icon="UserGroupIcon" @click="showPlayersModal">
+          Players
         </p-button>
 
         <p-button icon="CloudArrowDownIcon" @click="updateEvent">
@@ -209,7 +208,6 @@
               v-model:event-player="eventPlayers[index]"
               :disabled="disabled"
               :player="getPlayer(eventPlayer.playerId)"
-              :in-scoring-mode="inScoringMode"
             />
           </template>
         </div>
