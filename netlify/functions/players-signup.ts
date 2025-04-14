@@ -45,4 +45,4 @@ export const handler: Handler = Api('POST', 'players-signup', (args, body) => as
   } finally {
     await client.close()
   }
-})
+}, { isPublic: true })
