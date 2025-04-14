@@ -3,6 +3,7 @@ import { protectedRoute, savedRoute, moderatorRoute } from '@/router/guards'
 import { NamedRoute, NamedRouteRecord } from '@/router/routes'
 import { RouteGuardExecutioner } from '@/services'
 import { cacheSeasonId } from '@/router/guards/cacheSeasonId'
+import { signupVerify } from '@/router/guards/signupVerify'
 
 const routes: NamedRouteRecord<NamedRoute>[] = [
   {
@@ -14,6 +15,14 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
     path: '/logout',
     name: 'logout',
     component: () => import('@/views/LogoutView.vue'),
+  },
+  {
+    path: '/sign-up/:key',
+    name: 'signup',
+    component: () => import('@/views/PlayerSignUp.vue'),
+    meta: {
+      guards: [signupVerify],
+    },
   },
   {
     path: '/',

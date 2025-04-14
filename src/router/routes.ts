@@ -7,6 +7,7 @@ type RouteFunctionRecord = Record<string, RouteFunction>
 export const routes = {
   login: () => ({ name: 'login' } as const),
   logout: () => ({ name: 'logout' } as const),
+  signup: (key: string) => ({ name: 'signup', params: { key } } as const),
   home: (seasonId?: string) => ({ name: 'home', params: { seasonId } } as const),
   events: (seasonId: string) => ({ name: 'events.list', params: { seasonId } } as const),
   event: (eventId: string) => ({ name: 'events.view', params: { eventId } } as const),

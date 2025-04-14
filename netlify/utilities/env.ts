@@ -6,6 +6,7 @@ export type Env = {
   imagekitPublicKey: string,
   imagekitPrivateKey: string,
   jwtSecret: string,
+  recaptchaSecret: string,
 }
 
 export function env(): Env {
@@ -17,5 +18,6 @@ export function env(): Env {
     imagekitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY ?? '',
     imagekitPrivateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? '',
     jwtSecret: process.env.JWT_SECRET ?? '',
+    recaptchaSecret: process.env.RECAPTCHA_SECRET ?? '',
   }
 }

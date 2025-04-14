@@ -8,6 +8,7 @@ import { auth, initAuthFromStorage } from '@/services/auth'
 import { ApiConfig } from '@/services/api'
 import { apiKey, createApi } from '@/services/createApi'
 import { env } from '@/utilities/env'
+import { install as VueRecaptcha } from 'vue3-recaptcha-v2'
 
 import '@prefecthq/prefect-design/dist/style.css'
 import '@/styles/index.css'
@@ -35,4 +36,5 @@ const app = createApp(App)
 app.provide(apiKey, api)
 app.use(router)
 app.use(PrefectDesign)
+app.use(VueRecaptcha, { sitekey: env().recaptchaSiteKey })
 app.mount('#app')

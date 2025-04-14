@@ -12,4 +12,8 @@ export class UserApi extends Api {
     return this.post<UserAuthResponse>('users-refresh-login')
       .then(({ data }) => mapper.map('UserAuthResponse', data, 'User'))
   }
+
+  public verifyRecaptcha(recaptchaToken: string, key: string): Promise<void> {
+    return this.post('recaptcha-verify', { recaptchaToken, key })
+  }
 }
