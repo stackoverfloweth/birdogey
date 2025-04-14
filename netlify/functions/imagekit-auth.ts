@@ -13,4 +13,4 @@ export const handler: Handler = Api('GET', 'imagekit-auth', () => () => {
     statusCode: 200,
     body: JSON.stringify(imagekit.getAuthenticationParameters()),
   })
-})
+}, { isPublic: true })
