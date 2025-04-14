@@ -50,13 +50,13 @@
 
     <p-label class="player-form__name" label="First Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="firstName" :disabled="auth.isReadonly" :state="nameState" />
+        <p-text-input :id="id" v-model="firstName" :state="nameState" />
       </template>
     </p-label>
 
     <p-label class="player-form__name" label="Last Name">
       <template #default="{ id }">
-        <p-text-input :id="id" v-model="lastName" :disabled="auth.isReadonly" />
+        <p-text-input :id="id" v-model="lastName" />
       </template>
     </p-label>
 
@@ -65,7 +65,7 @@
         Cancel
       </p-button>
 
-      <p-button :loading="loading" type="submit" :disabled="auth.isReadonly || pending" primary>
+      <p-button :loading="loading" type="submit" :disabled="pending" primary>
         Sign Up
       </p-button>
     </template>
