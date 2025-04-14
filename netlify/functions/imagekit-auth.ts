@@ -3,7 +3,6 @@ import ImageKit from 'imagekit'
 import { Api, env } from '../utilities'
 
 export const handler: Handler = Api('GET', 'imagekit-auth', () => () => {
-  console.log('imagekitPrivateKey', env().imagekitUrl)
   const imagekit = new ImageKit({
     urlEndpoint: env().imagekitUrl,
     publicKey: env().imagekitPublicKey,
