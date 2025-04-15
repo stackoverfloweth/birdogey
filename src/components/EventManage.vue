@@ -230,12 +230,12 @@
           <h2>CTP ({{ penniesToUSD(ctpInPennies) }})</h2>
 
           <p-label label="Per Player">
-            <p-number-input v-model="ctpPerPlayer" :disabled="disabled" prepend="$" />
+            <p-number-input v-model="ctpPerPlayer" :disabled="disabled" prepend="$" step="0.01" />
           </p-label>
 
           <p-label label="Starting balance">
             <template #default="{ id }">
-              <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
+              <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" step="0.01" />
             </template>
           </p-label>
 
@@ -256,12 +256,12 @@
           <h2>ACE ({{ penniesToUSD(aceInPennies) }})</h2>
 
           <p-label label="Per Player">
-            <p-number-input v-model="acePerPlayer" :disabled="disabled" prepend="$" />
+            <p-number-input v-model="acePerPlayer" :disabled="disabled" prepend="$" step="0.01" />
           </p-label>
 
           <p-label label="Starting balance">
             <template #default="{ id }">
-              <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
+              <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" step="0.01" />
             </template>
           </p-label>
 

@@ -14,7 +14,7 @@ export const handler: Handler = Api<Partial<EventRequest>>('PUT', 'events-update
     const db = client.db(env().mongodbName)
     const collection = db.collection<EventResponse>('events')
 
-    const players = body.players?.map(eventPlayer => ({
+    const players = body.players?.map((eventPlayer) => ({
       ...eventPlayer,
       _id: new ObjectId(),
       playerId: new ObjectId(eventPlayer.playerId),
@@ -22,14 +22,16 @@ export const handler: Handler = Api<Partial<EventRequest>>('PUT', 'events-update
       inForAce: eventPlayer.inForAce ?? false,
     })) ?? []
 
-    const ctpPlayerIds = body.ctpPlayerIds?.map(playerId => new ObjectId(playerId)) ?? []
-    const acePlayerIds = body.acePlayerIds?.map(playerId => new ObjectId(playerId)) ?? []
+    const ctpPlayerIds = body.ctpPlayerIds?.map((playerId) => new ObjectId(playerId)) ?? []
+    const acePlayerIds = body.acePlayerIds?.map((playerId) => new ObjectId(playerId)) ?? []
 
     const result = await collection.updateOne({ _id: new ObjectId(id) }, {
       $set: {
         notes: body.notes,
         ctpStartingBalance: body.ctpStartingBalance,
         aceStartingBalance: body.aceStartingBalance,
+        ctpPerPlayer: body.ctpPerPlayer,
+        acePerPlayer: body.acePerPlayer,
         players,
         ctpPlayerIds,
         acePlayerIds,

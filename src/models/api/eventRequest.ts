@@ -5,6 +5,8 @@ export type EventRequest = Omit<EventResponse, '_id' | 'seasonId' | 'players' | 
   players?: EventPlayerRequest[],
   ctpStartingBalance?: number,
   aceStartingBalance?: number,
+  ctpPerPlayer?: number,
+  acePerPlayer?: number,
   ctpPlayerIds?: string[],
   acePlayerIds?: string[],
 }
