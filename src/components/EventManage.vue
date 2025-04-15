@@ -34,6 +34,8 @@
   const acePlayerIds = ref(props.event.acePlayerIds)
   const ctpStartingBalance = ref(props.event.ctpStartingBalance / 100)
   const aceStartingBalance = ref(props.event.aceStartingBalance / 100)
+  const ctpPerPlayer = ref(props.event.ctpPerPlayer / 100)
+  const acePerPlayer = ref(props.event.acePerPlayer / 100)
   const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
 
   const { validate, pending } = useValidationObserver()
@@ -136,6 +138,8 @@
       acePlayerIds: acePlayerIds.value,
       ctpStartingBalance: ctpStartingBalance.value * 100,
       aceStartingBalance: aceStartingBalance.value * 100,
+      ctpPerPlayer: ctpPerPlayer.value * 100,
+      acePerPlayer: acePerPlayer.value * 100,
     }
 
     emit('save', request)
@@ -222,41 +226,57 @@
       </p-label>
 
       <div class="event-manage__lower-form-2-col">
-        <p-label :label="`CTP (${penniesToUSD(ctpInPennies)})`" description="starting balance">
-          <template #default="{ id }">
-            <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
-          </template>
-        </p-label>
+        <div class="event-manage__lower-form-2-col-item">
+          <h2>CTP ({{ penniesToUSD(ctpInPennies) }})</h2>
 
-        <p-label :label="`ACE (${penniesToUSD(aceInPennies)})`" description="starting balance">
-          <template #default="{ id }">
-            <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
-          </template>
-        </p-label>
+          <p-label label="Per Player">
+            <p-number-input v-model="ctpPerPlayer" :disabled="disabled" prepend="$" />
+          </p-label>
 
-        <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
-          <template #default="{ id }">
-            <p-select
-              :id="id"
-              v-model="ctpPlayerIds"
-              :disabled="disabled"
-              :options="playersInOptions"
-              :state="ctpPlayerIdsState"
-            />
-          </template>
-        </p-label>
+          <p-label label="Starting balance">
+            <template #default="{ id }">
+              <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
+            </template>
+          </p-label>
 
-        <p-label label="Any aces?" :message="acePlayerIdsMessage" :state="acePlayerIdsState">
-          <template #default="{ id }">
-            <p-select
-              :id="id"
-              v-model="acePlayerIds"
-              :disabled="disabled"
-              :options="playersInOptions"
-              :state="acePlayerIdsState"
-            />
-          </template>
-        </p-label>
+          <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
+            <template #default="{ id }">
+              <p-select
+                :id="id"
+                v-model="ctpPlayerIds"
+                :disabled="disabled"
+                :options="playersInOptions"
+                :state="ctpPlayerIdsState"
+              />
+            </template>
+          </p-label>
+        </div>
+
+        <div class="event-manage__lower-form-2-col-item">
+          <h2>ACE ({{ penniesToUSD(aceInPennies) }})</h2>
+
+          <p-label label="Per Player">
+            <p-number-input v-model="acePerPlayer" :disabled="disabled" prepend="$" />
+          </p-label>
+
+          <p-label label="Starting balance">
+            <template #default="{ id }">
+              <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
+            </template>
+          </p-label>
+
+          <p-label label="Any aces?" :message="acePlayerIdsMessage" :state="acePlayerIdsState">
+            <template #default="{ id }">
+              <p-select
+                :id="id"
+                v-model="acePlayerIds"
+                :disabled="disabled"
+                :options="playersInOptions"
+                :state="acePlayerIdsState"
+              />
+            </template>
+          </p-label>
+        </div>
       </div>
 
       <div v-if="!disabled" class="event-manage__lower-form-actions">
@@ -317,6 +337,12 @@
   display: grid;
   gap: var(--space-md);
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.event-manage__lower-form-2-col-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
 .event-manage__lower-form-actions {
