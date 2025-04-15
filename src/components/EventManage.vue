@@ -212,6 +212,8 @@
               v-model:event-player="eventPlayers[index]"
               :disabled="disabled"
               :player="getPlayer(eventPlayer.playerId)"
+              :won-ctp="ctpPlayerIds.includes(eventPlayer.playerId)"
+              :won-ace="acePlayerIds.includes(eventPlayer.playerId)"
             />
           </template>
         </div>

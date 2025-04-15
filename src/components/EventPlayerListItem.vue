@@ -11,6 +11,8 @@
     disabled?: boolean,
     eventPlayer: EventPlayerRequest,
     player?: Player,
+    wonCtp?: boolean,
+    wonAce?: boolean,
   }>()
 
   const emit = defineEmits<{
@@ -43,6 +45,12 @@
     tag: {
       'event-player-list-item__tag--disabled': props.disabled,
       'event-player-list-item__tag--has-new-tag': hasNewTag.value,
+    },
+    ctp: {
+      'event-player-list-item__toggle--won': props.wonCtp,
+    },
+    ace: {
+      'event-player-list-item__toggle--won': props.wonAce,
     },
   }))
 
@@ -80,6 +88,10 @@
 
     <p-list-item class="event-player-list-item__player" :class="classes.player">
       <div v-if="player" class="event-player-list-item__name" @click="tryShowEditPlayerModal">
+        <template v-if="!player.entryPaid">
+          <p-tag icon="ExclamationCircleIcon" label="Not Paid" class="event-player-list-item__entry-not-paid" />
+        </template>
+
         {{ player.name }}
       </div>
 
@@ -94,13 +106,13 @@
           </template>
         </p-label>
 
-        <p-label label="Ctp" class="event-player-list-item__toggle">
+        <p-label label="Ctp" class="event-player-list-item__toggle" :class="classes.ctp">
           <template #default="{ id }">
             <p-toggle :id="id" v-model="inForCtp" :disabled="disabled" />
           </template>
         </p-label>
 
-        <p-label label="Ace" class="event-player-list-item__toggle">
+        <p-label label="Ace" class="event-player-list-item__toggle" :class="classes.ace">
           <template #default="{ id }">
             <p-toggle :id="id" v-model="inForAce" :disabled="disabled" />
           </template>
@@ -178,15 +190,26 @@
   --p-color-toggle-bg-checked: var(--p-color-button-primary-bg);
 
   grid-area: player;
+  position: relative;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: var(--space-xs);
+  border: 1px solid transparent;
 }
 
 .event-player-list-item__player--not-paid {
-  --p-color-toggle-bg-checked: var(--p-color-sentiment-negative);
+  border-color: var(--p-color-sentiment-negative);
+}
+
+.event-player-list-item__entry-not-paid {
+  position: absolute;
+  color: white;
+  background-color: var(--p-color-sentiment-negative);
+  font-weight: 100;
+  right: .75rem;
+  top: .75rem;
 }
 
 .event-player-list-item__name {
@@ -221,11 +244,9 @@
   align-items: center;
 }
 
-.event-player-list-item__entry-not-paid {
-  border-radius: 100%;
-  overflow: hidden;
-  background-color: var(--p-color-message-warning-bg);
-  color: var(--p-color-message-warning-text);
+.event-player-list-item__toggle--won {
+  color: var(--p-color-message-warning-bg);
+  --p-color-toggle-bg-checked: var(--p-color-message-warning-bg);
 }
 
 .event-player-list-item__name--not-found {
