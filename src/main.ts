@@ -38,6 +38,7 @@ const app = createApp(App)
 Sentry.init({
   app,
   dsn: env().sentryDsn,
+  environment: env().prod ? 'production' : 'development',
 })
 
 app.provide(apiKey, api)
