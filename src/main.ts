@@ -9,6 +9,7 @@ import { ApiConfig } from '@/services/api'
 import { apiKey, createApi } from '@/services/createApi'
 import { env } from '@/utilities/env'
 import { install as VueRecaptcha } from 'vue3-recaptcha-v2'
+import * as Sentry from '@sentry/vue'
 
 import '@prefecthq/prefect-design/dist/style.css'
 import '@/styles/index.css'
@@ -33,6 +34,12 @@ const api = createApi(config)
 await initAuthFromStorage(api)
 
 const app = createApp(App)
+
+Sentry.init({
+  app,
+  dsn: env().sentryDsn,
+})
+
 app.provide(apiKey, api)
 app.use(router)
 app.use(PrefectDesign)

@@ -5,6 +5,7 @@ export type Env = {
   imagekitPublicKey: string,
   imagekitUrl: string,
   recaptchaSiteKey: string,
+  sentryDsn: string,
 }
 
 export function env(): Env {
@@ -15,5 +16,6 @@ export function env(): Env {
     imagekitUrl: import.meta.env.VITE_IMAGEKIT_URL,
     recaptchaSiteKey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
     prod: import.meta.env.PROD,
+    sentryDsn: import.meta.env.VITE_SENTRY_DSN,
   }
 }
