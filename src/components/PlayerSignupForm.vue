@@ -3,7 +3,6 @@
   import { computed, ref } from 'vue'
   import PlayerImageUpload from '@/components/PlayerImageUpload.vue'
   import { PlayerSignupRequest } from '@/models'
-  import { auth } from '@/services'
 
   const { signupKey, loading } = defineProps<{
     loading?: boolean,

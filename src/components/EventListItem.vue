@@ -33,12 +33,19 @@
       <span class="event-list-item__name-value">{{ event.name }}</span>
     </div>
 
-    <div class="event-list-item__payout-summary">
+    <div class="event-list-item__event-summary">
+      <p-key-value label="#" class="event-list-item__payout" :value="playerNames.length" />
       <p-key-value label="CTP" class="event-list-item__payout" :value="penniesToUSD(ctp)" />
       <p-key-value label="ACE" class="event-list-item__payout" :value="penniesToUSD(ace)" />
     </div>
 
-    <p-tag-wrapper class="event-list-item__players" :tags="playerNames" />
+    <div class="event-list-item__players">
+      <template v-for="player in playerNames" :key="player">
+        <p-tag class="event-list-item__player">
+          {{ player }}
+        </p-tag>
+      </template>
+    </div>
   </p-list-item>
 </template>
 
@@ -47,10 +54,10 @@
   display: grid;
   column-gap: var(--space-sm);
   row-gap: var(--space-xxxs);
-  grid-template-columns: minmax(0, 1fr) 110px;
+  grid-template-columns: minmax(0, 1fr) 120px;
   grid-template-areas:
-    'name payout-summary'
-    'players payout-summary';
+    'name event-summary'
+    'players event-summary';
   cursor: pointer;
 }
 
@@ -91,8 +98,8 @@
   }
 }
 
-.event-list-item__payout-summary {
-  grid-area: payout-summary;
+.event-list-item__event-summary {
+  grid-area: event-summary;
   display: flex;
   gap: var(--space-sm);
 }
@@ -103,6 +110,9 @@
 
 .event-list-item__players {
   grid-area: players;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xxxs);
 }
 
 @container(max-width: 300px) {
@@ -113,7 +123,7 @@
       'players';
   }
 
-  .event-list-item__payout-summary {
+  .event-list-item__event-summary {
     display: none;
   }
 }
