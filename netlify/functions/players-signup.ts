@@ -8,7 +8,6 @@ export const handler: Handler = Api('POST', 'players-signup', (args, body) => as
   if (!isValidRequest<PlayerSignupRequest>(body, [
     ['key', 'string'],
     ['name', 'string'],
-    ['imageUrl', 'string'],
   ])) {
     return { statusCode: 400 }
   }
