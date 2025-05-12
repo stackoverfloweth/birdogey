@@ -22,8 +22,7 @@ export async function initAuthFromStorage(api: CreateApi): Promise<void> {
       const user = await api.users.refreshLogin()
       Object.assign(auth, user)
     }
-  } catch (error) {
-    console.error('Error initializing auth from storage:', error)
+  } catch {
     clearStoredAuth()
   }
 }
