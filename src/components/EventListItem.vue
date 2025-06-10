@@ -5,6 +5,7 @@
   import { Event } from '@/models'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
+  import PlayerImage from '@/components/PlayerImage.vue'
 
   const props = defineProps<{
     event: Event,
@@ -15,8 +16,8 @@
   const playerSubscription = useSubscription(api.players.getList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
-  const playerNames = computed(() => props.event.players.map(({ playerId }) => {
-    return players.value.find((player) => player.id === playerId)?.name ?? 'Player Deleted'
+  const eventPlayers = computed(() => props.event.players.map(({ playerId }) => {
+    return players.value.find((player) => player.id === playerId) ?? { name: 'loading...', imageUrl: undefined }
   }))
 
   const ctp = computed(() => calculateEventCtpPot(props.event))
@@ -34,15 +35,16 @@
     </div>
 
     <div class="event-list-item__event-summary">
-      <p-key-value label="#" class="event-list-item__payout" :value="playerNames.length" />
+      <p-key-value label="#" class="event-list-item__payout" :value="eventPlayers.length" />
       <p-key-value label="CTP" class="event-list-item__payout" :value="penniesToUSD(ctp)" />
       <p-key-value label="ACE" class="event-list-item__payout" :value="penniesToUSD(ace)" />
     </div>
 
     <div class="event-list-item__players">
-      <template v-for="player in playerNames" :key="player">
-        <p-tag class="event-list-item__player">
-          {{ player }}
+      <template v-for="player in eventPlayers" :key="player">
+        <PlayerImage v-if="player.imageUrl" :image-url="player.imageUrl" class="event-list-item__player-image" />
+        <p-tag v-else class="event-list-item__player">
+          {{ player.name }}
         </p-tag>
       </template>
     </div>
@@ -113,6 +115,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xxxs);
+}
+
+.event-list-item__player-image {
+  max-width: 24px;
 }
 
 @container(max-width: 300px) {
