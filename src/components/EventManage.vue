@@ -37,6 +37,11 @@
   const ctpPerPlayer = ref(props.event.ctpPerPlayer / 100)
   const acePerPlayer = ref(props.event.acePerPlayer / 100)
   const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
+  const eventPlayersSorted = computed<Player[]>(() => {
+    return eventPlayers.value
+      .map((player) => players.value.find(({ id }) => id === player.playerId) ?? { name: 'loading...', imageUrl: undefined } as Player)
+      .sort((aPlayer, bPlayer) => aPlayer.name.localeCompare(bPlayer.name))
+  })
 
   const { validate, pending } = useValidationObserver()
 
@@ -120,10 +125,6 @@
     })
   })
 
-  function getPlayer(playerId: string): Player | undefined {
-    return players.value.find(({ id }) => playerId === id)
-  }
-
   function sortByName(players: Player[]): Player[] {
     return players.sort((aPlayer, bPlayer) => {
       return aPlayer.name > bPlayer.name ? 1 : -1
@@ -204,13 +205,13 @@
 
       <template v-if="eventPlayers.length">
         <div class="event-manage__players">
-          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
+          <template v-for="(eventPlayer, index) in eventPlayersSorted" :key="eventPlayer.id">
             <EventPlayerListItem
               v-model:event-player="eventPlayers[index]"
               :disabled="disabled"
-              :player="getPlayer(eventPlayer.playerId)"
-              :won-ctp="ctpPlayerIds.includes(eventPlayer.playerId)"
-              :won-ace="acePlayerIds.includes(eventPlayer.playerId)"
+              :player="eventPlayer"
+              :won-ctp="ctpPlayerIds.includes(eventPlayer.id)"
+              :won-ace="acePlayerIds.includes(eventPlayer.id)"
             />
           </template>
         </div>
