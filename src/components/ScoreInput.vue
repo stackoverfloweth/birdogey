@@ -1,5 +1,7 @@
 <script lang="ts" setup>
   import { computed, useAttrs } from 'vue'
+  import ScoreInputModal from '@/components/ScoreInputModal.vue'
+  import { useBoolean } from '@prefecthq/vue-compositions'
 
   const props = defineProps<{
     disabled?: boolean,
@@ -24,6 +26,7 @@
   })
 
   const attrs = useAttrs()
+  const { value: scoringModalIsOpen, setTrue: openScoringModal } = useBoolean()
 
   const classes = computed(() => ({
     'score-input__formatted--disabled': props.disabled,
@@ -42,20 +45,16 @@
 
     return modelValue.value?.toLocaleString()
   })
-
-  function toggleValue(): void {
-    if (!props.disabled) {
-      modelValue.value = 0
-    }
-  }
 </script>
 
 <template>
   <div class="score-input">
     <p-stepper v-bind="attrs" v-model="modelValue" :disabled="disabled" />
-    <div class="score-input__formatted" :class="classes" @click="toggleValue">
+    <div class="score-input__formatted" :class="classes" @click="openScoringModal">
       {{ formattedValue }}
     </div>
+
+    <ScoreInputModal v-model="modelValue" v-model:is-open="scoringModalIsOpen" />
   </div>
 </template>
 
