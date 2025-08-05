@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { useBoolean, useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
-  import { computed } from 'vue'
+  import { computed, watch } from 'vue'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventManage from '@/components/EventManage.vue'
   import EventsViewMenu from '@/components/EventsViewMenu.vue'
@@ -8,15 +8,23 @@
   import { useApi } from '@/composables'
   import { routes } from '@/router/routes'
   import { auth } from '@/services'
+  import { useRouter } from 'vue-router'
 
   const api = useApi()
   const seasonId = useRouteParam('seasonId')
   const eventId = useRouteParam('eventId')
+  const router = useRouter()
 
   const eventSubscription = useSubscription(api.events.getById, [eventId])
   const event = computed(() => eventSubscription.response ?? null)
 
   const { value: checkinModalVisible, setTrue: showCheckinModal } = useBoolean()
+
+  watch(event, (event) => {
+    if (!event?.completed && !auth.isReadonly) {
+      router.replace(routes.eventEdit(eventId.value))
+    }
+  })
 </script>
 
 <template>
