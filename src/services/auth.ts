@@ -61,6 +61,19 @@ export async function attemptLogin(api: CreateApi, value: string): Promise<boole
   return auth.isAuthorized
 }
 
+export async function refreshAuthToken(api: CreateApi): Promise<User | null> {
+  if (!auth.isAuthorized) {
+    return null
+  }
+
+  const user = await api.users.refreshLogin()
+  Object.assign(auth, user)
+
+  saveAuthToStorage(auth)
+
+  return user
+}
+
 export function getAuthToken(): string | undefined {
   return auth.token
 }

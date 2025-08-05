@@ -1,6 +1,7 @@
 import mapper, { loadProfiles } from '@kitbag/mapper'
 import { plugin as PrefectDesign } from '@prefecthq/prefect-design'
 import { createApp } from 'vue'
+import { VueQueryPlugin } from '@tanstack/vue-query'
 import * as loaded from '@/maps'
 import { router } from '@/router'
 import App from '@/App.vue'
@@ -42,6 +43,7 @@ Sentry.init({
 })
 
 app.provide(apiKey, api)
+app.use(VueQueryPlugin)
 app.use(router)
 app.use(PrefectDesign)
 app.use(VueRecaptcha, { sitekey: env().recaptchaSiteKey })

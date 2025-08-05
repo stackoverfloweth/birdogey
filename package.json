@@ -18,6 +18,7 @@
     "@prefecthq/vue-compositions": "^1.11.5",
     "@sentry/vite-plugin": "^3.3.1",
     "@sentry/vue": "^9.12.0",
+    "@tanstack/vue-query": "^5.83.1",
     "axios": "^1.6.7",
     "date-fns": "3.3.1",
     "imagekitio-vue": "^3.1.0",
