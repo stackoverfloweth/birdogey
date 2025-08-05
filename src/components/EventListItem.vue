@@ -35,18 +35,17 @@
     </div>
 
     <div class="event-list-item__event-summary">
-      <p-key-value label="#" class="event-list-item__payout" :value="eventPlayers.length" />
       <p-key-value label="CTP" class="event-list-item__payout" :value="penniesToUSD(ctp)" />
       <p-key-value label="ACE" class="event-list-item__payout" :value="penniesToUSD(ace)" />
     </div>
 
     <div class="event-list-item__players">
       <template v-for="player in eventPlayers" :key="player">
-        <PlayerImage v-if="player.imageUrl" :image-url="player.imageUrl" class="event-list-item__player-image" />
-        <p-tag v-else class="event-list-item__player">
-          {{ player.name }}
-        </p-tag>
+        <PlayerImage :image-url="player.imageUrl" class="event-list-item__player-image" />
       </template>
+      <p-tag class="event-list-item__player-count">
+        {{ eventPlayers.length }}
+      </p-tag>
     </div>
   </p-list-item>
 </template>
@@ -108,6 +107,17 @@
 
 .event-list-item__payout {
   white-space: nowrap;
+}
+
+.event-list-item__player-count {
+  border-radius: 100%;
+  height: 23px;
+  width: 23px;
+  font-size: var(--text-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dotted var(--p-color-text-default);
 }
 
 .event-list-item__players {
