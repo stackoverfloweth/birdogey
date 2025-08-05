@@ -181,9 +181,6 @@
       v-if="!disabled"
       :season-id="seasonId"
       :players="playersIn"
-      @cancel="emit('cancel')"
-      @save="updateEvent"
-      @complete="completeEvent"
     />
 
     <template v-if="playerSubscription.loading">

@@ -29,7 +29,7 @@
 
 <template>
   <div class="events-view">
-    <EventsViewMenu :event-id="eventId" />
+    <EventsViewMenu :season-id="seasonId" :event-id="eventId" />
     <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: routes.events(seasonId) }, { text: event?.name ?? '...' }]" />
 
     <template v-if="event">

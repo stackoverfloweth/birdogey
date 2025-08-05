@@ -2,10 +2,9 @@
   import AppMenu from '@/components/AppMenu.vue'
   import { routes } from '@/router/routes'
   import { auth } from '@/services'
+  import { useRouteParam } from '@prefecthq/vue-compositions'
 
-  defineProps<{
-    eventId: string,
-  }>()
+  const eventId = useRouteParam('eventId')
 </script>
 
 <template>

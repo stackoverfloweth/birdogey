@@ -5,7 +5,7 @@
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventsList from '@/components/EventsList.vue'
   import EventsListViewEmptyState from '@/components/EventsListViewEmptyState.vue'
-  import EventsListViewMenu from '@/components/EventsListViewMenu.vue'
+  import AppMenu from '@/components/AppMenu.vue'
   import { useApi } from '@/composables'
   import { Event } from '@/models'
   import { routes } from '@/router/routes'
@@ -24,7 +24,7 @@
 
 <template>
   <div class="events-list-view">
-    <EventsListViewMenu :season-id="seasonId" />
+    <AppMenu :season-id="seasonId" />
     <ContextBreadCrumbs :crumbs="[{ text: 'Events' }]" />
 
     <template v-if="eventSubscription.loading">
