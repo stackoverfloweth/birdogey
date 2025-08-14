@@ -77,25 +77,25 @@
     <div class="event-create-form__form-2-col">
       <p-label label="Ctp" description="per player">
         <template #default="{ id }">
-          <p-number-input :id="id" v-model="ctpPerPlayer" :disabled="disabled" prepend="$" />
+          <p-number-input :id="id" v-model="ctpPerPlayer" :disabled="disabled" prepend="$" :step="0.01" />
         </template>
       </p-label>
 
       <p-label label="Ace" description="per player">
         <template #default="{ id }">
-          <p-number-input :id="id" v-model="acePerPlayer" :disabled="disabled" prepend="$" />
+          <p-number-input :id="id" v-model="acePerPlayer" :disabled="disabled" prepend="$" :step="0.01" />
         </template>
       </p-label>
 
       <p-label label="Ctp" description="starting balance">
         <template #default="{ id }">
-          <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" />
+          <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" :step="0.01" />
         </template>
       </p-label>
 
       <p-label label="Ace" description="starting balance">
         <template #default="{ id }">
-          <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" />
+          <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" :step="0.01" />
         </template>
       </p-label>
     </div>

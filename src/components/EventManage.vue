@@ -37,11 +37,6 @@
   const ctpPerPlayer = ref(props.event.ctpPerPlayer / 100)
   const acePerPlayer = ref(props.event.acePerPlayer / 100)
   const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
-  const eventPlayersSorted = computed<Player[]>(() => {
-    return eventPlayers.value
-      .map((player) => players.value.find(({ id }) => id === player.playerId) ?? { name: 'loading...', imageUrl: undefined } as Player)
-      .sort((aPlayer, bPlayer) => aPlayer.name.localeCompare(bPlayer.name))
-  })
 
   const { validate, pending } = useValidationObserver()
 
@@ -111,6 +106,10 @@
     })),
   )
 
+  function getPlayer(playerId: string): Player {
+    return players.value.find((player) => player.id === playerId) ?? { name: 'loading...' } as Player
+  }
+
   const ctpInPennies = computed(() => {
     return calculateEventCtpPot({
       ...props.event,
@@ -172,8 +171,22 @@
     acePlayerIds.value = event.acePlayerIds
     ctpStartingBalance.value = event.ctpStartingBalance / 100
     aceStartingBalance.value = event.aceStartingBalance / 100
-    eventPlayers.value = event.players
-  })
+
+    if (event.completed) {
+      eventPlayers.value = event.players
+    } else {
+      eventPlayers.value = event.players
+        .map((player) => {
+          const { name } = players.value.find(({ id }) => id === player.playerId) ?? { name: 'loading...' }
+
+          return {
+            ...player,
+            name,
+          }
+        })
+        .sort((aPlayer, bPlayer) => aPlayer.name.localeCompare(bPlayer.name))
+    }
+  }, { immediate: true })
 </script>
 
 <template>
@@ -205,13 +218,13 @@
 
       <template v-if="eventPlayers.length">
         <div class="event-manage__players">
-          <template v-for="(eventPlayer, index) in eventPlayersSorted" :key="eventPlayer.id">
+          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
             <EventPlayerListItem
               v-model:event-player="eventPlayers[index]"
               :disabled="disabled"
-              :player="eventPlayer"
-              :won-ctp="ctpPlayerIds.includes(eventPlayer.id)"
-              :won-ace="acePlayerIds.includes(eventPlayer.id)"
+              :player="getPlayer(eventPlayer.playerId)"
+              :won-ctp="ctpPlayerIds.includes(eventPlayer.playerId)"
+              :won-ace="acePlayerIds.includes(eventPlayer.playerId)"
             />
           </template>
         </div>

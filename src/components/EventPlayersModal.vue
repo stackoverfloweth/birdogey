@@ -22,9 +22,10 @@
         return {
           playerId,
           incomingTagId: player?.tagId ?? Infinity,
+          name: player?.name ?? '',
           ...previousEventPlayer,
         }
-      })
+      }).sort((aPlayer, bPlayer) => aPlayer.name.localeCompare(bPlayer.name))
     },
   })
 
