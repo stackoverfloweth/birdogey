@@ -1,0 +1,26 @@
+{
+  "name": "birdogey-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/server/src/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.11.0",
+    "dotenv": "^17.3.1",
+    "hono": "^4.4.0",
+    "imagekit": "^4.1.4",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^20.11.24",
+    "tsc-alias": "^1.8.8",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
