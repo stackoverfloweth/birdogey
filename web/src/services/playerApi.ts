@@ -11,7 +11,7 @@ export class PlayerApi extends Api {
   }
 
   public getList(seasonId: string): Promise<Player[]> {
-    return this.get<PlayerResponse[]>(`?seasonId=${seasonId}`)
+    return this.get<PlayerResponse[]>(undefined, { params: { seasonId } })
       .then(({ data }) => mapper.mapMany('PlayerResponse', data, 'Player'))
   }
 
