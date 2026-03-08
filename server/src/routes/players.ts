@@ -10,14 +10,14 @@ import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
 
 const players = new Hono()
 
-players.get('/', authMiddleware, async (c) => {
-  const seasonId = c.req.query('seasonId')
+players.get('/', authMiddleware, async (context) => {
+  const seasonId = context.req.query('seasonId')
 
   if (!seasonId) {
     throw new HttpError(400, 'seasonId query parameter is required')
   }
 
-  const token = getJwtPayload(c)
+  const token = getJwtPayload(context)
   checkSeasonAccess(seasonId, token)
 
   const db = getDb()
@@ -28,23 +28,23 @@ players.get('/', authMiddleware, async (c) => {
     .sort({ tagId: 1 })
     .toArray()
 
-  return c.json(result)
+  return context.json(result)
 })
 
-players.get('/:id', authMiddleware, async (c) => {
-  const id = c.req.param('id')
+players.get('/:id', authMiddleware, async (context) => {
+  const id = context.req.param('id')
 
   const db = getDb()
   const collection = db.collection<PlayerResponse>('players')
 
   const player = await collection.findOne({ _id: new ObjectId(id) })
 
-  return c.json(player)
+  return context.json(player)
 })
 
-players.post('/', authMiddleware, async (c) => {
-  const body = await c.req.json()
-  const token = getJwtPayload(c)
+players.post('/', authMiddleware, async (context) => {
+  const body = await context.req.json()
+  const token = getJwtPayload(context)
 
   if (!isValidRequest<PlayerRequest>(body, [
     ['seasonId', 'string'],
@@ -69,13 +69,13 @@ players.post('/', authMiddleware, async (c) => {
     entryPaid: body.entryPaid ?? false,
   })
 
-  return c.json(result.insertedId, 201)
+  return context.json(result.insertedId, 201)
 })
 
-players.put('/:id', authMiddleware, async (c) => {
-  const id = c.req.param('id')
-  const body = await c.req.json() as Partial<PlayerRequest>
-  const token = getJwtPayload(c)
+players.put('/:id', authMiddleware, async (context) => {
+  const id = context.req.param('id')
+  const body = await context.req.json() as Partial<PlayerRequest>
+  const token = getJwtPayload(context)
 
   if (!isValidRequest<PlayerRequest>(body, [
     ['seasonId', 'string'],
@@ -92,23 +92,23 @@ players.put('/:id', authMiddleware, async (c) => {
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set })
 
-  return c.json(null, result.acknowledged ? 202 : 400)
+  return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-players.delete('/:id', authMiddleware, async (c) => {
-  const id = c.req.param('id')
+players.delete('/:id', authMiddleware, async (context) => {
+  const id = context.req.param('id')
 
   const db = getDb()
   const collection = db.collection<PlayerResponse>('players')
 
   const result = await collection.deleteOne({ _id: new ObjectId(id) })
 
-  return c.json(null, result.deletedCount === 1 ? 202 : 400)
+  return context.json(null, result.deletedCount === 1 ? 202 : 400)
 })
 
-players.put('/:id/checkin', authMiddleware, async (c) => {
-  const id = c.req.param('id')
-  const body = await c.req.json() as PlayerCheckInRequest
+players.put('/:id/checkin', authMiddleware, async (context) => {
+  const id = context.req.param('id')
+  const body = await context.req.json() as PlayerCheckInRequest
 
   if (!body) {
     throw new HttpError(400, 'Invalid request')
@@ -139,11 +139,11 @@ players.put('/:id/checkin', authMiddleware, async (c) => {
     },
   })
 
-  return c.json(null, result.acknowledged ? 202 : 400)
+  return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-players.post('/signup', async (c) => {
-  const body = await c.req.json()
+players.post('/signup', async (context) => {
+  const body = await context.req.json()
 
   if (!isValidRequest<PlayerSignupRequest>(body, [
     ['key', 'string'],
@@ -174,7 +174,7 @@ players.post('/signup', async (c) => {
     entryPaid: false,
   })
 
-  return c.json(result.insertedId, 201)
+  return context.json(result.insertedId, 201)
 })
 
 export { players }

@@ -8,8 +8,8 @@ import { isValidRequest } from '../utilities/requestValidation.js'
 
 const auth = new Hono()
 
-auth.post('/login', async (c) => {
-  const body = await c.req.json()
+auth.post('/login', async (context) => {
+  const body = await context.req.json()
 
   if (!isValidRequest<{ password: string }>(body, [['password', 'string']])) {
     throw new HttpError(400, 'Invalid request')
@@ -49,16 +49,16 @@ auth.post('/login', async (c) => {
 
   const token = generateToken(user)
 
-  return c.json({ ...user, token })
+  return context.json({ ...user, token })
 })
 
-auth.post('/refresh', authMiddleware, async (c) => {
-  const jwtPayload = getJwtPayload(c)
+auth.post('/refresh', authMiddleware, async (context) => {
+  const jwtPayload = getJwtPayload(context)
   const { iat, exp, ...userPayload } = jwtPayload
 
   const newToken = generateToken(userPayload)
 
-  return c.json({ ...userPayload, token: newToken })
+  return context.json({ ...userPayload, token: newToken })
 })
 
 async function checkReadonlyPassword(password: string, db: Db): Promise<UserAuthResponse | null> {

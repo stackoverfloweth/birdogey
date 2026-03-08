@@ -33,8 +33,6 @@
     "src/**/*.d.ts", 
     "src/**/*.tsx",
     "src/**/*.vue",
-    "netlify/**/**/*.ts",
-    "netlify/functions/hello-world.js",
   ],
   "exclude": ["/node_modules", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

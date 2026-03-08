@@ -31,8 +31,6 @@
     "vue3-recaptcha-v2": "^2.1.0"
   },
   "devDependencies": {
-    "@netlify/functions": "^2.4.1",
-    "@netlify/plugin-emails": "^1.1.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.11.24",
     "@vitejs/plugin-vue": "^5.0.4",

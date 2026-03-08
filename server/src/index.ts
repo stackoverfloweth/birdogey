@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { trimTrailingSlash } from 'hono/trailing-slash'
 import { connectDb, disconnectDb } from './db.js'
 import { env } from './env.js'
 import { errorHandler } from './middleware/errorHandler.js'
@@ -9,6 +10,7 @@ import { routes } from './routes/index.js'
 
 const app = new Hono()
 
+app.use(trimTrailingSlash())
 app.use('*', cors({
   origin: env().corsOrigins,
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

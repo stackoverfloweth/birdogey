@@ -8,8 +8,8 @@ import { isValidRequest } from '../utilities/requestValidation.js'
 
 const recaptcha = new Hono()
 
-recaptcha.post('/verify', async (c) => {
-  const body = await c.req.json()
+recaptcha.post('/verify', async (context) => {
+  const body = await context.req.json()
 
   if (!isValidRequest<RecaptchaVerifyRequest>(body, [
     ['recaptchaToken', 'string'],
@@ -38,7 +38,7 @@ recaptcha.post('/verify', async (c) => {
 
   const exists = await keys.findOne({ _id: new ObjectId(body.key) })
 
-  return c.json(null, exists ? 202 : 404)
+  return context.json(null, exists ? 202 : 404)
 })
 
 export { recaptcha }

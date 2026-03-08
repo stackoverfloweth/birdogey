@@ -4,14 +4,14 @@ import { env } from '../env.js'
 
 const imagekit = new Hono()
 
-imagekit.get('/auth', (c) => {
+imagekit.get('/auth', (context) => {
   const ik = new ImageKit({
     urlEndpoint: env().imagekitUrl,
     publicKey: env().imagekitPublicKey,
     privateKey: env().imagekitPrivateKey,
   })
 
-  return c.json(ik.getAuthenticationParameters())
+  return context.json(ik.getAuthenticationParameters())
 })
 
 export { imagekit }

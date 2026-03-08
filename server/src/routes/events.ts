@@ -11,14 +11,14 @@ const events = new Hono()
 
 events.use(authMiddleware)
 
-events.get('/', async (c) => {
-  const seasonId = c.req.query('seasonId')
+events.get('/', async (context) => {
+  const seasonId = context.req.query('seasonId')
 
   if (!seasonId) {
     throw new HttpError(400, 'seasonId query parameter is required')
   }
 
-  const token = getJwtPayload(c)
+  const token = getJwtPayload(context)
   checkSeasonAccess(seasonId, token)
 
   const db = getDb()
@@ -30,23 +30,23 @@ events.get('/', async (c) => {
     .sort({ created: -1 })
     .toArray()
 
-  return c.json(result)
+  return context.json(result)
 })
 
-events.get('/:id', async (c) => {
-  const id = c.req.param('id')
+events.get('/:id', async (context) => {
+  const id = context.req.param('id')
 
   const db = getDb()
   const collection = db.collection<EventResponse>('events')
 
   const event = await collection.findOne({ _id: new ObjectId(id) })
 
-  return c.json(event)
+  return context.json(event)
 })
 
-events.post('/', async (c) => {
-  const body = await c.req.json()
-  const token = getJwtPayload(c)
+events.post('/', async (context) => {
+  const body = await context.req.json()
+  const token = getJwtPayload(context)
 
   if (!isValidRequest<EventRequest>(body, [
     ['seasonId', 'string'],
@@ -83,12 +83,12 @@ events.post('/', async (c) => {
     players,
   })
 
-  return c.json(result.insertedId, 201)
+  return context.json(result.insertedId, 201)
 })
 
-events.put('/:id', async (c) => {
-  const id = c.req.param('id')
-  const body = await c.req.json() as Partial<EventRequest>
+events.put('/:id', async (context) => {
+  const id = context.req.param('id')
+  const body = await context.req.json() as Partial<EventRequest>
 
   if (!body) {
     throw new HttpError(400, 'Invalid request')
@@ -121,12 +121,12 @@ events.put('/:id', async (c) => {
     },
   })
 
-  return c.json(null, result.acknowledged ? 202 : 400)
+  return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-events.put('/:id/complete', async (c) => {
-  const id = c.req.param('id')
-  const body = await c.req.json() as Partial<EventRequest>
+events.put('/:id/complete', async (context) => {
+  const id = context.req.param('id')
+  const body = await context.req.json() as Partial<EventRequest>
 
   if (!body) {
     throw new HttpError(400, 'Invalid request')
@@ -163,18 +163,18 @@ events.put('/:id/complete', async (c) => {
 
   await updatePlayerTags(db, players)
 
-  return c.json(null, result.acknowledged ? 202 : 400)
+  return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-events.delete('/:id', async (c) => {
-  const id = c.req.param('id')
+events.delete('/:id', async (context) => {
+  const id = context.req.param('id')
 
   const db = getDb()
   const collection = db.collection<EventResponse>('events')
 
   const result = await collection.deleteOne({ _id: new ObjectId(id) })
 
-  return c.json(null, result.deletedCount === 1 ? 202 : 400)
+  return context.json(null, result.deletedCount === 1 ? 202 : 400)
 })
 
 function updatePlayerTags(db: Db, players: EventPlayerResponse[]): Promise<BulkWriteResult> {

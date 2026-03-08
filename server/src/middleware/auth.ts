@@ -27,8 +27,8 @@ function extractTokenFromHeader(authHeader?: string): string | null {
   return authHeader.substring(7)
 }
 
-export const authMiddleware: MiddlewareHandler = async (c, next) => {
-  const token = extractTokenFromHeader(c.req.header('authorization'))
+export const authMiddleware: MiddlewareHandler = async (context, next) => {
+  const token = extractTokenFromHeader(context.req.header('authorization'))
 
   if (!token) {
     throw new HttpError(401, 'Authentication required')
@@ -40,11 +40,11 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
     throw new HttpError(401, 'Invalid or expired token')
   }
 
-  c.set('jwtPayload', jwtPayload)
+  context.set('jwtPayload', jwtPayload)
 
   await next()
 }
 
-export function getJwtPayload(c: Context): JwtPayload {
-  return c.get('jwtPayload') as JwtPayload
+export function getJwtPayload({ get }: Context): JwtPayload {
+  return get('jwtPayload') as JwtPayload
 }
