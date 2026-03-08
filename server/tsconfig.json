@@ -14,10 +14,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "paths": {
-      "@/*": ["../src/*"]
+      "@/*": ["../web/src/*"]
     },
     "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "../src/models/**/*.ts"],
+  "include": ["src/**/*.ts", "../web/src/models/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

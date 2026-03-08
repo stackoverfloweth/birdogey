@@ -13,7 +13,7 @@ RUN npm ci
 WORKDIR /app
 COPY server/tsconfig.json ./server/
 COPY server/src/ ./server/src/
-COPY src/models/ ./src/models/
+COPY web/src/models/ ./src/models/
 
 # Build
 WORKDIR /app/server
