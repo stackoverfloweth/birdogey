@@ -15,6 +15,9 @@ COPY server/tsconfig.json ./server/
 COPY server/src/ ./server/src/
 COPY web/src/models/ ./web/src/models/
 
+# Make server deps resolvable from shared model files
+RUN ln -s /app/server/node_modules /app/node_modules
+
 # Build
 WORKDIR /app/server
 RUN npm run build
