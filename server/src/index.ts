@@ -17,7 +17,7 @@ app.use('*', cors({
 
 app.onError(errorHandler)
 
-app.get('/api/health', (c) => c.json({ status: 'ok' }))
+app.get('/api/health', ({ json }) => json({ status: 'ok' }))
 
 app.route('/api', routes)
 
