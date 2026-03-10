@@ -22,6 +22,6 @@ export function env(): Env {
     imagekitPrivateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? '',
     jwtSecret: process.env.JWT_SECRET ?? '',
     recaptchaSecret: process.env.RECAPTCHA_SECRET ?? '',
-    corsOrigins: corsOriginsRaw ? corsOriginsRaw.split(',').map(s => s.trim()) : ['http://localhost:5173'],
+    corsOrigins: corsOriginsRaw ? corsOriginsRaw.split(',').map((origin) => origin.trim()) : ['http://localhost:5173'],
   }
 }

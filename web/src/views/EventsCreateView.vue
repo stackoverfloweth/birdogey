@@ -6,7 +6,7 @@
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventCreateForm from '@/components/EventCreateForm.vue'
   import { useApi } from '@/composables'
-  import { Event, EventRequest } from '@/models'
+  import { Event, EventRequest } from '@birdogey/shared'
   import { routes } from '@/router/routes'
 
   const api = useApi()

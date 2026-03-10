@@ -5,7 +5,7 @@
   import { useRouter } from 'vue-router'
   import PlayerForm from '@/components/PlayerForm.vue'
   import { useApi } from '@/composables'
-  import { PlayerRequest } from '@/models'
+  import { PlayerRequest } from '@birdogey/shared'
   import { routes } from '@/router/routes'
 
   const props = defineProps<{

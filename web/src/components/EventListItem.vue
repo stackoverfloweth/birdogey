@@ -2,7 +2,7 @@
   import { useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import { useApi } from '@/composables'
-  import { Event } from '@/models'
+  import { Event } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
   import PlayerImage from '@/components/PlayerImage.vue'

@@ -1,12 +1,9 @@
-import mapper, { loadProfiles } from '@kitbag/mapper'
 import { plugin as PrefectDesign } from '@prefecthq/prefect-design'
 import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
-import * as loaded from '@/maps'
 import { router } from '@/router'
 import App from '@/App.vue'
 import { auth, initAuthFromStorage } from '@/services/auth'
-import { ApiConfig } from '@/services/api'
 import { apiKey, createApi } from '@/services/createApi'
 import { env } from '@/utilities/env'
 import { install as VueRecaptcha } from 'vue3-recaptcha-v2'
@@ -15,22 +12,10 @@ import * as Sentry from '@sentry/vue'
 import '@prefecthq/prefect-design/dist/style.css'
 import '@/styles/index.css'
 
-const profiles = loadProfiles(loaded)
-
-mapper.register(profiles)
-
-declare module '@kitbag/mapper' {
-  interface Register {
-    profiles: typeof profiles,
-  }
-}
-
-const config: ApiConfig = {
+const api = createApi({
   baseUrl: env().baseApiUrl,
-  token: () => auth.token,
-}
-
-const api = createApi(config)
+  getToken: () => auth.token ?? null,
+})
 
 await initAuthFromStorage(api)
 

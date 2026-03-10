@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { computed, ref } from 'vue'
-  import { EventPlayerRequest } from '@/models'
+  import { EventPlayerRequest } from '@birdogey/shared'
 
   const props = defineProps<{
     isOpen: boolean,

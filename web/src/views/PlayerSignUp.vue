@@ -6,7 +6,7 @@
   import BirdogeyTitle from '@/components/BirdogeyTitle.vue'
   import PlayerSignupForm from '@/components/PlayerSignupForm.vue'
   import { useApi } from '@/composables'
-  import { PlayerSignupRequest } from '@/models/api'
+  import { PlayerSignupRequest } from '@birdogey/shared/api'
   import { useRouter } from 'vue-router'
   import { routes } from '@/router/routes'
 
@@ -52,7 +52,7 @@
   }
 
   async function verifyKeyAfterCaptcha(captchaResponse: string): Promise<void> {
-    await api.users.verifyRecaptcha(captchaResponse, key.value)
+    await api.auth.verifyRecaptcha(captchaResponse, key.value)
   }
 </script>
 

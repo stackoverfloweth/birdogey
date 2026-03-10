@@ -5,7 +5,7 @@
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import { useApi } from '@/composables'
-  import { Event, EventPlayerRequest, EventRequest, Player } from '@/models'
+  import { Event, EventPlayerRequest, EventRequest, Player } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
   import EventPlayersModal from './EventPlayersModal.vue'

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { Player } from '@/models'
+  import { Player } from '@birdogey/shared'
   import PlayerImage from '@/components/PlayerImage.vue'
 
   defineProps<{

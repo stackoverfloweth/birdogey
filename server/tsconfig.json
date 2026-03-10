@@ -5,7 +5,7 @@
     "moduleResolution": "bundler",
     "lib": ["ESNext"],
     "outDir": "./dist",
-    "rootDir": "..",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -13,11 +13,8 @@
     "declaration": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "paths": {
-      "@/*": ["../web/src/*"]
-    },
     "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "../web/src/models/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

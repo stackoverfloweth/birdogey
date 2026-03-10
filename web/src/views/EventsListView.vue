@@ -7,7 +7,7 @@
   import EventsListViewEmptyState from '@/components/EventsListViewEmptyState.vue'
   import AppMenu from '@/components/AppMenu.vue'
   import { useApi } from '@/composables'
-  import { Event } from '@/models'
+  import { Event } from '@birdogey/shared'
   import { routes } from '@/router/routes'
 
   const api = useApi()

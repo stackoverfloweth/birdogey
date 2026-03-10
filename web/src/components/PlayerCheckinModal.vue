@@ -3,7 +3,7 @@
   import { usePatchRef, useSubscription } from '@prefecthq/vue-compositions'
   import { computed, ref, toRefs, watch } from 'vue'
   import { useApi } from '@/composables'
-  import { PlayerCheckInRequest } from '@/models/api'
+  import { PlayerCheckInRequest } from '@birdogey/shared/api'
 
   const props = defineProps<{
     isOpen: boolean,

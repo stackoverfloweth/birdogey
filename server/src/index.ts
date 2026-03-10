@@ -31,17 +31,19 @@ async function start(): Promise<void> {
   })
 }
 
-process.on('SIGTERM', async () => {
-  await disconnectDb()
-  process.exit(0)
+process.on('SIGTERM', () => {
+  disconnectDb().then(() => {
+    process.exit(0)
+  })
 })
 
-process.on('SIGINT', async () => {
-  await disconnectDb()
-  process.exit(0)
+process.on('SIGINT', () => {
+  disconnectDb().then(() => {
+    process.exit(0)
+  })
 })
 
-start().catch((error) => {
+start().catch((error: unknown) => {
   console.error('Failed to start server:', error)
   process.exit(1)
 })

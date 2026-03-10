@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { randomId } from '@prefecthq/prefect-design'
   import { computed, ref, watch } from 'vue'
-  import { Card, Player } from '@/models'
+  import { Card, Player } from '@birdogey/shared'
 
   const props = defineProps<{
     isOpen: boolean,

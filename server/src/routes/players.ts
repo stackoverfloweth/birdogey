@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
-import { EventResponse, PlayerCheckInRequest, PlayerRequest, PlayerResponse, PlayerSignupRequest, SignupKeyResponse } from '@/models/api'
+import { EventResponse, PlayerRequest, PlayerResponse, PlayerSignupRequest, SignupKeyResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
@@ -74,7 +74,7 @@ players.post('/', authMiddleware, async (context) => {
 
 players.put('/:id', authMiddleware, async (context) => {
   const id = context.req.param('id')
-  const body = await context.req.json() as Partial<PlayerRequest>
+  const body = await context.req.json()
   const token = getJwtPayload(context)
 
   if (!isValidRequest<PlayerRequest>(body, [
@@ -108,7 +108,7 @@ players.delete('/:id', authMiddleware, async (context) => {
 
 players.put('/:id/checkin', authMiddleware, async (context) => {
   const id = context.req.param('id')
-  const body = await context.req.json() as PlayerCheckInRequest
+  const body = await context.req.json()
 
   if (!body) {
     throw new HttpError(400, 'Invalid request')
@@ -121,13 +121,13 @@ players.put('/:id/checkin', authMiddleware, async (context) => {
   const { eventId, tagId, udiscId } = body
 
   const result = await playersCollection.updateOne({ _id: new ObjectId(id) }, { $set: { tagId, udiscId } })
-  const event = await eventsCollection.findOne({ _id: new ObjectId(eventId) })
+  const event = await eventsCollection.findOne({ _id: new ObjectId(eventId as string) })
 
-  if (event?.players.some(player => player.playerId.toString() === id)) {
+  if (event?.players.some((player) => player.playerId.toString() === id)) {
     throw new HttpError(400, 'Player already checked in')
   }
 
-  await eventsCollection.updateOne({ _id: new ObjectId(eventId) }, {
+  await eventsCollection.updateOne({ _id: new ObjectId(eventId as string) }, {
     $push: {
       players: {
         _id: new ObjectId(),

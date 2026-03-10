@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import EventListItem from '@/components/EventListItem.vue'
-  import { Event } from '@/models'
+  import { Event } from '@birdogey/shared'
   import { routes } from '@/router/routes'
   import { useRouteParam } from '@prefecthq/vue-compositions'
 

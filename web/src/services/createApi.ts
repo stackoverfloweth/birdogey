@@ -1,15 +1,24 @@
 import { createActions } from '@prefecthq/vue-compositions'
+import { showToast } from '@prefecthq/prefect-design'
 import { InjectionKey } from 'vue'
-import { ApiConfig, EventApi, PlayerApi, UserApi } from '@/services'
-import { ImageKitApi } from '@/services/imageKitApi'
+import { FetchHttpClient, HttpClientConfig, createEventApi, createPlayerApi, createAuthApi, createImageKitApi } from '@birdogey/shared'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function createApi(config: ApiConfig) {
+export function createApi(config: HttpClientConfig) {
+  const client = new FetchHttpClient({
+    ...config,
+    onError: (error) => {
+      if (error instanceof Error) {
+        showToast(error.message, 'error')
+      }
+    },
+  })
+
   return {
-    events: createActions(new EventApi(config)),
-    players: createActions(new PlayerApi(config)),
-    users: createActions(new UserApi(config)),
-    imagekit: createActions(new ImageKitApi(config)),
+    events: createActions(createEventApi(client)),
+    players: createActions(createPlayerApi(client)),
+    auth: createActions(createAuthApi(client)),
+    imagekit: createActions(createImageKitApi(client)),
   }
 }
 

@@ -1,4 +1,4 @@
-import { PlayerResponse } from '@/models/api'
+import { PlayerResponse } from '@birdogey/shared/api'
 import { Collection, ObjectId } from 'mongodb'
 
 export function getNextAvailableTag(seasonId: ObjectId, collection: Collection<PlayerResponse>): Promise<number> {

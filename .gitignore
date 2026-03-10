@@ -2,6 +2,7 @@
 node_modules
 web/dist
 server/dist
+.claude/
 
 # local env files
 .env.local
@@ -19,3 +20,16 @@ pnpm-debug.log*
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Expo / React Native
+mobile/.expo/
+mobile/dist/
+mobile/ios/
+mobile/android/
+mobile/.env
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*

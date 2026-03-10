@@ -1,4 +1,4 @@
-import { UserResponse } from '@/models/api'
+import { UserResponse } from '@birdogey/shared/api'
 
 export class HttpError extends Error {
   public statusCode: number

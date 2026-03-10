@@ -4,9 +4,9 @@
 
   const count = 15
   const negativeValues = new Array(count).fill(null)
-    .map((_, index) => -count + index)
+    .map((_value, index) => -count + index)
   const positiveValues = new Array(count).fill(null)
-    .map((_, index) => index + 1)
+    .map((_value, index) => index + 1)
 
   function setScore(value: number): void {
     modelValue.value = value

@@ -2,7 +2,7 @@
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref } from 'vue'
   import PlayerImageUpload from '@/components/PlayerImageUpload.vue'
-  import { PlayerSignupRequest } from '@/models'
+  import { PlayerSignupRequest } from '@birdogey/shared'
 
   const { signupKey, loading } = defineProps<{
     loading?: boolean,

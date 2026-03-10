@@ -2,7 +2,7 @@
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { format } from 'date-fns'
   import { computed, ref } from 'vue'
-  import { Event, EventRequest } from '@/models'
+  import { Event, EventRequest } from '@birdogey/shared'
   import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners } from '@/services'
 
   const props = defineProps<{

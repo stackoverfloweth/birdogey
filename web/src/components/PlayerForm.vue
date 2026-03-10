@@ -2,7 +2,7 @@
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { ref } from 'vue'
   import PlayerImageUpload from '@/components/PlayerImageUpload.vue'
-  import { Player, PlayerRequest } from '@/models'
+  import { Player, PlayerRequest } from '@birdogey/shared'
   import { auth } from '@/services'
 
   const props = defineProps<{

@@ -8,7 +8,7 @@
   import PlayersListViewEmptyState from '@/components/PlayersListViewEmptyState.vue'
   import PlayersListViewMenu from '@/components/PlayersListViewMenu.vue'
   import { useApi } from '@/composables'
-  import { Player } from '@/models'
+  import { Player } from '@birdogey/shared'
   import { routes } from '@/router/routes'
 
   const seasonId = useRouteParam('seasonId')

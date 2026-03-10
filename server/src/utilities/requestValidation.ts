@@ -1,5 +1,7 @@
 export type Typeof = 'string' | 'number' | 'bigint' | 'boolean' | 'symbol' | 'undefined' | 'object' | 'function'
 
+// todo replace this with Zod validation
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function isValidRequest<T>(target: unknown, properties: [PropertyKey, Typeof][]): target is T {
   return isRecord(target) && properties.every(([key, type]) => isKeyOfT(target, key) && typeof target[key] === type)
 }

@@ -1,0 +1,24 @@
+{
+  "name": "birdogey",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present"
+  },
+  "workspaces": [
+    "shared",
+    "mobile",
+    "web",
+    "server"
+  ],
+  "devDependencies": {
+    "@kitbag/eslint-config": "1.0.2",
+    "eslint": "^9.23.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1"
+  },
+  "dependencies": {
+    "mongodb": "7.1.0"
+  }
+}

@@ -3,7 +3,7 @@
   import AppMenu from '@/components/AppMenu.vue'
   import CardSuggestionModal from '@/components/CardSuggestionModal.vue'
   import PlayerCreateModal from '@/components/PlayerCreateModal.vue'
-  import { Player } from '@/models'
+  import { Player } from '@birdogey/shared'
   import { auth } from '@/services'
 
   defineProps<{

@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { User } from '@/models'
+import { User } from '@birdogey/shared'
 import { CreateApi } from '@/services'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 
@@ -19,7 +19,7 @@ export async function initAuthFromStorage(api: CreateApi): Promise<void> {
     if (storedToken.value) {
       Object.assign(auth, { token: storedToken })
 
-      const user = await api.users.refreshLogin()
+      const user = await api.auth.refresh()
       Object.assign(auth, user)
     }
   } catch {
@@ -51,12 +51,10 @@ export function clearStoredAuth(): void {
 }
 
 export async function attemptLogin(api: CreateApi, value: string): Promise<boolean> {
-  const response = await api.users.attemptLogin(value)
+  const response = await api.auth.login(value)
 
-  if (response) {
-    Object.assign(auth, response)
-    saveAuthToStorage(auth)
-  }
+  Object.assign(auth, response)
+  saveAuthToStorage(auth)
 
   return auth.isAuthorized
 }
@@ -66,7 +64,7 @@ export async function refreshAuthToken(api: CreateApi): Promise<User | null> {
     return null
   }
 
-  const user = await api.users.refreshLogin()
+  const user = await api.auth.refresh()
   Object.assign(auth, user)
 
   saveAuthToStorage(auth)

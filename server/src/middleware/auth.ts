@@ -1,6 +1,6 @@
 import { Context, MiddlewareHandler } from 'hono'
 import jwt from 'jsonwebtoken'
-import { UserResponse } from '@/models/api'
+import { UserResponse } from '@birdogey/shared/api'
 import { env } from '../env.js'
 import { HttpError, JwtPayload } from '../types.js'
 

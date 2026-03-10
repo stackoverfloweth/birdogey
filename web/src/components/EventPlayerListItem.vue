@@ -5,7 +5,7 @@
   import PlayerEditModal from '@/components/PlayerEditModal.vue'
   import ScoreInput from '@/components/ScoreInput.vue'
   import PlayerImage from '@/components/PlayerImage.vue'
-  import { EventPlayerRequest, Player } from '@/models'
+  import { EventPlayerRequest, Player } from '@birdogey/shared'
 
   const props = defineProps<{
     disabled?: boolean,

@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { Db, ObjectId } from 'mongodb'
-import { SeasonResponse, UserAuthResponse, UserResponse } from '@/models/api'
+import { SeasonResponse, UserAuthResponse, UserResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, generateToken, getJwtPayload } from '../middleware/auth.js'

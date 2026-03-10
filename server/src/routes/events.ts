@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { BulkWriteResult, Db, ObjectId } from 'mongodb'
-import { EventPlayerResponse, EventRequest, EventResponse, PlayerResponse } from '@/models/api'
+import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, PlayerResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
@@ -63,7 +63,7 @@ events.post('/', async (context) => {
   const players = body.players?.map((eventPlayer: any) => ({
     ...eventPlayer,
     _id: new ObjectId(),
-    playerId: new ObjectId(eventPlayer.playerId),
+    playerId: new ObjectId(eventPlayer.playerId as string),
     inForCtp: eventPlayer.inForCtp ?? false,
     inForAce: eventPlayer.inForAce ?? false,
   })) ?? []
@@ -88,7 +88,7 @@ events.post('/', async (context) => {
 
 events.put('/:id', async (context) => {
   const id = context.req.param('id')
-  const body = await context.req.json() as Partial<EventRequest>
+  const body = await context.req.json()
 
   if (!body) {
     throw new HttpError(400, 'Invalid request')
@@ -100,13 +100,13 @@ events.put('/:id', async (context) => {
   const players = body.players?.map((eventPlayer: any) => ({
     ...eventPlayer,
     _id: new ObjectId(),
-    playerId: new ObjectId(eventPlayer.playerId),
+    playerId: new ObjectId(eventPlayer.playerId as string),
     inForCtp: eventPlayer.inForCtp ?? false,
     inForAce: eventPlayer.inForAce ?? false,
   })) ?? []
 
-  const ctpPlayerIds = body.ctpPlayerIds?.map((playerId) => new ObjectId(playerId)) ?? []
-  const acePlayerIds = body.acePlayerIds?.map((playerId) => new ObjectId(playerId)) ?? []
+  const ctpPlayerIds = body.ctpPlayerIds?.map((playerId: string) => new ObjectId(playerId)) ?? []
+  const acePlayerIds = body.acePlayerIds?.map((playerId: string) => new ObjectId(playerId)) ?? []
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, {
     $set: {
@@ -126,7 +126,7 @@ events.put('/:id', async (context) => {
 
 events.put('/:id/complete', async (context) => {
   const id = context.req.param('id')
-  const body = await context.req.json() as Partial<EventRequest>
+  const body = await context.req.json()
 
   if (!body) {
     throw new HttpError(400, 'Invalid request')
@@ -136,20 +136,20 @@ events.put('/:id/complete', async (context) => {
   const collection = db.collection<EventResponse>('events')
 
   const requestPlayers = body.players ?? []
-  const availableTags = requestPlayers.map(({ incomingTagId }) => incomingTagId).sort((aTag, bTag) => aTag - bTag)
-  const sortedByScore = requestPlayers.sort((aPlayer, bPlayer) => (aPlayer.score ?? Infinity) - (bPlayer.score ?? Infinity) || aPlayer.incomingTagId - bPlayer.incomingTagId)
+  const availableTags = requestPlayers.map(({ incomingTagId }: { incomingTagId: number }) => incomingTagId).sort((aTag: number, bTag: number) => aTag - bTag)
+  const sortedByScore = requestPlayers.sort((aPlayer: EventPlayerResponse, bPlayer: EventPlayerResponse) => (aPlayer.score ?? Infinity) - (bPlayer.score ?? Infinity) || aPlayer.incomingTagId - bPlayer.incomingTagId)
 
-  const players = requestPlayers.map(eventPlayer => ({
+  const players = requestPlayers.map((eventPlayer: EventPlayerRequest) => ({
     ...eventPlayer,
     _id: new ObjectId(),
     playerId: new ObjectId(eventPlayer.playerId),
     inForCtp: eventPlayer.inForCtp ?? false,
     inForAce: eventPlayer.inForAce ?? false,
-    outgoingTagId: availableTags[sortedByScore.findIndex(({ playerId }) => playerId === eventPlayer.playerId)],
+    outgoingTagId: availableTags[sortedByScore.findIndex(({ playerId }: { playerId: ObjectId }) => playerId.toString() === eventPlayer.playerId)],
   }))
 
-  const ctpPlayerIds = body.ctpPlayerIds?.map(playerId => new ObjectId(playerId)) ?? []
-  const acePlayerIds = body.acePlayerIds?.map(playerId => new ObjectId(playerId)) ?? []
+  const ctpPlayerIds = body.ctpPlayerIds?.map((playerId: string) => new ObjectId(playerId)) ?? []
+  const acePlayerIds = body.acePlayerIds?.map((playerId: string) => new ObjectId(playerId)) ?? []
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, {
     $set: {
@@ -178,7 +178,7 @@ events.delete('/:id', async (context) => {
 })
 
 function updatePlayerTags(db: Db, players: EventPlayerResponse[]): Promise<BulkWriteResult> {
-  const playerUpdates: Partial<PlayerResponse>[] = players.map(player => ({
+  const playerUpdates: Partial<PlayerResponse>[] = players.map((player) => ({
     _id: new ObjectId(player.playerId),
     tagId: player.outgoingTagId,
   }))

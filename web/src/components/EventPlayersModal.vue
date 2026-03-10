@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { EventPlayerRequest, Player } from '@/models'
+  import { EventPlayerRequest, Player } from '@birdogey/shared'
   import PlayerImage from '@/components/PlayerImage.vue'
   import { computed } from 'vue'
 

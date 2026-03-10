@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { computed, ref } from 'vue'
   import { RouteLocationRaw } from 'vue-router'
-  import { Season } from '@/models'
+  import { Season } from '@birdogey/shared'
   import { auth } from '@/services'
   import { isSame } from '@/utilities'
   import { routes } from '@/router/routes'
