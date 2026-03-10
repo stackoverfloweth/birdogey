@@ -9,7 +9,7 @@ export function useCreateEvent(seasonId: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: { name: string, notes?: string, ctpPerPlayer?: number, acePerPlayer?: number }) => eventApi.create({ seasonId, ...data }),
+    mutationFn: (data: { name: string, notes?: string, ctpPerPlayer: number, acePerPlayer: number }) => eventApi.create({ seasonId, ...data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.events.all(seasonId) })
     },

@@ -1,33 +1,33 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useCreateEvent } from '../../../../../src/hooks/useCreateEvent';
+import { useState } from 'react'
+import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native'
+import { router, useLocalSearchParams } from 'expo-router'
+import { useCreateEvent } from '@/hooks/useCreateEvent'
 
-export default function CreateEventScreen() {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>();
-  const createEvent = useCreateEvent(seasonId!);
+export default function CreateEventScreen(): React.ReactNode {
+  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
+  const createEvent = useCreateEvent(seasonId)
 
-  const [name, setName] = useState('');
-  const [notes, setNotes] = useState('');
-  const [ctpPerPlayer, setCtpPerPlayer] = useState('');
-  const [acePerPlayer, setAcePerPlayer] = useState('');
+  const [name, setName] = useState('')
+  const [notes, setNotes] = useState('')
+  const [ctpPerPlayer, setCtpPerPlayer] = useState('')
+  const [acePerPlayer, setAcePerPlayer] = useState('')
 
-  async function handleSubmit() {
+  async function handleSubmit(): Promise<void> {
     if (!name.trim()) {
-      Alert.alert('Error', 'Name is required');
-      return;
+      Alert.alert('Error', 'Name is required')
+      return
     }
 
     try {
       await createEvent.mutateAsync({
         name: name.trim(),
         notes: notes || undefined,
-        ctpPerPlayer: ctpPerPlayer ? Number(ctpPerPlayer) : undefined,
-        acePerPlayer: acePerPlayer ? Number(acePerPlayer) : undefined,
-      });
-      router.back();
+        ctpPerPlayer: ctpPerPlayer ? Number(ctpPerPlayer) : 0,
+        acePerPlayer: acePerPlayer ? Number(acePerPlayer) : 0,
+      })
+      router.back()
     } catch {
-      Alert.alert('Error', 'Failed to create event');
+      Alert.alert('Error', 'Failed to create event')
     }
   }
 
@@ -47,11 +47,11 @@ export default function CreateEventScreen() {
       <Text style={styles.label}>Ace Per Player ($)</Text>
       <TextInput style={styles.input} value={acePerPlayer} onChangeText={setAcePerPlayer} keyboardType="numeric" placeholder="0" />
 
-      <Pressable style={styles.button} onPress={handleSubmit} disabled={createEvent.isPending}>
+      <Pressable style={styles.button} onPress={() => void handleSubmit()} disabled={createEvent.isPending}>
         <Text style={styles.buttonText}>{createEvent.isPending ? 'Creating...' : 'Create Event'}</Text>
       </Pressable>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-});
+})

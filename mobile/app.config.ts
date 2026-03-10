@@ -1,4 +1,4 @@
-import { ExpoConfig, ConfigContext } from 'expo/config';
+import { ExpoConfig, ConfigContext } from 'expo/config'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -8,4 +8,4 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ...config.extra,
     apiBaseUrl: process.env.API_BASE_URL ?? 'https://birdogey.up.railway.app',
   },
-});
+})

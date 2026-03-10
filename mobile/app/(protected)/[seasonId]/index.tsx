@@ -1,23 +1,23 @@
-import { View, FlatList, Text, StyleSheet } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEvents } from '../../../src/hooks/useEvents';
-import { EventListItem } from '../../../src/components/EventListItem';
-import { LoadingSpinner } from '../../../src/components/LoadingSpinner';
-import { ErrorView } from '../../../src/components/ErrorView';
+import { View, FlatList, Text, StyleSheet } from 'react-native'
+import { router, useLocalSearchParams } from 'expo-router'
+import { useEvents } from '@/hooks/useEvents'
+import { EventListItem } from '@/components/EventListItem'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { ErrorView } from '@/components/ErrorView'
 
-export default function EventsListScreen() {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>();
-  const { data: events, isLoading, error, refetch } = useEvents(seasonId!);
+export default function EventsListScreen(): React.ReactNode {
+  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
+  const { data: events, isLoading, error, refetch } = useEvents(seasonId)
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorView message="Failed to load events" onRetry={refetch} />;
+  if (isLoading) return <LoadingSpinner />
+  if (error) return <ErrorView message="Failed to load events" onRetry={() => void refetch()} />
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Events</Text>
       <FlatList
         data={events}
-        keyExtractor={(e) => e.id}
+        keyExtractor={(event) => event.id}
         renderItem={({ item }) => (
           <EventListItem
             event={item}
@@ -25,12 +25,12 @@ export default function EventsListScreen() {
           />
         )}
         contentContainerStyle={styles.list}
-        onRefresh={refetch}
+        onRefresh={() => void refetch()}
         refreshing={isLoading}
         ListEmptyComponent={<Text style={styles.empty}>No events yet</Text>}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -55,4 +55,4 @@ const styles = StyleSheet.create({
     marginTop: 40,
     fontSize: 16,
   },
-});
+})

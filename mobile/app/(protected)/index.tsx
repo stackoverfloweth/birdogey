@@ -1,32 +1,32 @@
-import { useEffect } from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { useSeason } from '../../src/contexts/SeasonContext';
-import type { Season } from '@birdogey/shared';
+import { useCallback, useEffect } from 'react'
+import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native'
+import { router } from 'expo-router'
+import { useSeason } from '@/contexts/SeasonContext'
+import type { Season } from '@birdogey/shared'
 
-export default function SeasonSelectionScreen() {
-  const { availableSeasons, selectedSeasonId, setSelectedSeasonId } = useSeason();
+export default function SeasonSelectionScreen(): React.ReactNode {
+  const { availableSeasons, selectedSeasonId, setSelectedSeasonId } = useSeason()
+
+  const navigateToSeason = useCallback((seasonId: string): void => {
+    setSelectedSeasonId(seasonId)
+    router.replace(`/(protected)/${seasonId}`)
+  }, [setSelectedSeasonId])
 
   useEffect(() => {
     if (availableSeasons.length === 1) {
-      navigateToSeason(availableSeasons[0].id);
+      navigateToSeason(availableSeasons[0].id)
     } else if (selectedSeasonId) {
-      navigateToSeason(selectedSeasonId);
+      navigateToSeason(selectedSeasonId)
     }
-  }, [availableSeasons, selectedSeasonId]);
+  }, [availableSeasons, selectedSeasonId, navigateToSeason])
 
-  function navigateToSeason(seasonId: string) {
-    setSelectedSeasonId(seasonId);
-    router.replace(`/(protected)/${seasonId}`);
-  }
-
-  function renderSeason({ item }: { item: Season }) {
+  function renderSeason({ item }: { item: Season }): React.ReactElement {
     return (
       <Pressable style={styles.seasonItem} onPress={() => navigateToSeason(item.id)}>
         <Text style={styles.seasonName}>{item.name}</Text>
         <Text style={styles.courseName}>{item.course.name}</Text>
       </Pressable>
-    );
+    )
   }
 
   return (
@@ -34,12 +34,12 @@ export default function SeasonSelectionScreen() {
       <Text style={styles.title}>Select Season</Text>
       <FlatList
         data={availableSeasons}
-        keyExtractor={(s) => s.id}
+        keyExtractor={(season) => season.id}
         renderItem={renderSeason}
         contentContainerStyle={styles.list}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -72,4 +72,4 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     marginTop: 4,
   },
-});
+})

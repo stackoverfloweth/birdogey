@@ -1,25 +1,25 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
-import { router } from 'expo-router';
-import { useAuth } from '../src/contexts/AuthContext';
+import { useState } from 'react'
+import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native'
+import { router } from 'expo-router'
+import { useAuth } from '../src/contexts/AuthContext'
 
-export default function LoginScreen() {
-  const { login } = useAuth();
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+export default function LoginScreen(): React.ReactNode {
+  const { login } = useAuth()
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  async function handleLogin() {
-    if (!password.trim()) return;
-    setError('');
-    setLoading(true);
+  async function handleLogin(): Promise<void> {
+    if (!password.trim()) return
+    setError('')
+    setLoading(true)
     try {
-      await login(password);
-      router.replace('/(protected)');
+      await login(password)
+      router.replace('/(protected)')
     } catch {
-      setError('Invalid password');
+      setError('Invalid password')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -32,19 +32,15 @@ export default function LoginScreen() {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
-        onSubmitEditing={handleLogin}
+        onSubmitEditing={() => void handleLogin()}
         autoCapitalize="none"
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Pressable style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Login</Text>
-        )}
+      <Pressable style={styles.button} onPress={() => void handleLogin()} disabled={loading}>
+        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
       </Pressable>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -84,4 +80,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-});
+})

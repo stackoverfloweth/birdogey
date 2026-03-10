@@ -1,21 +1,21 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Switch, Alert } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useCreatePlayer } from '../../../../../src/hooks/useCreatePlayer';
+import { useState } from 'react'
+import { View, Text, TextInput, Pressable, StyleSheet, Switch, Alert } from 'react-native'
+import { router, useLocalSearchParams } from 'expo-router'
+import { useCreatePlayer } from '@/hooks/useCreatePlayer'
 
-export default function CreatePlayerScreen() {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>();
-  const createPlayer = useCreatePlayer(seasonId!);
+export default function CreatePlayerScreen(): React.ReactNode {
+  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
+  const createPlayer = useCreatePlayer(seasonId)
 
-  const [name, setName] = useState('');
-  const [tagId, setTagId] = useState('');
-  const [udiscId, setUdiscId] = useState('');
-  const [entryPaid, setEntryPaid] = useState(false);
+  const [name, setName] = useState('')
+  const [tagId, setTagId] = useState('')
+  const [udiscId, setUdiscId] = useState('')
+  const [entryPaid, setEntryPaid] = useState(false)
 
-  async function handleSubmit() {
+  async function handleSubmit(): Promise<void> {
     if (!name.trim()) {
-      Alert.alert('Error', 'Name is required');
-      return;
+      Alert.alert('Error', 'Name is required')
+      return
     }
 
     try {
@@ -24,10 +24,10 @@ export default function CreatePlayerScreen() {
         tagId: tagId ? Number(tagId) : undefined,
         udiscId: udiscId || undefined,
         entryPaid,
-      });
-      router.back();
+      })
+      router.back()
     } catch {
-      Alert.alert('Error', 'Failed to create player');
+      Alert.alert('Error', 'Failed to create player')
     }
   }
 
@@ -49,11 +49,11 @@ export default function CreatePlayerScreen() {
         <Switch value={entryPaid} onValueChange={setEntryPaid} />
       </View>
 
-      <Pressable style={styles.button} onPress={handleSubmit} disabled={createPlayer.isPending}>
+      <Pressable style={styles.button} onPress={() => void handleSubmit()} disabled={createPlayer.isPending}>
         <Text style={styles.buttonText}>{createPlayer.isPending ? 'Creating...' : 'Create Player'}</Text>
       </Pressable>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-});
+})

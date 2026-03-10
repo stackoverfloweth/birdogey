@@ -1,46 +1,46 @@
-import { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEvent } from '../../../../../../src/hooks/useEvent';
-import { useUpdateEvent } from '../../../../../../src/hooks/useUpdateEvent';
-import { LoadingSpinner } from '../../../../../../src/components/LoadingSpinner';
+import { useState } from 'react'
+import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native'
+import { router, useLocalSearchParams } from 'expo-router'
+import { useEvent } from '@/hooks/useEvent'
+import { useUpdateEvent } from '@/hooks/useUpdateEvent'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
+import type { Event } from '@birdogey/shared'
 
-export default function EditEventScreen() {
-  const { seasonId, eventId } = useLocalSearchParams<{ seasonId: string; eventId: string }>();
-  const { data: event, isLoading } = useEvent(eventId!);
-  const updateEvent = useUpdateEvent(seasonId!, eventId!);
+export default function EditEventScreen(): React.ReactNode {
+  const { eventId } = useLocalSearchParams<{ seasonId: string, eventId: string }>()
+  const { data: event, isLoading } = useEvent(eventId)
 
-  const [notes, setNotes] = useState('');
-  const [ctpPerPlayer, setCtpPerPlayer] = useState('');
-  const [acePerPlayer, setAcePerPlayer] = useState('');
+  if (isLoading) return <LoadingSpinner />
+  if (!event) return null
 
-  useEffect(() => {
-    if (event) {
-      setNotes(event.notes ?? '');
-      setCtpPerPlayer(String(event.ctpPerPlayer ?? ''));
-      setAcePerPlayer(String(event.acePerPlayer ?? ''));
-    }
-  }, [event]);
+  return <EditEventForm event={event} />
+}
 
-  async function handleSubmit() {
+function EditEventForm({ event }: { event: Event }): React.ReactNode {
+  const { seasonId, eventId } = useLocalSearchParams<{ seasonId: string, eventId: string }>()
+  const updateEvent = useUpdateEvent(seasonId, eventId)
+
+  const [notes, setNotes] = useState(event.notes ?? '')
+  const [ctpPerPlayer, setCtpPerPlayer] = useState(String(event.ctpPerPlayer))
+  const [acePerPlayer, setAcePerPlayer] = useState(String(event.acePerPlayer))
+
+  async function handleSubmit(): Promise<void> {
     try {
       await updateEvent.mutateAsync({
         notes: notes || undefined,
         ctpPerPlayer: ctpPerPlayer ? Number(ctpPerPlayer) : undefined,
         acePerPlayer: acePerPlayer ? Number(acePerPlayer) : undefined,
-      });
-      router.back();
+      })
+      router.back()
     } catch {
-      Alert.alert('Error', 'Failed to update event');
+      Alert.alert('Error', 'Failed to update event')
     }
   }
-
-  if (isLoading) return <LoadingSpinner />;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Edit Event</Text>
-      <Text style={styles.subtitle}>{event?.name}</Text>
+      <Text style={styles.subtitle}>{event.name}</Text>
 
       <Text style={styles.label}>Notes</Text>
       <TextInput style={styles.input} value={notes} onChangeText={setNotes} placeholder="Optional" multiline />
@@ -51,11 +51,11 @@ export default function EditEventScreen() {
       <Text style={styles.label}>Ace Per Player ($)</Text>
       <TextInput style={styles.input} value={acePerPlayer} onChangeText={setAcePerPlayer} keyboardType="numeric" />
 
-      <Pressable style={styles.button} onPress={handleSubmit} disabled={updateEvent.isPending}>
+      <Pressable style={styles.button} onPress={() => void handleSubmit()} disabled={updateEvent.isPending}>
         <Text style={styles.buttonText}>{updateEvent.isPending ? 'Saving...' : 'Save Changes'}</Text>
       </Pressable>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -100,4 +100,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-});
+})

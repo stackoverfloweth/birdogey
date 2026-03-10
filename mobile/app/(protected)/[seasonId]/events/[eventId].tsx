@@ -1,20 +1,20 @@
-import { View, Text, FlatList, StyleSheet, ScrollView } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { useEvent } from '../../../../src/hooks/useEvent';
-import { LoadingSpinner } from '../../../../src/components/LoadingSpinner';
-import { ErrorView } from '../../../../src/components/ErrorView';
-import { calculateEventCtpPot, calculateEventAcePot } from '../../../../src/services/eventBalance';
+import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { useLocalSearchParams } from 'expo-router'
+import { useEvent } from '@/hooks/useEvent'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { ErrorView } from '@/components/ErrorView'
+import { calculateEventCtpPot, calculateEventAcePot } from '@birdogey/shared'
 
-export default function EventDetailScreen() {
-  const { eventId } = useLocalSearchParams<{ eventId: string }>();
-  const { data: event, isLoading, error, refetch } = useEvent(eventId!);
+export default function EventDetailScreen(): React.ReactNode {
+  const { eventId } = useLocalSearchParams<{ eventId: string }>()
+  const { data: event, isLoading, error, refetch } = useEvent(eventId)
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error || !event) return <ErrorView message="Failed to load event" onRetry={refetch} />;
+  if (isLoading) return <LoadingSpinner />
+  if (error || !event) return <ErrorView message="Failed to load event" onRetry={() => void refetch()} />
 
-  const ctpPot = calculateEventCtpPot(event);
-  const acePot = calculateEventAcePot(event);
-  const isCompleted = !!event.completed;
+  const ctpPot = calculateEventCtpPot(event)
+  const acePot = calculateEventAcePot(event)
+  const isCompleted = !!event.completed
 
   return (
     <ScrollView style={styles.container}>
@@ -23,11 +23,17 @@ export default function EventDetailScreen() {
 
       <View style={styles.statsRow}>
         <View style={styles.stat}>
-          <Text style={styles.statValue}>${ctpPot}</Text>
+          <Text style={styles.statValue}>
+            $
+            {ctpPot}
+          </Text>
           <Text style={styles.statLabel}>CTP Pot</Text>
         </View>
         <View style={styles.stat}>
-          <Text style={styles.statValue}>${acePot}</Text>
+          <Text style={styles.statValue}>
+            $
+            {acePot}
+          </Text>
           <Text style={styles.statLabel}>Ace Pot</Text>
         </View>
         <View style={styles.stat}>
@@ -39,18 +45,26 @@ export default function EventDetailScreen() {
       <Text style={styles.sectionTitle}>
         {isCompleted ? 'Results' : 'Checked In'}
       </Text>
-      {event.players.map((ep) => (
-        <View key={ep.id} style={styles.playerRow}>
-          <Text style={styles.playerTag}>#{ep.incomingTagId}</Text>
-          <Text style={styles.playerId}>{ep.playerId}</Text>
-          {ep.score !== undefined && <Text style={styles.score}>{ep.score}</Text>}
-          {ep.outgoingTagId !== undefined && (
-            <Text style={styles.outTag}>→ #{ep.outgoingTagId}</Text>
+      {event.players.map((eventPlayer) => (
+        <View key={eventPlayer.id} style={styles.playerRow}>
+          <Text style={styles.playerTag}>
+            #
+            {eventPlayer.incomingTagId}
+          </Text>
+          <Text style={styles.playerId}>{eventPlayer.playerId}</Text>
+          {eventPlayer.score !== undefined && <Text style={styles.score}>{eventPlayer.score}</Text>}
+          {eventPlayer.outgoingTagId !== undefined && (
+            <Text style={styles.outTag}>
+              → #
+              {eventPlayer.outgoingTagId}
+            </Text>
           )}
         </View>
-      ))}
+      ),
+
+      )}
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -121,4 +135,4 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6b7280',
   },
-});
+})

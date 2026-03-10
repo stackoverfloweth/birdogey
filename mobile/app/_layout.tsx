@@ -1,10 +1,10 @@
-import { Stack } from 'expo-router';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '../src/services/queryClient';
-import { AuthProvider } from '../src/contexts/AuthContext';
-import { SeasonProvider } from '../src/contexts/SeasonContext';
+import { Stack } from 'expo-router'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '../src/services/queryClient'
+import { AuthProvider } from '../src/contexts/AuthContext'
+import { SeasonProvider } from '../src/contexts/SeasonContext'
 
-export default function RootLayout() {
+export default function RootLayout(): React.ReactNode {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -13,5 +13,5 @@ export default function RootLayout() {
         </SeasonProvider>
       </AuthProvider>
     </QueryClientProvider>
-  );
+  )
 }

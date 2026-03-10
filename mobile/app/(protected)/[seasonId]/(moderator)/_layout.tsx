@@ -1,12 +1,12 @@
-import { Redirect, Stack } from 'expo-router';
-import { useAuth } from '../../../../src/contexts/AuthContext';
+import { Redirect, Stack } from 'expo-router'
+import { useAuth } from '@/contexts/AuthContext'
 
-export default function ModeratorLayout() {
-  const { user } = useAuth();
+export default function ModeratorLayout(): React.ReactNode {
+  const { user } = useAuth()
 
   if (user?.isReadonly) {
-    return <Redirect href="/(protected)" />;
+    return <Redirect href="/(protected)" />
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return <Stack screenOptions={{ headerShown: false }} />
 }
