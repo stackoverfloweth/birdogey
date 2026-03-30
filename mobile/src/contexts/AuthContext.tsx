@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
-import { type User, createAuthApi, FetchHttpClient } from '@birdogey/shared'
+import { type User, createAuthApi, FetchHttpClient, MINUTE } from '@birdogey/shared'
 import { config } from '../config/env'
 import { getToken, setToken, removeToken } from '../services/tokenStorage'
 
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     if (user) {
       refreshInterval.current = setInterval(() => {
         refreshToken()
-      }, 5 * 60 * 1000)
+      }, MINUTE * 5)
     }
     return () => {
       if (refreshInterval.current) {

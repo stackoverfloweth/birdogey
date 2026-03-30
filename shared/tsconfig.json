@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "esModuleInterop": true
   },
-  "include": ["models/**/*.ts", "services/**/*.ts", "index.ts"]
+  "include": ["models/**/*.ts", "services/**/*.ts", "utilities/**/*.ts", "index.ts"]
 }

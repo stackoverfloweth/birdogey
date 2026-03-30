@@ -8,7 +8,7 @@ function getConfig(): AppConfig {
   const extra = Constants.expoConfig?.extra
 
   return {
-    apiBaseUrl: extra?.apiBaseUrl ?? 'https://birdogey.up.railway.app/api',
+    apiBaseUrl: extra?.apiBaseUrl,
   }
 }
 

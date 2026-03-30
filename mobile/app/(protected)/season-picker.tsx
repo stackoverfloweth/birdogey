@@ -1,32 +1,20 @@
-import { useCallback, useEffect, useRef } from 'react'
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native'
 import { router } from 'expo-router'
 import { useSeason } from '@/contexts/SeasonContext'
 import type { Season } from '@birdogey/shared'
 
-export default function SeasonSelectionScreen(): React.ReactNode {
-  const { availableSeasons, selectedSeasonId, setSelectedSeasonId } = useSeason()
-  const isInitialMount = useRef(true)
+export default function SeasonPickerModal(): React.ReactNode {
+  const { availableSeasons, setSelectedSeasonId } = useSeason()
 
-  const navigateToSeason = useCallback((seasonId: string): void => {
+  function selectSeason(seasonId: string): void {
     setSelectedSeasonId(seasonId)
-    router.push(`/(protected)/${seasonId}`)
-  }, [setSelectedSeasonId])
-
-  useEffect(() => {
-    if (!isInitialMount.current) return
-    isInitialMount.current = false
-
-    if (availableSeasons.length === 1) {
-      navigateToSeason(availableSeasons[0].id)
-    } else if (selectedSeasonId) {
-      navigateToSeason(selectedSeasonId)
-    }
-  }, [availableSeasons, selectedSeasonId, navigateToSeason])
+    router.dismiss()
+    router.replace(`/(protected)/${seasonId}`)
+  }
 
   function renderSeason({ item }: { item: Season }): React.ReactElement {
     return (
-      <Pressable style={styles.seasonItem} onPress={() => navigateToSeason(item.id)}>
+      <Pressable style={styles.seasonItem} onPress={() => selectSeason(item.id)}>
         <Text style={styles.seasonName}>{item.name}</Text>
         <Text style={styles.courseName}>{item.course.name}</Text>
       </Pressable>
@@ -35,7 +23,6 @@ export default function SeasonSelectionScreen(): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Select Season</Text>
       <FlatList
         data={availableSeasons}
         keyExtractor={(season) => season.id}
@@ -50,7 +37,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 60,
+    paddingTop: 0,
   },
   title: {
     fontSize: 24,
