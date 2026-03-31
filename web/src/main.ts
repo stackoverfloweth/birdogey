@@ -25,6 +25,16 @@ Sentry.init({
   app,
   dsn: env().sentryDsn,
   environment: env().prod ? 'production' : 'development',
+  beforeSend(event) {
+    const frames = event.exception?.values?.flatMap((value) => value.stacktrace?.frames ?? []) ?? []
+    const files = frames.map((frame) => frame.filename ?? '').filter(Boolean)
+
+    if (['/auth/refresh'].some((file) => files.includes(file))) {
+      return null
+    }
+
+    return event
+  },
 })
 
 app.provide(apiKey, api)
