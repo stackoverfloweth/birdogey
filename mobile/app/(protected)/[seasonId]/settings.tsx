@@ -1,9 +1,18 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { useAuth } from '@/contexts/AuthContext'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 
 export default function SettingsScreen(): React.ReactNode {
+  const { logout } = useAuth()
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
+
+      <ScrollView contentContainerStyle={styles.container}>
+        <TouchableOpacity style={styles.row} onPress={() => void logout()}>
+          <Text style={styles.rowLabel}>Logout</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   )
 }
@@ -19,4 +28,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+  row: {
+    paddingVertical: 12,
+  },
+  rowLabel: { fontSize: 16 },
 })
