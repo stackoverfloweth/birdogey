@@ -1,16 +1,22 @@
 import { View, Text, StyleSheet } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { router } from 'expo-router'
 import { useSeason } from '@/contexts/SeasonContext'
+import { useCallback } from 'react'
+import { SeasonSelectList } from '@/components/SeasonSelectList'
 
 export default function HomeScreen(): React.ReactNode {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
-  const { availableSeasons } = useSeason()
-  const season = availableSeasons.find((s) => s.id === seasonId)
+  const { selectedSeason, setSelectedSeasonId } = useSeason()
+
+  const navigateToSeason = useCallback((seasonId: string): void => {
+    setSelectedSeasonId(seasonId)
+    router.setParams({ seasonId })
+  }, [setSelectedSeasonId])
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{season?.name ?? 'Home'}</Text>
-      <Text style={styles.subtitle}>{season?.course.name}</Text>
+      <Text style={styles.title}>Birdogey</Text>
+
+      <SeasonSelectList onSeasonPress={(season) => navigateToSeason(season.id)} selectedSeasonId={selectedSeason?.id} />
     </View>
   )
 }
@@ -25,10 +31,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6b7280',
+    marginBottom: 10,
   },
 })

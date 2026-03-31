@@ -6,7 +6,7 @@ import { getStoredValue, setStoredValue } from '../services/tokenStorage'
 const SEASON_KEY = 'BIRDOGEY_SEASON_ID'
 
 interface SeasonState {
-  selectedSeasonId: string | null,
+  selectedSeason: Season | null,
   setSelectedSeasonId: (id: string) => void,
   availableSeasons: Season[],
 }
@@ -15,16 +15,18 @@ const SeasonContext = createContext<SeasonState | null>(null)
 
 export function SeasonProvider({ children }: { children: React.ReactNode }): React.ReactNode {
   const { user } = useAuth()
-  const [selectedSeasonId, setSelectedSeasonIdState] = useState<string | null>(null)
+  const [selectedSeason, setSelectedSeasonState] = useState<Season | null>(null)
   const availableSeasons = useMemo(() => user?.seasons ?? [], [user])
 
   useEffect(() => {
     async function restore(): Promise<void> {
       const stored = await getStoredValue(SEASON_KEY)
-      if (stored && availableSeasons.some((season) => season.id === stored)) {
-        setSelectedSeasonIdState(stored)
+      const season = stored ? availableSeasons.find((season) => season.id === stored) : null
+
+      if (season) {
+        setSelectedSeasonState(season)
       } else if (availableSeasons.length === 1) {
-        setSelectedSeasonIdState(availableSeasons[0].id)
+        setSelectedSeasonState(availableSeasons[0])
         await setStoredValue(SEASON_KEY, availableSeasons[0].id)
       }
     }
@@ -34,12 +36,18 @@ export function SeasonProvider({ children }: { children: React.ReactNode }): Rea
   }, [availableSeasons])
 
   const setSelectedSeasonId = (id: string): void => {
-    setSelectedSeasonIdState(id)
+    const season = availableSeasons.find((season) => season.id === id)
+
+    if (!season) {
+      return
+    }
+
+    setSelectedSeasonState(season)
     setStoredValue(SEASON_KEY, id)
   }
 
   return (
-    <SeasonContext.Provider value={{ selectedSeasonId, setSelectedSeasonId, availableSeasons }}>
+    <SeasonContext.Provider value={{ selectedSeason, setSelectedSeasonId, availableSeasons }}>
       {children}
     </SeasonContext.Provider>
   )
