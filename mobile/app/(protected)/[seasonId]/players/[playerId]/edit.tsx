@@ -55,8 +55,6 @@ function EditPlayerForm({ player }: { player: Player }): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Edit Player</Text>
-
       <Text style={styles.label}>Name</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} />
 
@@ -82,13 +80,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 60,
     paddingHorizontal: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 24,
+    paddingTop: 16,
   },
   label: {
     fontSize: 14,

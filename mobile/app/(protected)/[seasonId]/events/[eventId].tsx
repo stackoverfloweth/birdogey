@@ -18,7 +18,6 @@ export default function EventDetailScreen(): React.ReactNode {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>{event.name}</Text>
       {event.notes ? <Text style={styles.notes}>{event.notes}</Text> : null}
 
       <View style={styles.statsRow}>
@@ -71,13 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 60,
     paddingHorizontal: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
   },
   notes: {
     fontSize: 14,

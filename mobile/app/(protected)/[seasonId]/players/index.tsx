@@ -14,7 +14,6 @@ export default function PlayersListScreen(): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Players</Text>
       <FlatList
         data={players}
         keyExtractor={(player) => player.id}
@@ -32,17 +31,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 60,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    paddingHorizontal: 16,
-    marginBottom: 12,
   },
   list: {
     padding: 16,
-    paddingTop: 0,
   },
   empty: {
     textAlign: 'center',

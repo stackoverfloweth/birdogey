@@ -6,6 +6,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: 'birdogey',
   extra: {
     ...config.extra,
-    apiBaseUrl: process.env.API_BASE_URL ?? 'https://birdogey.up.railway.app',
+    apiBaseUrl: process.env.API_BASE_URL,
   },
 })

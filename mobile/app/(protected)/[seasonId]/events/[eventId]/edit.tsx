@@ -39,9 +39,6 @@ function EditEventForm({ event }: { event: Event }): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Edit Event</Text>
-      <Text style={styles.subtitle}>{event.name}</Text>
-
       <Text style={styles.label}>Notes</Text>
       <TextInput style={styles.input} value={notes} onChangeText={setNotes} placeholder="Optional" multiline />
 
@@ -62,18 +59,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 60,
     paddingHorizontal: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6b7280',
-    marginBottom: 24,
+    paddingTop: 16,
   },
   label: {
     fontSize: 14,

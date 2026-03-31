@@ -1,34 +1,16 @@
-import { View, FlatList, Text, StyleSheet } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
-import { useEvents } from '@/hooks/useEvents'
-import { EventListItem } from '@/components/EventListItem'
-import { LoadingSpinner } from '@/components/LoadingSpinner'
-import { ErrorView } from '@/components/ErrorView'
+import { View, Text, StyleSheet } from 'react-native'
+import { useLocalSearchParams } from 'expo-router'
+import { useSeason } from '@/contexts/SeasonContext'
 
-export default function EventsListScreen(): React.ReactNode {
+export default function HomeScreen(): React.ReactNode {
   const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
-  const { data: events, isLoading, error, refetch } = useEvents(seasonId)
-
-  if (isLoading) return <LoadingSpinner />
-  if (error) return <ErrorView message="Failed to load events" onRetry={() => void refetch()} />
+  const { availableSeasons } = useSeason()
+  const season = availableSeasons.find((s) => s.id === seasonId)
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Events</Text>
-      <FlatList
-        data={events}
-        keyExtractor={(event) => event.id}
-        renderItem={({ item }) => (
-          <EventListItem
-            event={item}
-            onPress={() => router.push(`/(protected)/${seasonId}/events/${item.id}`)}
-          />
-        )}
-        contentContainerStyle={styles.list}
-        onRefresh={() => void refetch()}
-        refreshing={isLoading}
-        ListEmptyComponent={<Text style={styles.empty}>No events yet</Text>}
-      />
+      <Text style={styles.title}>{season?.name ?? 'Home'}</Text>
+      <Text style={styles.subtitle}>{season?.course.name}</Text>
     </View>
   )
 }
@@ -38,21 +20,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingTop: 60,
+    paddingHorizontal: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    paddingHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 4,
   },
-  list: {
-    padding: 16,
-    paddingTop: 0,
-  },
-  empty: {
-    textAlign: 'center',
-    color: '#9ca3af',
-    marginTop: 40,
+  subtitle: {
     fontSize: 16,
+    color: '#6b7280',
   },
 })
