@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useGlobalSearchParams } from 'expo-router'
 import { useCreateEvent } from '@/hooks/useCreateEvent'
 
 export default function CreateEventScreen(): React.ReactNode {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
+  const { seasonId } = useGlobalSearchParams<{ seasonId: string }>()
   const createEvent = useCreateEvent(seasonId)
 
   const [name, setName] = useState('')

@@ -6,7 +6,6 @@ export default function HomeScreen(): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Birdogey</Text>
       <Text>
         {selectedSeason?.course.name}
       </Text>

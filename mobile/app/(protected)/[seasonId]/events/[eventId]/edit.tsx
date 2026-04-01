@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useGlobalSearchParams } from 'expo-router'
 import { useEvent } from '@/hooks/useEvent'
 import { useUpdateEvent } from '@/hooks/useUpdateEvent'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import type { Event } from '@birdogey/shared'
 
 export default function EditEventScreen(): React.ReactNode {
-  const { eventId } = useLocalSearchParams<{ seasonId: string, eventId: string }>()
+  const { eventId } = useGlobalSearchParams<{ seasonId: string, eventId: string }>()
   const { data: event, isLoading } = useEvent(eventId)
 
   if (isLoading) return <LoadingSpinner />
@@ -17,7 +17,7 @@ export default function EditEventScreen(): React.ReactNode {
 }
 
 function EditEventForm({ event }: { event: Event }): React.ReactNode {
-  const { seasonId, eventId } = useLocalSearchParams<{ seasonId: string, eventId: string }>()
+  const { seasonId, eventId } = useGlobalSearchParams<{ seasonId: string, eventId: string }>()
   const updateEvent = useUpdateEvent(seasonId, eventId)
 
   const [notes, setNotes] = useState(event.notes ?? '')

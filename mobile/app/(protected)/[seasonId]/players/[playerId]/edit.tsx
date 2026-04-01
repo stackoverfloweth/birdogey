@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet, Switch, Alert } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useGlobalSearchParams } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/contexts/AuthContext'
 import { createPlayerApi, type Player } from '@birdogey/shared'
@@ -9,7 +9,7 @@ import { queryKeys } from '@/hooks/queryKeys'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function EditPlayerScreen(): React.ReactNode {
-  const { playerId } = useLocalSearchParams<{ seasonId: string, playerId: string }>()
+  const { playerId } = useGlobalSearchParams<{ seasonId: string, playerId: string }>()
   const { apiClient } = useAuth()
   const playerApi = createPlayerApi(apiClient)
 
@@ -25,7 +25,7 @@ export default function EditPlayerScreen(): React.ReactNode {
 }
 
 function EditPlayerForm({ player }: { player: Player }): React.ReactNode {
-  const { seasonId, playerId } = useLocalSearchParams<{ seasonId: string, playerId: string }>()
+  const { seasonId, playerId } = useGlobalSearchParams<{ seasonId: string, playerId: string }>()
   const updatePlayer = useUpdatePlayer(seasonId)
 
   const [name, setName] = useState(player.name)

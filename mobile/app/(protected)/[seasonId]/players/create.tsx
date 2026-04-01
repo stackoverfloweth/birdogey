@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet, Switch, Alert } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useGlobalSearchParams } from 'expo-router'
 import { useCreatePlayer } from '@/hooks/useCreatePlayer'
 
 export default function CreatePlayerScreen(): React.ReactNode {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
+  const { seasonId } = useGlobalSearchParams<{ seasonId: string }>()
   const createPlayer = useCreatePlayer(seasonId)
 
   const [name, setName] = useState('')

@@ -1,12 +1,12 @@
-import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { router, Stack, useGlobalSearchParams } from 'expo-router'
 import { Pressable } from 'react-native'
 import { SymbolView } from 'expo-symbols'
 
 export default function PlayersLayout(): React.ReactNode {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
+  const { seasonId } = useGlobalSearchParams<{ seasonId: string }>()
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShadowVisible: false }}>
       <Stack.Screen
         name="index"
         options={{

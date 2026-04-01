@@ -3,11 +3,12 @@ import { SymbolView } from 'expo-symbols'
 
 export default function SeasonLayout(): React.ReactNode {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs screenOptions={{ headerShown: false, headerShadowVisible: false }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <SymbolView name="house" tintColor={color} size={28} />
           ),
@@ -35,6 +36,7 @@ export default function SeasonLayout(): React.ReactNode {
         name="settings"
         options={{
           title: 'Settings',
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <SymbolView name="gearshape" tintColor={color} size={28} />
           ),

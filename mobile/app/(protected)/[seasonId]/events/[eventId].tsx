@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useGlobalSearchParams } from 'expo-router'
 import { useEvent } from '@/hooks/useEvent'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ErrorView } from '@/components/ErrorView'
 import { calculateEventCtpPot, calculateEventAcePot } from '@birdogey/shared'
 
 export default function EventDetailScreen(): React.ReactNode {
-  const { eventId } = useLocalSearchParams<{ eventId: string }>()
+  const { eventId } = useGlobalSearchParams<{ eventId: string }>()
   const { data: event, isLoading, error, refetch } = useEvent(eventId)
 
   if (isLoading) return <LoadingSpinner />

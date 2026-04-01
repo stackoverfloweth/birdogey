@@ -1,12 +1,12 @@
 import { View, FlatList, Text, StyleSheet } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useGlobalSearchParams } from 'expo-router'
 import { usePlayersBySeason } from '@/hooks/usePlayers'
 import { PlayerListItem } from '@/components/PlayerListItem'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ErrorView } from '@/components/ErrorView'
 
 export default function PlayersListScreen(): React.ReactNode {
-  const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
+  const { seasonId } = useGlobalSearchParams<{ seasonId: string }>()
   const { data: players, isLoading, error, refetch } = usePlayersBySeason(seasonId)
 
   if (isLoading) return <LoadingSpinner />
