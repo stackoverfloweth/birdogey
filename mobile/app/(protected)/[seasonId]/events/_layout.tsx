@@ -6,7 +6,7 @@ export default function EventsLayout(): React.ReactNode {
   const { seasonId } = useLocalSearchParams<{ seasonId: string }>()
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShadowVisible: false }}>
       <Stack.Screen
         name="index"
         options={{
