@@ -5,6 +5,8 @@ export type SeasonJson = {
   start: string,
   end?: string,
   password: string,
+  ctpInPennies?: number,
+  aceInPennies?: number,
   course: {
     _id: string,
     name: string,

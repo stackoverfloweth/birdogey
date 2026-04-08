@@ -51,6 +51,8 @@ export function mapSeason(source: SeasonJson): Season {
     start: new Date(source.start),
     end: source.end ? new Date(source.end) : undefined,
     password: source.password,
+    ctpPerPlayer: source.ctpInPennies,
+    acePerPlayer: source.aceInPennies,
     course: {
       id: source.course._id,
       name: source.course.name,

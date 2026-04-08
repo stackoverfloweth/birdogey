@@ -3,7 +3,7 @@
   import { format } from 'date-fns'
   import { computed, ref } from 'vue'
   import { Event, EventRequest } from '@birdogey/shared'
-  import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners } from '@/services'
+  import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners, auth } from '@/services'
 
   const props = defineProps<{
     seasonId: string,
@@ -17,9 +17,11 @@
   }>()
 
   const { validate, pending } = useValidationObserver()
+  const season = computed(() => auth.seasons.find((season) => season.id === props.seasonId))
+
   const previousEventBalance = computed(() => ({
-    ctpPerPlayer: props.previousEvent?.ctpPerPlayer ?? 0,
-    acePerPlayer: props.previousEvent?.acePerPlayer ?? 0,
+    ctpPerPlayer: props.previousEvent?.ctpPerPlayer ?? season.value?.ctpPerPlayer ?? 0,
+    acePerPlayer: props.previousEvent?.acePerPlayer ?? season.value?.acePerPlayer ?? 0,
     ctpStartingBalance: props.previousEvent ? calculateEventCtpPotIfNoWinners(props.previousEvent) : 0,
     aceStartingBalance: props.previousEvent ? calculateEventAcePotIfNoWinners(props.previousEvent) : 0,
   }))

@@ -8,4 +8,6 @@ export type Season = {
   end?: Date,
   password: string,
   course: Course,
+  ctpPerPlayer?: number,
+  acePerPlayer?: number,
 }
