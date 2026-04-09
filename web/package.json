@@ -27,6 +27,9 @@
     "vue-router": "4.3.0",
     "vue3-recaptcha-v2": "^2.1.0"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.39.0"
+  },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.11.24",
