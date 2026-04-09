@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { BulkWriteResult, Db, ObjectId } from 'mongodb'
-import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, PlayerResponse } from '@birdogey/shared/api'
+import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, PlayerResponse, PlayerSeasonResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
@@ -151,7 +151,13 @@ events.put('/:id/complete', async (context) => {
   const ctpPlayerIds = body.ctpPlayerIds?.map((playerId: string) => new ObjectId(playerId)) ?? []
   const acePlayerIds = body.acePlayerIds?.map((playerId: string) => new ObjectId(playerId)) ?? []
 
-  const result = await collection.updateOne({ _id: new ObjectId(id) }, {
+  const event = await collection.findOne({ _id: new ObjectId(id) })
+
+  if (!event) {
+    throw new HttpError(404, 'Event not found')
+  }
+
+  const result = await collection.updateOne({ _id: event._id }, {
     $set: {
       completed: new Date(),
       notes: body.notes,
@@ -161,7 +167,7 @@ events.put('/:id/complete', async (context) => {
     },
   })
 
-  await updatePlayerTags(db, players)
+  await updatePlayerTags(db, event.seasonId, players)
 
   return context.json(null, result.acknowledged ? 202 : 400)
 })
@@ -177,17 +183,17 @@ events.delete('/:id', async (context) => {
   return context.json(null, result.deletedCount === 1 ? 202 : 400)
 })
 
-function updatePlayerTags(db: Db, players: EventPlayerResponse[]): Promise<BulkWriteResult> {
-  const playerUpdates: Partial<PlayerResponse>[] = players.map((player) => ({
-    _id: new ObjectId(player.playerId),
+function updatePlayerTags(db: Db, seasonId: ObjectId, players: EventPlayerResponse[]): Promise<BulkWriteResult> {
+  const playerUpdates: Partial<PlayerSeasonResponse>[] = players.map((player) => ({
+    playerId: new ObjectId(player.playerId),
     tagId: player.outgoingTagId,
   }))
 
-  const collection = db.collection<PlayerResponse>('players')
+  const collection = db.collection<PlayerSeasonResponse>('playerSeasons')
 
-  return collection.bulkWrite(playerUpdates.map(({ _id, tagId }) => ({
+  return collection.bulkWrite(playerUpdates.map(({ playerId, tagId }) => ({
     updateOne: {
-      filter: { _id },
+      filter: { playerId, seasonId },
       update: { $set: { tagId } },
     },
   })))
