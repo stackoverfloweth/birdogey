@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { BulkWriteResult, Db, ObjectId } from 'mongodb'
-import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, PlayerResponse, PlayerSeasonResponse } from '@birdogey/shared/api'
+import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, PlayerSeasonResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, getJwtPayload } from '../middleware/auth.js'

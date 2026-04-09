@@ -27,7 +27,7 @@
   }))
 
   const today = format(new Date(), 'MMMM do')
-  const name = ref<string>(today)
+  const name = ref(today)
   const notes = ref<string>()
   const ctpStartingBalance = ref(previousEventBalance.value.ctpStartingBalance / 100)
   const aceStartingBalance = ref(previousEventBalance.value.aceStartingBalance / 100)

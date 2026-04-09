@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "lint": "npm run lint --workspaces --if-present",
-    "lint:fix": "npm run lint:fix --workspaces --if-present"
+    "lint:fix": "npm run lint:fix --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
   },
   "workspaces": [
     "shared",
