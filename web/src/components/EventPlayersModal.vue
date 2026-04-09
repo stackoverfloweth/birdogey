@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { EventPlayerRequest, Player } from '@birdogey/shared'
+  import { EventPlayerRequest, Player, PlayerSeason } from '@birdogey/shared'
   import PlayerImage from '@/components/PlayerImage.vue'
   import { computed } from 'vue'
 
@@ -7,7 +7,7 @@
   const isOpen = defineModel<boolean>('isOpen')
 
   const { players } = defineProps<{
-    players: Player[],
+    players: PlayerSeason[],
   }>()
 
   const selectedPlayers = computed({

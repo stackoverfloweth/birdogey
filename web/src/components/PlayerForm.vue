@@ -2,13 +2,13 @@
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { ref } from 'vue'
   import PlayerImageUpload from '@/components/PlayerImageUpload.vue'
-  import { Player, PlayerRequest } from '@birdogey/shared'
+  import { PlayerRequest, PlayerSeason } from '@birdogey/shared'
   import { auth } from '@/services'
 
   const props = defineProps<{
     seasonId: string,
     loading?: boolean,
-    initialValues?: Partial<Player>,
+    initialValues?: Partial<PlayerSeason>,
     showRemoveButton?: boolean,
   }>()
 

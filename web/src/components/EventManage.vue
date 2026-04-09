@@ -5,7 +5,7 @@
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import { useApi } from '@/composables'
-  import { Event, EventPlayerRequest, EventRequest, Player } from '@birdogey/shared'
+  import { Event, EventPlayerRequest, EventRequest, Player, PlayerSeason } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
   import EventPlayersModal from './EventPlayersModal.vue'
@@ -106,8 +106,10 @@
     })),
   )
 
-  function getPlayer(playerId: string): Player {
-    return players.value.find((player) => player.id === playerId) ?? { name: 'loading...' } as Player
+  function getPlayer(playerId: string): PlayerSeason {
+    const emptyPlayer = { name: 'loading...' } as PlayerSeason
+
+    return players.value.find((player) => player.id === playerId) ?? emptyPlayer
   }
 
   const ctpInPennies = computed(() => {
