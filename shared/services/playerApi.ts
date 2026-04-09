@@ -9,8 +9,8 @@ export function createPlayerApi(client: HttpClient) {
     getById(id: string): Promise<Player> {
       return client.get<PlayerJson>(`/players/${id}`).then(mapPlayer)
     },
-    getList(): Promise<Player[]> {
-      return client.get<PlayerJson[]>('/players').then((data) => data.map(mapPlayer))
+    getList(seasonIds: string[] = []): Promise<Player[]> {
+      return client.get<PlayerJson[]>('/players', { seasonIds: seasonIds.join(',') }).then((data) => data.map(mapPlayer))
     },
     getSeasonList(seasonId: string): Promise<PlayerSeason[]> {
       return client.get<PlayerSeasonJson[]>(`/players/season/${seasonId}`).then((data) => data.map(mapPlayerSeason))

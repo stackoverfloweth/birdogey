@@ -11,18 +11,40 @@ import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
 const players = new Hono()
 
 players.get('/', authMiddleware, async (context) => {
-  const seasonId = context.req.query('seasonId')
+  const seasonIds = context.req.query('seasonIds')?.split(',')
+    .filter(Boolean) ?? []
 
   const token = getJwtPayload(context)
   const db = getDb()
 
-  if (seasonId) {
-    checkSeasonAccess(seasonId, token)
+  if (seasonIds.length) {
+    seasonIds.forEach((seasonId) => checkSeasonAccess(seasonId, token))
   }
 
-  const collection = db.collection<PlayerResponse>('players')
+  if (!seasonIds.length) {
+    const collection = db.collection<PlayerResponse>('players')
+    const result = await collection.find({}).toArray()
 
-  const result = await collection.find({ name: { $not: /- test$/ } }).toArray()
+    return context.json(result)
+  }
+
+  const collection = db.collection<PlayerSeasonResponse>('playerSeasons')
+
+  const result = await collection
+    .aggregate([
+      { $match: { seasonId: { $in: seasonIds.map((id) => new ObjectId(id)) } } },
+      { $lookup: { from: 'players', localField: 'playerId', foreignField: '_id', as: 'player' } },
+      { $unwind: '$player' },
+      {
+        $group: {
+          _id: '$player._id',
+          name: { $first: '$player.name' },
+          udiscId: { $first: '$player.udiscId' },
+          imageUrl: { $first: '$player.imageUrl' },
+        },
+      },
+    ])
+    .toArray()
 
   return context.json(result)
 })
