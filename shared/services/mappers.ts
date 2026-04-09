@@ -1,5 +1,6 @@
-import type { EventJson, EventPlayerJson, PlayerJson, SeasonJson, UserAuthJson } from './types'
+import type { EventJson, EventPlayerJson, PlayerJson, PlayerSeasonJson, SeasonJson, UserAuthJson } from './types'
 import { EventPlayer, Event, Player, Season, User } from '../models'
+import { PlayerSeason } from '../models/playerSeason'
 
 export function mapEventPlayer(source: EventPlayerJson): EventPlayer {
   return {
@@ -34,12 +35,18 @@ export function mapEvent(source: EventJson): Event {
 export function mapPlayer(source: PlayerJson): Player {
   return {
     id: source._id,
-    seasonId: source.seasonId,
     name: source.name,
-    tagId: source.tagId,
-    entryPaid: source.entryPaid,
     udiscId: source.udiscId,
     imageUrl: source.imageUrl,
+  }
+}
+
+export function mapPlayerSeason(source: PlayerSeasonJson): PlayerSeason {
+  return {
+    ...mapPlayer(source),
+    seasonId: source.seasonId,
+    tagId: source.tagId,
+    entryPaid: source.entryPaid,
   }
 }
 

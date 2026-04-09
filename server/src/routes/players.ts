@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
-import { EventResponse, PlayerRequest, PlayerResponse, PlayerSignupRequest, SignupKeyResponse } from '@birdogey/shared/api'
+import { EventResponse, PlayerRequest, PlayerResponse, PlayerSeasonResponse, PlayerSignupRequest, SignupKeyResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
@@ -13,19 +13,52 @@ const players = new Hono()
 players.get('/', authMiddleware, async (context) => {
   const seasonId = context.req.query('seasonId')
 
-  if (!seasonId) {
-    throw new HttpError(400, 'seasonId query parameter is required')
+  const token = getJwtPayload(context)
+  const db = getDb()
+
+  if (seasonId) {
+    checkSeasonAccess(seasonId, token)
   }
 
-  const token = getJwtPayload(context)
-  checkSeasonAccess(seasonId, token)
-
-  const db = getDb()
   const collection = db.collection<PlayerResponse>('players')
 
+  const result = await collection.find({ name: { $not: /- test$/ } }).toArray()
+
+  return context.json(result)
+})
+
+players.get('/season/:seasonId', authMiddleware, async (context) => {
+  const seasonId = context.req.param('seasonId')
+
+  const token = getJwtPayload(context)
+  const db = getDb()
+
+  if (!seasonId) {
+    throw new HttpError(400, 'seasonId is required')
+  }
+
+  checkSeasonAccess(seasonId, token)
+
+  const collection = db.collection<PlayerSeasonResponse>('playerSeasons')
+
   const result = await collection
-    .find({ seasonId: new ObjectId(seasonId) })
-    .sort({ tagId: 1 })
+    .aggregate([
+      { $match: { seasonId: new ObjectId(seasonId) } },
+      { $lookup: { from: 'players', localField: 'playerId', foreignField: '_id', as: 'player' } },
+      { $unwind: '$player' },
+      {
+        $project: {
+          _id: { $toString: '$player._id' },
+          name: '$player.name',
+          udiscId: '$player.udiscId',
+          imageUrl: '$player.imageUrl',
+          seasonId: { $toString: '$seasonId' },
+          tagId: 1,
+          entryPaid: 1,
+        },
+      },
+      { $sort: { tagId: 1 } },
+    ])
     .toArray()
 
   return context.json(result)
@@ -47,24 +80,31 @@ players.post('/', authMiddleware, async (context) => {
   const token = getJwtPayload(context)
 
   if (!isValidRequest<PlayerRequest>(body, [
-    ['seasonId', 'string'],
     ['name', 'string'],
   ])) {
     throw new HttpError(400, 'Invalid request')
   }
 
-  checkSeasonAccess(body.seasonId, token)
+  if (body.seasonId) {
+    checkSeasonAccess(body.seasonId, token)
+  }
 
   const db = getDb()
-  const collection = db.collection<PlayerResponse>('players')
+  const players = db.collection<PlayerResponse>('players')
+  const playerSeasons = db.collection<PlayerSeasonResponse>('playerSeasons')
   const seasonId = new ObjectId(body.seasonId)
 
-  const tagId = body.tagId ?? await getNextAvailableTag(seasonId, collection)
+  const tagId = body.tagId ?? await getNextAvailableTag(seasonId, playerSeasons)
 
-  const result = await collection.insertOne({
+  const result = await players.insertOne({
     _id: new ObjectId(),
-    seasonId,
     name: body.name,
+  })
+
+  await playerSeasons.insertOne({
+    _id: new ObjectId(),
+    playerId: result.insertedId,
+    seasonId,
     tagId,
     entryPaid: body.entryPaid ?? false,
   })
@@ -75,22 +115,28 @@ players.post('/', authMiddleware, async (context) => {
 players.put('/:id', authMiddleware, async (context) => {
   const id = context.req.param('id')
   const body = await context.req.json()
+  const { seasonId, tagId, entryPaid, ...$set } = body
   const token = getJwtPayload(context)
 
-  if (!isValidRequest<PlayerRequest>(body, [
-    ['seasonId', 'string'],
-  ])) {
-    throw new HttpError(400, 'Invalid request')
+  if (seasonId) {
+    checkSeasonAccess(seasonId, token)
   }
 
-  checkSeasonAccess(body.seasonId, token)
-
   const db = getDb()
-  const collection = db.collection<PlayerResponse>('players')
+  const players = db.collection<PlayerResponse>('players')
+  const playerSeasons = db.collection<PlayerSeasonResponse>('playerSeasons')
 
-  const { seasonId, ...$set } = body
+  const result = await players.updateOne({ _id: new ObjectId(id) }, { $set })
 
-  const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set })
+  if (seasonId && typeof seasonId === 'string') {
+    const tagId = body.tagId ?? await getNextAvailableTag(seasonId, playerSeasons)
+
+    await playerSeasons.updateOne(
+      { playerId: new ObjectId(id), seasonId: new ObjectId(seasonId) },
+      { $set: { tagId, entryPaid } },
+      { upsert: true },
+    )
+  }
 
   return context.json(null, result.acknowledged ? 202 : 400)
 })
@@ -154,7 +200,8 @@ players.post('/signup', async (context) => {
 
   const db = getDb()
   const keys = db.collection<SignupKeyResponse>('signup')
-  const playersCollection = db.collection<PlayerResponse>('players')
+  const players = db.collection<PlayerResponse>('players')
+  const playerSeasons = db.collection<PlayerSeasonResponse>('playerSeasons')
 
   const signupKey = await keys.findOne({ _id: new ObjectId(body.key) })
 
@@ -162,16 +209,21 @@ players.post('/signup', async (context) => {
     throw new HttpError(404, 'Invalid signup key')
   }
 
-  const tagId = await getNextAvailableTag(signupKey.seasonId, playersCollection)
+  const tagId = await getNextAvailableTag(signupKey.seasonId, playerSeasons)
   const { name, imageUrl } = body
 
-  const result = await playersCollection.insertOne({
+  const result = await players.insertOne({
     _id: new ObjectId(),
-    seasonId: signupKey.seasonId,
     name,
     imageUrl,
-    tagId,
+  })
+
+  await playerSeasons.insertOne({
+    _id: new ObjectId(),
+    playerId: result.insertedId,
+    seasonId: signupKey.seasonId,
     entryPaid: false,
+    tagId,
   })
 
   return context.json(result.insertedId, 201)

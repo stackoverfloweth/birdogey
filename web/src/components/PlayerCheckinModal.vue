@@ -28,7 +28,7 @@
   const selectedPlayer = ref<string>()
 
   const api = useApi()
-  const playerSubscription = useSubscription(api.players.getList, [seasonId])
+  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const playersOptions = computed(() => players.value.map<SelectOption>((player) => ({
     label: player.name,

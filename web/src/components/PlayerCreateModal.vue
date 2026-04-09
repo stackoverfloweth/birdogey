@@ -30,7 +30,7 @@
   const router = useRouter()
 
   const { seasonId } = toRefs(props)
-  const playerSubscription = useSubscription(api.players.getList, [seasonId])
+  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
   async function addPlayer(request: PlayerRequest): Promise<void> {

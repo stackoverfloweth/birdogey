@@ -26,12 +26,15 @@ export type UserAuthJson = {
 
 export type PlayerJson = {
   _id: string,
-  seasonId: string,
   name: string,
-  tagId: number,
-  entryPaid?: boolean,
   udiscId?: string,
   imageUrl?: string,
+}
+
+export type PlayerSeasonJson = PlayerJson & {
+  seasonId: string,
+  tagId: number,
+  entryPaid: boolean,
 }
 
 export type EventPlayerJson = {

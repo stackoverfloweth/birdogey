@@ -13,7 +13,7 @@
 
   const api = useApi()
   const seasonId = computed(() => props.event.seasonId)
-  const playerSubscription = useSubscription(api.players.getList, [seasonId])
+  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
   const eventPlayers = computed(() => props.event.players.map(({ playerId }) => {
@@ -40,7 +40,7 @@
     </div>
 
     <div class="event-list-item__players">
-      <template v-for="player in eventPlayers" :key="player">
+      <template v-for="player in eventPlayers" :key="player.name">
         <PlayerImage :image-url="player.imageUrl" class="event-list-item__player-image" />
       </template>
       <p-tag class="event-list-item__player-count">

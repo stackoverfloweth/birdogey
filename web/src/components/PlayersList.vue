@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-  import { Player } from '@birdogey/shared'
+  import { Player, PlayerSeason } from '@birdogey/shared'
   import PlayerImage from '@/components/PlayerImage.vue'
 
   defineProps<{
-    players: Player[],
+    players: (Player & Partial<PlayerSeason>)[],
   }>()
 
   const emit = defineEmits<{
@@ -15,15 +15,20 @@
   <div class="players-list">
     <template v-for="player in players" :key="player.id">
       <div class="player-list__player" @click="emit('select', player)">
-        <div class="player-list__player-tag">
-          {{ player.tagId }}
-        </div>
+        <template v-if="player.seasonId">
+          <div class="player-list__player-tag">
+            {{ player.tagId }}
+          </div>
+        </template>
         <p-list-item class="player-list__player-details" :value="player.id">
           <div class="player-list__player-details-name">
             {{ player.name }}
           </div>
           <PlayerImage :image-url="player.imageUrl" height="30" width="30" />
-          <p-icon class="player-list__player-details-paid" :class="{ 'player-list__player-details-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
+
+          <template v-if="player.seasonId">
+            <p-icon class="player-list__player-details-paid" :class="{ 'player-list__player-details-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />
+          </template>
         </p-list-item>
       </div>
     </template>

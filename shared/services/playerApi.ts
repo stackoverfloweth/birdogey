@@ -1,7 +1,7 @@
 import type { HttpClient } from './httpClient'
-import type { PlayerJson } from './types'
-import { mapPlayer } from './mappers'
-import { Player } from '../models'
+import type { PlayerJson, PlayerSeasonJson } from './types'
+import { mapPlayer, mapPlayerSeason } from './mappers'
+import { Player, PlayerSeason } from '../models'
 import { PlayerCheckInRequest, PlayerRequest, PlayerSignupRequest } from '../models/api'
 
 export function createPlayerApi(client: HttpClient) {
@@ -9,8 +9,11 @@ export function createPlayerApi(client: HttpClient) {
     getById(id: string): Promise<Player> {
       return client.get<PlayerJson>(`/players/${id}`).then(mapPlayer)
     },
-    getList(seasonId: string): Promise<Player[]> {
-      return client.get<PlayerJson[]>('/players', { seasonId }).then((data) => data.map(mapPlayer))
+    getList(): Promise<Player[]> {
+      return client.get<PlayerJson[]>('/players').then((data) => data.map(mapPlayer))
+    },
+    getSeasonList(seasonId: string): Promise<PlayerSeason[]> {
+      return client.get<PlayerSeasonJson[]>(`/players/season/${seasonId}`).then((data) => data.map(mapPlayerSeason))
     },
     create(request: PlayerRequest): Promise<string> {
       return client.post<string>('/players', request)

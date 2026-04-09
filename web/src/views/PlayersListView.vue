@@ -16,7 +16,7 @@
   const api = useApi()
   const router = useRouter()
 
-  const playerSubscription = useSubscription(api.players.getList, [seasonId])
+  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
   const crumbs = computed<Crumb[]>(() => [{ text: 'Players' }])

@@ -26,7 +26,7 @@
 
   const eventSubscription = useSubscription(api.events.getList, [seasonId])
 
-  const playerSubscription = useSubscription(api.players.getList, [seasonId])
+  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
   const notes = ref(props.event.notes)
@@ -218,7 +218,7 @@
 
       <template v-if="eventPlayers.length">
         <div class="event-manage__players">
-          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.id">
+          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.playerId">
             <EventPlayerListItem
               v-model:event-player="eventPlayers[index]"
               :disabled="disabled"
