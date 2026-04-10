@@ -7,7 +7,8 @@ interface AuthState {
   user: User | null,
   isAuthenticated: boolean,
   isLoading: boolean,
-  login: (password: string) => Promise<void>,
+  sendCode: (phoneNumber: string) => Promise<void>,
+  verifyCode: (phoneNumber: string, code: string) => Promise<void>,
   logout: () => Promise<void>,
   apiClient: FetchHttpClient,
 }
@@ -59,8 +60,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     }
   }, [user, refreshToken])
 
-  const login = useCallback(async (password: string) => {
-    const loggedInUser = await authApi.login(password)
+  const sendCode = useCallback(async (phoneNumber: string) => {
+    await authApi.sendCode(phoneNumber)
+  }, [authApi])
+
+  const verifyCode = useCallback(async (phoneNumber: string, code: string) => {
+    const loggedInUser = await authApi.verifyCode(phoneNumber, code)
     if (loggedInUser.token) {
       await setToken(loggedInUser.token)
     }
@@ -78,7 +83,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
         user,
         isAuthenticated: !!user,
         isLoading,
-        login,
+        sendCode,
+        verifyCode,
         logout,
         apiClient,
       }}

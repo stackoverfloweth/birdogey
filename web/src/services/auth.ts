@@ -50,8 +50,12 @@ export function clearStoredAuth(): void {
   })
 }
 
-export async function attemptLogin(api: CreateApi, value: string): Promise<boolean> {
-  const response = await api.auth.login(value)
+export async function sendVerificationCode(api: CreateApi, phoneNumber: string): Promise<void> {
+  await api.auth.sendCode(phoneNumber)
+}
+
+export async function verifyCode(api: CreateApi, phoneNumber: string, code: string): Promise<boolean> {
+  const response = await api.auth.verifyCode(phoneNumber, code)
 
   Object.assign(auth, response)
   saveAuthToStorage(auth)

@@ -8,6 +8,9 @@ export type Env = {
   jwtSecret: string,
   recaptchaSecret: string,
   corsOrigins: string[],
+  twilioAccountSid: string,
+  twilioAuthToken: string,
+  twilioVerifyServiceSid: string,
 }
 
 export function env(): Env {
@@ -23,5 +26,8 @@ export function env(): Env {
     jwtSecret: process.env.JWT_SECRET ?? '',
     recaptchaSecret: process.env.RECAPTCHA_SECRET ?? '',
     corsOrigins: corsOriginsRaw ? corsOriginsRaw.split(',').map((origin) => origin.trim()) : ['http://localhost:5173'],
+    twilioAccountSid: process.env.TWILIO_ACCOUNT_SID ?? '',
+    twilioAuthToken: process.env.TWILIO_AUTH_TOKEN ?? '',
+    twilioVerifyServiceSid: process.env.TWILIO_VERIFY_SERVICE_SID ?? '',
   }
 }

@@ -1,3 +1,5 @@
 export * from './models'
 export * from './services'
 export * from './utilities/time'
+export * from './utilities/phone'
+export * from './utilities/number'

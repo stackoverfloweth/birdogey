@@ -5,8 +5,11 @@ import { mapUser } from './mappers'
 
 export function createAuthApi(client: HttpClient) {
   return {
-    login(password: string): Promise<User> {
-      return client.post<UserAuthJson>('/auth/login', { password }).then(mapUser)
+    sendCode(phoneNumber: string): Promise<void> {
+      return client.post('/auth/send-code', { phoneNumber })
+    },
+    verifyCode(phoneNumber: string, code: string): Promise<User> {
+      return client.post<UserAuthJson>('/auth/verify-code', { phoneNumber, code }).then(mapUser)
     },
     refresh(): Promise<User> {
       return client.post<UserAuthJson>('/auth/refresh').then(mapUser)
