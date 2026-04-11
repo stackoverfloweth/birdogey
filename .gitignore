@@ -2,6 +2,7 @@
 node_modules
 web/dist
 server/dist
+shared/dist
 .claude/
 
 # local env files
