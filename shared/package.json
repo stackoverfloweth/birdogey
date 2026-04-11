@@ -6,17 +6,17 @@
   "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./index.ts",
       "default": "./dist/index.js"
     },
     "./api": {
-      "types": "./dist/models/api/index.d.ts",
+      "types": "./models/api/index.ts",
       "default": "./dist/models/api/index.js"
     }
   },
   "typesVersions": {
     "*": {
-      "api": ["./dist/models/api/index.d.ts"]
+      "api": ["./models/api/index.ts"]
     }
   },
   "scripts": {
