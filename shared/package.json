@@ -3,22 +3,32 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./index.ts",
-    "./api": "./models/api/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./api": {
+      "types": "./dist/models/api/index.d.ts",
+      "default": "./dist/models/api/index.js"
+    }
   },
   "typesVersions": {
     "*": {
-      "api": ["./models/api/index.ts"]
+      "api": ["./dist/models/api/index.d.ts"]
     }
   },
   "scripts": {
+    "build": "vite build",
     "lint": "eslint models services",
     "lint:fix": "eslint models services --fix"
   },
   "dependencies": {
     "mongodb": "^6.3.0"
+  },
+  "devDependencies": {
+    "vite": "^5.1.4",
+    "typescript": "^5.3.3"
   }
 }

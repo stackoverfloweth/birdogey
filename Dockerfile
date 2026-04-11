@@ -14,11 +14,16 @@ COPY server/package.json ./server/
 # Install dependencies using workspaces
 RUN npm ci --workspace=server --workspace=shared --include-workspace-root
 
+# Build shared
+WORKDIR /app/shared
+RUN npm run build
+
 # Copy server source files
+WORKDIR /app
 COPY server/tsconfig.json ./server/
 COPY server/src/ ./server/src/
 
-# Build
+# Build server
 WORKDIR /app/server
 RUN npm run build
 
@@ -30,8 +35,9 @@ WORKDIR /app
 # Copy root workspace files
 COPY package.json package-lock.json ./
 
-# Copy shared package (needed at runtime)
-COPY shared/ ./shared/
+# Copy shared package.json (for workspace linking) and compiled bundle
+COPY shared/package.json ./shared/
+COPY --from=build /app/shared/dist/ ./shared/dist/
 
 # Copy server package.json
 COPY server/package.json ./server/
@@ -39,7 +45,7 @@ COPY server/package.json ./server/
 # Install production dependencies only
 RUN npm ci --workspace=server --workspace=shared --include-workspace-root --omit=dev
 
-# Copy built output
+# Copy built server output
 COPY --from=build /app/server/dist/ ./server/dist/
 
 EXPOSE 8080
