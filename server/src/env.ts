@@ -11,6 +11,7 @@ export type Env = {
   twilioAccountSid: string,
   twilioAuthToken: string,
   twilioVerifyServiceSid: string,
+  twilioBypassCode: string | undefined,
 }
 
 export function env(): Env {
@@ -29,5 +30,6 @@ export function env(): Env {
     twilioAccountSid: process.env.TWILIO_ACCOUNT_SID ?? '',
     twilioAuthToken: process.env.TWILIO_AUTH_TOKEN ?? '',
     twilioVerifyServiceSid: process.env.TWILIO_VERIFY_SERVICE_SID ?? '',
+    twilioBypassCode: process.env.TWILIO_BYPASS_CODE,
   }
 }
