@@ -5,7 +5,7 @@
   import { Event } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
-  import PlayerImage from '@/components/PlayerImage.vue'
+  import UserImage from '@/components/UserImage.vue'
 
   const props = defineProps<{
     event: Event,
@@ -13,11 +13,11 @@
 
   const api = useApi()
   const seasonId = computed(() => props.event.seasonId)
-  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
+  const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
-  const eventPlayers = computed(() => props.event.players.map(({ playerId }) => {
-    return players.value.find((player) => player.id === playerId) ?? { name: 'loading...', imageUrl: undefined }
+  const eventPlayers = computed(() => props.event.players.map(({ userId }) => {
+    return players.value.find((player) => player.id === userId) ?? { name: 'loading...', imageUrl: undefined }
   }))
 
   const ctp = computed(() => calculateEventCtpPot(props.event))
@@ -41,7 +41,7 @@
 
     <div class="event-list-item__players">
       <template v-for="player in eventPlayers" :key="player.name">
-        <PlayerImage :image-url="player.imageUrl" class="event-list-item__player-image" />
+        <UserImage :image-url="player.imageUrl" class="event-list-item__player-image" />
       </template>
       <p-tag class="event-list-item__player-count">
         {{ eventPlayers.length }}

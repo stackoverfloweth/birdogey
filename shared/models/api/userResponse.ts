@@ -1,11 +1,12 @@
 import { ObjectId } from 'mongodb'
-import { SeasonResponse } from './seasonResponse'
 
 export type UserResponse = {
-  _id?: ObjectId,
-  name?: string,
-  isAdmin: boolean,
-  isAuthorized: boolean,
-  seasons: SeasonResponse[],
-  token?: string,
+  _id: ObjectId,
+  name: string,
+  phoneNumber?: string,
+  udiscId?: string,
+  imageUrl?: string,
+  isAdmin?: boolean,
+  isReadonly?: boolean,
+  courseIds?: ObjectId[],
 }

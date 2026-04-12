@@ -15,7 +15,7 @@
       Add players to this season
     </template>
     <template #actions>
-      <p-button icon="PlusIcon" :to="routes.playerCreate(seasonId)">
+      <p-button icon="PlusIcon" :to="routes.userCreate(seasonId)">
         Add Player
       </p-button>
     </template>

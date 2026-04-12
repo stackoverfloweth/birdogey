@@ -1,6 +1,6 @@
 export type EventPlayer = {
   id: string,
-  playerId: string,
+  userId: string,
   inForCtp: boolean,
   inForAce: boolean,
   score?: number,

@@ -1,4 +1,4 @@
-import { UserResponse } from '@birdogey/shared/api'
+import { UserAuthResponse } from '@birdogey/shared/api'
 
 export class HttpError extends Error {
   public statusCode: number
@@ -9,7 +9,7 @@ export class HttpError extends Error {
   }
 }
 
-export type JwtPayload = Required<UserResponse> & {
+export type JwtPayload = UserAuthResponse & {
   iat?: number,
   exp?: number,
 }

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref } from 'vue'
-  import PlayerImageUpload from '@/components/PlayerImageUpload.vue'
-  import { PlayerSignupRequest } from '@birdogey/shared'
+  import UserImageUpload from '@/components/UserImageUpload.vue'
+  import { SignupRequest } from '@birdogey/shared'
 
   const { signupKey, loading } = defineProps<{
     loading?: boolean,
@@ -10,7 +10,7 @@
   }>()
 
   const emit = defineEmits<{
-    submit: [value: PlayerSignupRequest],
+    submit: [value: SignupRequest],
     cancel: [],
   }>()
 
@@ -45,7 +45,7 @@
 
 <template>
   <p-form class="player-form" @submit="submit">
-    <PlayerImageUpload v-model="imageUrl" />
+    <UserImageUpload v-model="imageUrl" />
 
     <p-label class="player-form__name" label="First Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">

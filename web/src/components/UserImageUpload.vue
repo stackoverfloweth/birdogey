@@ -3,7 +3,7 @@
   import { ref } from 'vue'
   import { useApi } from '@/composables/useApi'
   import { env } from '@/utilities'
-  import PlayerImage from '@/components/PlayerImage.vue'
+  import UserImage from '@/components/UserImage.vue'
   import { showToast } from '@prefecthq/prefect-design'
 
   const imageUrl = defineModel<string>()
@@ -36,7 +36,7 @@
   <div class="player-image-upload">
     <IKContext :public-key="env().imagekitPublicKey" :url-endpoint="env().imagekitUrl" :authenticator="api.imagekit.authenticate">
       <div class="player-image-upload__current">
-        <PlayerImage :image-url="imageUrl" width="250" height="250" />
+        <UserImage :image-url="imageUrl" width="250" height="250" />
         <template v-if="loading">
           <div class="player-image-upload__loading" :style="{ width: `${progress}%` }" />
         </template>

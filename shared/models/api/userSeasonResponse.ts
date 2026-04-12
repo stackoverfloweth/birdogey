@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-export type PlayerSeasonResponse = {
+export type UserSeasonResponse = {
   _id: ObjectId,
   userId: ObjectId,
   seasonId: ObjectId,

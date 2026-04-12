@@ -1,11 +1,11 @@
 <script lang="ts" setup>
   import { randomId } from '@prefecthq/prefect-design'
   import { computed, ref, watch } from 'vue'
-  import { Card, Player } from '@birdogey/shared'
+  import { Card, User } from '@birdogey/shared'
 
   const props = defineProps<{
     isOpen: boolean,
-    players: Player[],
+    players: User[],
   }>()
 
   const emit = defineEmits<{
@@ -13,13 +13,13 @@
   }>()
 
   const draggingOverCard = ref<Card>()
-  const draggingPlayer = ref<Player>()
+  const draggingPlayer = ref<User>()
 
   const classes = computed(() => ({
     card: (card: Card) => ({
       'card-suggestion-modal__card--hovering': card.id === draggingOverCard.value?.id,
     }),
-    player: (player: Player) => ({
+    player: (player: User) => ({
       'card-suggestion-modal__player--dragging': player.id === draggingPlayer.value?.id,
     }),
   }))
@@ -76,7 +76,7 @@
     return card.maxPlayersCount > card.players.length
   }
 
-  function assignPlayersToCards(playersWithoutCard: Player[], cards: Card[]): Card[] {
+  function assignPlayersToCards(playersWithoutCard: User[], cards: Card[]): Card[] {
     if (!playersWithoutCard.length) {
       return cards
     }
@@ -91,7 +91,7 @@
     return assignPlayersToCards(playersWithoutCard, cards)
   }
 
-  function movePlayer(player: Player, destination: Card): void {
+  function movePlayer(player: User, destination: Card): void {
     const playerAlreadyOnCard = destination.players.find(({ id }) => id === player.id)
 
     if (playerAlreadyOnCard) {
@@ -113,7 +113,7 @@
     })
   }
 
-  function dragStart(event: DragEvent, player: Player): void {
+  function dragStart(event: DragEvent, player: User): void {
     if (!event.dataTransfer) {
       return
     }
@@ -122,7 +122,7 @@
 
     event.dataTransfer.dropEffect = 'move'
     event.dataTransfer.effectAllowed = 'move'
-    event.dataTransfer.setData('playerId', player.id)
+    event.dataTransfer.setData('userId', player.id)
   }
 
   function dragEnd(): void {
@@ -135,8 +135,8 @@
   }
 
   function dragDrop(event: DragEvent, card: Card): void {
-    const droppedPlayerId = event.dataTransfer?.getData('playerId')
-    const player = props.players.find(({ id }) => droppedPlayerId === id)
+    const droppedUserId = event.dataTransfer?.getData('userId')
+    const player = props.players.find(({ id }) => droppedUserId === id)
 
     if (!player) {
       return

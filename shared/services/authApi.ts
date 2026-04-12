@@ -1,7 +1,7 @@
 import type { User } from '../models'
 import type { HttpClient } from './httpClient'
 import type { UserAuthJson } from './types'
-import { mapUser } from './mappers'
+import { mapUserAuth } from './mappers'
 
 export function createAuthApi(client: HttpClient) {
   return {
@@ -9,10 +9,10 @@ export function createAuthApi(client: HttpClient) {
       return client.post('/auth/send-code', { phoneNumber })
     },
     verifyCode(phoneNumber: string, code: string): Promise<User> {
-      return client.post<UserAuthJson>('/auth/verify-code', { phoneNumber, code }).then(mapUser)
+      return client.post<UserAuthJson>('/auth/verify-code', { phoneNumber, code }).then(mapUserAuth)
     },
     refresh(): Promise<User> {
-      return client.post<UserAuthJson>('/auth/refresh').then(mapUser)
+      return client.post<UserAuthJson>('/auth/refresh').then(mapUserAuth)
     },
     verifyRecaptcha(recaptchaToken: string, key: string): Promise<void> {
       return client.post('/recaptcha/verify', { recaptchaToken, key })

@@ -13,6 +13,6 @@ export type EventResponse = {
   aceStartingBalance: number,
   ctpPerPlayer: number,
   acePerPlayer: number,
-  ctpPlayerIds: ObjectId[],
-  acePlayerIds: ObjectId[],
+  ctpUserIds: ObjectId[],
+  aceUserIds: ObjectId[],
 }

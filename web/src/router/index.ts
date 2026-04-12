@@ -19,7 +19,7 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
   {
     path: '/sign-up/:key',
     name: 'signup',
-    component: () => import('@/views/PlayerSignUp.vue'),
+    component: () => import('@/views/SignUpView.vue'),
     meta: {
       guards: [signupVerify],
     },
@@ -39,22 +39,22 @@ const routes: NamedRouteRecord<NamedRoute>[] = [
         path: ':seasonId',
         children: [
           {
-            path: 'players',
+            path: 'users',
             children: [
               {
                 path: '',
-                name: 'players.list',
-                component: () => import('@/views/PlayersListView.vue'),
+                name: 'users.list',
+                component: () => import('@/views/UsersListView.vue'),
               },
               {
                 path: 'create',
-                name: 'players.create',
-                component: () => import('@/views/PlayersCreateView.vue'),
+                name: 'users.create',
+                component: () => import('@/views/UsersCreateView.vue'),
               },
               {
-                path: ':playerId/edit',
-                name: 'players.edit',
-                component: () => import('@/views/PlayersEditView.vue'),
+                path: ':userId/edit',
+                name: 'users.edit',
+                component: () => import('@/views/UsersEditView.vue'),
                 meta: {
                   guards: [moderatorRoute],
                 },

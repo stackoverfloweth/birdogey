@@ -18,20 +18,24 @@ export type UserAuthJson = {
   token?: string,
   _id?: string,
   name?: string,
+  phoneNumber?: string,
+  udiscId?: string,
+  imageUrl?: string,
   isAdmin?: boolean,
   isAuthorized?: boolean,
   isReadonly?: boolean,
   seasons: SeasonJson[],
 }
 
-export type PlayerJson = {
+export type UserJson = {
   _id: string,
   name: string,
+  phoneNumber?: string,
   udiscId?: string,
   imageUrl?: string,
 }
 
-export type PlayerSeasonJson = PlayerJson & {
+export type UserSeasonJson = UserJson & {
   seasonId: string,
   tagId: number,
   entryPaid: boolean,
@@ -39,7 +43,7 @@ export type PlayerSeasonJson = PlayerJson & {
 
 export type EventPlayerJson = {
   _id: string,
-  playerId: string,
+  userId: string,
   inForCtp: boolean,
   inForAce: boolean,
   score?: number,
@@ -59,8 +63,8 @@ export type EventJson = {
   aceStartingBalance: number,
   ctpPerPlayer: number,
   acePerPlayer: number,
-  ctpPlayerIds: string[],
-  acePlayerIds: string[],
+  ctpUserIds: string[],
+  aceUserIds: string[],
 }
 
 export type ImageKitAuthJson = {

@@ -12,6 +12,6 @@ export type Event = {
   aceStartingBalance: number,
   ctpPerPlayer: number,
   acePerPlayer: number,
-  ctpPlayerIds: string[],
-  acePlayerIds: string[],
+  ctpUserIds: string[],
+  aceUserIds: string[],
 }

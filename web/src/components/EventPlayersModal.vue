@@ -1,26 +1,26 @@
 <script lang="ts" setup>
-  import { EventPlayerRequest, Player, PlayerSeason } from '@birdogey/shared'
-  import PlayerImage from '@/components/PlayerImage.vue'
+  import { EventPlayerRequest, User, UserSeason } from '@birdogey/shared'
+  import UserImage from '@/components/UserImage.vue'
   import { computed } from 'vue'
 
   const model = defineModel<EventPlayerRequest[]>({ required: true })
   const isOpen = defineModel<boolean>('isOpen')
 
   const { players } = defineProps<{
-    players: PlayerSeason[],
+    players: UserSeason[],
   }>()
 
   const selectedPlayers = computed({
     get() {
-      return model.value.map(({ playerId }) => playerId)
+      return model.value.map(({ userId }) => userId)
     },
     set(value) {
-      model.value = value.map((playerId) => {
-        const previousEventPlayer = model.value.find((player) => player.playerId === playerId)
-        const player = players.find((player) => player.id === playerId)
+      model.value = value.map((userId) => {
+        const previousEventPlayer = model.value.find((player) => player.userId === userId)
+        const player = players.find((player) => player.id === userId)
 
         return {
-          playerId,
+          userId,
           incomingTagId: player?.tagId ?? Infinity,
           name: player?.name ?? '',
           ...previousEventPlayer,
@@ -29,27 +29,27 @@
     },
   })
 
-  function sortPlayers(aPlayer: Player, bPlayer: Player): number {
+  function sortPlayers(aPlayer: User, bPlayer: User): number {
     return aPlayer.name.localeCompare(bPlayer.name)
   }
 
-  function selectPlayer(playerId: string): void {
-    selectedPlayers.value = [...selectedPlayers.value, playerId]
+  function selectPlayer(userId: string): void {
+    selectedPlayers.value = [...selectedPlayers.value, userId]
   }
 
-  function deselectPlayer(playerId: string): void {
-    selectedPlayers.value = selectedPlayers.value.filter((id) => id !== playerId)
+  function deselectPlayer(userId: string): void {
+    selectedPlayers.value = selectedPlayers.value.filter((id) => id !== userId)
   }
 
-  function isSelected(playerId: string): boolean {
-    return selectedPlayers.value.includes(playerId)
+  function isSelected(userId: string): boolean {
+    return selectedPlayers.value.includes(userId)
   }
 
-  function togglePlayer(playerId: string): void {
-    if (isSelected(playerId)) {
-      deselectPlayer(playerId)
+  function togglePlayer(userId: string): void {
+    if (isSelected(userId)) {
+      deselectPlayer(userId)
     } else {
-      selectPlayer(playerId)
+      selectPlayer(userId)
     }
   }
 </script>
@@ -65,7 +65,7 @@
     <div class="event-players-modal__players">
       <template v-for="player in players.toSorted(sortPlayers)" :key="player.id">
         <button type="button" class="event-players-modal__player" :class="{ 'event-players-modal__player--selected': isSelected(player.id) }" @click="togglePlayer(player.id)">
-          <PlayerImage :image-url="player.imageUrl" height="100" width="100" />
+          <UserImage :image-url="player.imageUrl" height="100" width="100" />
 
           <div class="event-players-modal__player-name">
             {{ player.name }}

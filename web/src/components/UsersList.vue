@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-  import { Player, PlayerSeason } from '@birdogey/shared'
-  import PlayerImage from '@/components/PlayerImage.vue'
+  import { User, UserSeason } from '@birdogey/shared'
+  import UserImage from '@/components/UserImage.vue'
 
   defineProps<{
-    players: (Player & Partial<PlayerSeason>)[],
+    players: (User & Partial<UserSeason>)[],
   }>()
 
   const emit = defineEmits<{
-    select: [value: Player],
+    select: [value: User],
   }>()
 </script>
 
@@ -24,7 +24,7 @@
           <div class="player-list__player-details-name">
             {{ player.name }}
           </div>
-          <PlayerImage :image-url="player.imageUrl" height="30" width="30" />
+          <UserImage :image-url="player.imageUrl" height="30" width="30" />
 
           <template v-if="player.seasonId">
             <p-icon class="player-list__player-details-paid" :class="{ 'player-list__player-details-paid--paid': player.entryPaid }" icon="CurrencyDollarIcon" />

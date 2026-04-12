@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import twilio, { Twilio } from 'twilio'
 import { normalizePhoneNumber } from '@birdogey/shared'
-import { UserResponse } from '@birdogey/shared/api'
+import { UserAuthResponse, UserResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, generateToken, getJwtPayload } from '../middleware/auth.js'
@@ -72,7 +72,7 @@ auth.post('/verify-code', async (context) => {
 
   const db = getDb()
   const collection = db.collection<UserResponse>('users')
-  const users = await collection.aggregate([
+  const users = await collection.aggregate<UserAuthResponse>([
     {
       $match: { phoneNumber },
     },
@@ -93,7 +93,7 @@ auth.post('/verify-code', async (context) => {
     throw new HttpError(401, 'No account found for this phone number')
   }
 
-  const user = {
+  const user: UserAuthResponse = {
     ...userAccount,
     isAuthorized: true,
     isAdmin: userAccount.isAdmin ?? false,

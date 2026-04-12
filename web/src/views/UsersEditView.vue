@@ -4,33 +4,33 @@
   import { computed } from 'vue'
   import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
-  import PlayerForm from '@/components/PlayerForm.vue'
+  import UserForm from '@/components/UserForm.vue'
   import { useApi } from '@/composables'
-  import { PlayerRequest } from '@birdogey/shared'
+  import { UserRequest } from '@birdogey/shared'
   import { routes } from '@/router/routes'
 
   const seasonId = useRouteParam('seasonId')
-  const playerId = useRouteParam('playerId')
+  const userId = useRouteParam('userId')
 
   const api = useApi()
   const router = useRouter()
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
-  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
+  const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-  const player = computed(() => players.value.find(({ id }) => id === playerId.value))
-  const playerName = computed(() => player.value?.name ?? '...')
+  const user = computed(() => players.value.find(({ id }) => id === userId.value))
+  const userName = computed(() => user.value?.name ?? '...')
 
   await playerSubscription.promise()
 
   const crumbs = computed<Crumb[]>(() => [
-    { text: 'Players', to: routes.players(seasonId.value) },
-    { text: playerName.value },
+    { text: 'Players', to: routes.users(seasonId.value) },
+    { text: userName.value },
   ])
 
-  async function updatePlayer(request: PlayerRequest): Promise<void> {
+  async function updatePlayer(request: UserRequest): Promise<void> {
     startLoading()
-    await api.players.update(playerId.value, request)
+    await api.users.update(userId.value, request)
 
     showToast('Player Updated!', 'success')
     playerSubscription.refresh()
@@ -43,12 +43,12 @@
     }
 
     startLoading()
-    await api.players.remove(playerId.value)
+    await api.users.remove(userId.value)
 
-    showToast(`${player.value?.name} deleted`, 'success')
+    showToast(`${user.value?.name} deleted`, 'success')
     playerSubscription.refresh()
     stopLoading()
-    router.push(routes.players(seasonId.value))
+    router.push(routes.users(seasonId.value))
   }
 </script>
 
@@ -57,10 +57,10 @@
     <ContextBreadCrumbs :crumbs="crumbs" />
 
     <p-card>
-      <PlayerForm
+      <UserForm
         :loading="loading"
         :season-id="seasonId"
-        :initial-values="player"
+        :initial-values="user"
         show-remove-button
         @submit="updatePlayer"
         @remove="deletePlayer"

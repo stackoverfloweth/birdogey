@@ -3,7 +3,7 @@
   import { usePatchRef, useSubscription } from '@prefecthq/vue-compositions'
   import { computed, ref, toRefs, watch } from 'vue'
   import { useApi } from '@/composables'
-  import { PlayerCheckInRequest } from '@birdogey/shared/api'
+  import { CheckInRequest } from '@birdogey/shared/api'
 
   const props = defineProps<{
     isOpen: boolean,
@@ -28,14 +28,14 @@
   const selectedPlayer = ref<string>()
 
   const api = useApi()
-  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
+  const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const playersOptions = computed(() => players.value.map<SelectOption>((player) => ({
     label: player.name,
     value: player.id,
   })))
 
-  const editingPlayer = ref<Partial<PlayerCheckInRequest>>({})
+  const editingPlayer = ref<Partial<CheckInRequest>>({})
   const tagId = usePatchRef(editingPlayer, 'tagId')
   const udiscId = usePatchRef(editingPlayer, 'udiscId')
 
@@ -53,7 +53,7 @@
     }
 
     try {
-      await api.players.checkin(selectedPlayer.value, {
+      await api.users.checkin(selectedPlayer.value, {
         eventId: props.eventId,
         ...editingPlayer.value,
       })

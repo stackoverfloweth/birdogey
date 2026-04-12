@@ -4,7 +4,8 @@ import { CreateApi } from '@/services'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 
 export const auth = reactive<User>({
-  id: undefined,
+  id: '',
+  name: '',
   isAdmin: false,
   isAuthorized: false,
   isReadonly: true,

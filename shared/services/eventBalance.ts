@@ -3,8 +3,8 @@ type Event = {
   acePerPlayer?: number,
   ctpStartingBalance?: number,
   aceStartingBalance?: number,
-  ctpPlayerIds?: string[],
-  acePlayerIds?: string[],
+  ctpUserIds?: string[],
+  aceUserIds?: string[],
   players: {
     inForCtp?: boolean,
     inForAce?: boolean,
@@ -12,7 +12,7 @@ type Event = {
 }
 
 export function calculateEventCtpPotIfNoWinners(event: Event): number {
-  const someoneWonCtp = !!event.ctpPlayerIds?.length
+  const someoneWonCtp = !!event.ctpUserIds?.length
   if (someoneWonCtp) {
     return 0
   }
@@ -31,7 +31,7 @@ export function calculateEventCtpPot(event: Event): number {
 }
 
 export function calculateEventAcePotIfNoWinners(event: Event): number {
-  const someoneWonAce = !!event.acePlayerIds?.length
+  const someoneWonAce = !!event.aceUserIds?.length
   if (someoneWonAce) {
     return 0
   }

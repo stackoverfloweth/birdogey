@@ -2,13 +2,13 @@
   import { useBoolean } from '@prefecthq/vue-compositions'
   import AppMenu from '@/components/AppMenu.vue'
   import CardSuggestionModal from '@/components/CardSuggestionModal.vue'
-  import PlayerCreateModal from '@/components/PlayerCreateModal.vue'
-  import { Player } from '@birdogey/shared'
+  import UserCreateModal from '@/components/UserCreateModal.vue'
+  import { User } from '@birdogey/shared'
   import { auth } from '@/services'
 
   defineProps<{
     seasonId: string,
-    players: Player[],
+    players: User[],
   }>()
 
   const { value: showingAddPlayer, setTrue: showAddPlayer } = useBoolean()
@@ -24,6 +24,6 @@
       </template>
     </template>
   </AppMenu>
-  <PlayerCreateModal v-model:is-open="showingAddPlayer" :season-id="seasonId" />
+  <UserCreateModal v-model:is-open="showingAddPlayer" :season-id="seasonId" />
   <CardSuggestionModal v-model:is-open="showingCardSuggestions" :players="players" />
 </template>

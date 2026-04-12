@@ -4,10 +4,10 @@
   import { computed, ref } from 'vue'
   import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
-  import PlayerForm from '@/components/PlayerForm.vue'
-  import PlayersList from '@/components/PlayersList.vue'
+  import UserForm from '@/components/UserForm.vue'
+  import UsersList from '@/components/UsersList.vue'
   import { useApi } from '@/composables'
-  import { Player, PlayerRequest, Season } from '@birdogey/shared'
+  import { User, UserRequest, Season } from '@birdogey/shared'
   import { routes } from '@/router/routes'
   import { auth } from '@/services'
 
@@ -16,15 +16,15 @@
   const seasonId = useRouteParam('seasonId')
   const filteredSeasons = ref<string[]>([])
 
-  const playerSubscription = useSubscription(api.players.getList, [filteredSeasons])
-  const seasonPlayerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
+  const playerSubscription = useSubscription(api.users.getList, [filteredSeasons])
+  const seasonPlayerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const seasonPlayers = computed(() => seasonPlayerSubscription.response ?? [])
   const playersNotInSeason = computed(() => players.value.filter((player) => !seasonPlayers.value.some((seasonPlayer) => seasonPlayer.id === player.id)))
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
   const crumbs = computed<Crumb[]>(() => [
-    { text: 'Players', to: routes.players(seasonId.value) },
+    { text: 'Players', to: routes.users(seasonId.value) },
     { text: 'Create' },
   ])
 
@@ -40,28 +40,28 @@
     }
   }
 
-  async function addPlayer(request: PlayerRequest): Promise<void> {
+  async function addPlayer(request: UserRequest): Promise<void> {
     startLoading()
-    await api.players.create(request)
+    await api.users.create(request)
 
     showToast('Player Created!', 'success')
     playerSubscription.refresh()
     seasonPlayerSubscription.refresh()
     stopLoading()
 
-    router.push(routes.players(seasonId.value))
+    router.push(routes.users(seasonId.value))
   }
 
-  async function addExistingPlayer(player: Player): Promise<void> {
+  async function addExistingPlayer(player: User): Promise<void> {
     startLoading()
-    await api.players.update(player.id, { seasonId: seasonId.value })
+    await api.users.update(player.id, { seasonId: seasonId.value })
 
     showToast('Player Added!', 'success')
     playerSubscription.refresh()
     seasonPlayerSubscription.refresh()
     stopLoading()
 
-    router.push(routes.players(seasonId.value))
+    router.push(routes.users(seasonId.value))
   }
 </script>
 
@@ -78,11 +78,11 @@
         </template>
       </div>
 
-      <PlayersList class="players-create-view__existing-players" :players="playersNotInSeason" @select="addExistingPlayer" />
+      <UsersList class="players-create-view__existing-players" :players="playersNotInSeason" @select="addExistingPlayer" />
     </p-card>
 
     <p-card>
-      <PlayerForm
+      <UserForm
         :loading="loading"
         :season-id="seasonId"
         @submit="addPlayer"

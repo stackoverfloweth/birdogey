@@ -4,7 +4,7 @@
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
   import EventManage from '@/components/EventManage.vue'
   import EventsViewMenu from '@/components/EventsViewMenu.vue'
-  import PlayerCheckinModal from '@/components/PlayerCheckinModal.vue'
+  import UserCheckinModal from '@/components/UserCheckinModal.vue'
   import { useApi } from '@/composables'
   import { routes } from '@/router/routes'
   import { auth } from '@/services'
@@ -50,7 +50,7 @@
       <EventManage :event="event" disabled />
     </template>
 
-    <PlayerCheckinModal v-model:is-open="checkinModalVisible" :season-id="seasonId" :event-id="eventId" @update:is-open="() => eventSubscription.refresh()" />
+    <UserCheckinModal v-model:is-open="checkinModalVisible" :season-id="seasonId" :event-id="eventId" @update:is-open="() => eventSubscription.refresh()" />
   </div>
 </template>
 

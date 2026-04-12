@@ -4,9 +4,9 @@
   import { ref } from 'vue'
   import { RecaptchaV2 } from 'vue3-recaptcha-v2'
   import BirdogeyTitle from '@/components/BirdogeyTitle.vue'
-  import PlayerSignupForm from '@/components/PlayerSignupForm.vue'
+  import SignupForm from '@/components/SignupForm.vue'
   import { useApi } from '@/composables'
-  import { PlayerSignupRequest } from '@birdogey/shared/api'
+  import { SignupRequest } from '@birdogey/shared/api'
   import { useRouter } from 'vue-router'
   import { routes } from '@/router/routes'
 
@@ -19,9 +19,9 @@
 
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
-  async function addPlayer(request: Omit<PlayerSignupRequest, 'key'>): Promise<void> {
+  async function addPlayer(request: Omit<SignupRequest, 'key'>): Promise<void> {
     startLoading()
-    await api.players.signup({ ...request, key: key.value })
+    await api.users.signup({ ...request, key: key.value })
 
     showToast('Player Created!', 'success')
     stopLoading()
@@ -87,7 +87,7 @@
       </div>
 
       <div v-else class="player-sign-up__form">
-        <PlayerSignupForm
+        <SignupForm
           :loading="loading"
           :signup-key="key"
           @submit="addPlayer"

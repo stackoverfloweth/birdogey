@@ -1,12 +1,12 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native'
-import type { Player } from '@birdogey/shared'
+import type { UserSeason } from '@birdogey/shared'
 
 interface Props {
-  player: Player,
+  player: UserSeason,
   onPress?: () => void,
 }
 
-function EntryPaid({ player }: { player: Player }): React.ReactNode {
+function EntryPaid({ player }: { player: UserSeason }): React.ReactNode {
   return (
     <Text style={[styles.paid, player.entryPaid ? styles.paidYes : styles.paidNo]}>
       {player.entryPaid ? 'Paid' : 'Unpaid'}
@@ -14,7 +14,7 @@ function EntryPaid({ player }: { player: Player }): React.ReactNode {
   )
 }
 
-export function PlayerListItem({ player, onPress }: Props): React.ReactNode {
+export function UserSeasonListItem({ player, onPress }: Props): React.ReactNode {
   return (
     <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.left}>

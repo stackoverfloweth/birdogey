@@ -5,7 +5,7 @@
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import { useApi } from '@/composables'
-  import { Event, EventPlayerRequest, EventRequest, Player, PlayerSeason } from '@birdogey/shared'
+  import { Event, EventPlayerRequest, EventRequest, User, UserSeason } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import { penniesToUSD } from '@/utilities'
   import EventPlayersModal from './EventPlayersModal.vue'
@@ -26,12 +26,12 @@
 
   const eventSubscription = useSubscription(api.events.getList, [seasonId])
 
-  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
+  const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
   const notes = ref(props.event.notes)
-  const ctpPlayerIds = ref(props.event.ctpPlayerIds)
-  const acePlayerIds = ref(props.event.acePlayerIds)
+  const ctpUserIds = ref(props.event.ctpUserIds)
+  const aceUserIds = ref(props.event.aceUserIds)
   const ctpStartingBalance = ref(props.event.ctpStartingBalance / 100)
   const aceStartingBalance = ref(props.event.aceStartingBalance / 100)
   const ctpPerPlayer = ref(props.event.ctpPerPlayer / 100)
@@ -41,29 +41,29 @@
   const { validate, pending } = useValidationObserver()
 
   const playerIsInForCtp: ValidationRule<string[]> = (value) => {
-    if (value.every((playerId) => eventPlayers.value.find((player) => player.playerId === playerId)?.inForCtp)) {
+    if (value.every((userId) => eventPlayers.value.find((player) => player.userId === userId)?.inForCtp)) {
       return true
     }
 
     return value.length === 1 ? 'Player is not in for ctp' : 'Not every player selected is in for ctp'
   }
   const playerIsInForAce: ValidationRule<string[]> = (value) => {
-    if (value.every((playerId) => eventPlayers.value.find((player) => player.playerId === playerId)?.inForAce)) {
+    if (value.every((userId) => eventPlayers.value.find((player) => player.userId === userId)?.inForAce)) {
       return true
     }
 
     return value.length === 1 ? 'Player is not in for ace' : 'Not every player selected is in for ace'
   }
 
-  const { error: ctpPlayerIdsErrorMessage, state: ctpPlayerIdsState } = useValidation(ctpPlayerIds, 'Who won ctp', [playerIsInForCtp])
-  const { error: acePlayerIdsErrorMessage, state: acePlayerIdsState } = useValidation(acePlayerIds, 'Any aces', [playerIsInForAce])
+  const { error: ctpUserIdsErrorMessage, state: ctpUserIdsState } = useValidation(ctpUserIds, 'Who won ctp', [playerIsInForCtp])
+  const { error: aceUserIdsErrorMessage, state: aceUserIdsState } = useValidation(aceUserIds, 'Any aces', [playerIsInForAce])
 
-  const ctpPlayerIdsMessage = computed(() => {
-    if (ctpPlayerIdsErrorMessage.value) {
-      return ctpPlayerIdsErrorMessage.value
+  const ctpUserIdsMessage = computed(() => {
+    if (ctpUserIdsErrorMessage.value) {
+      return ctpUserIdsErrorMessage.value
     }
 
-    const numberOfWinners = ctpPlayerIds.value.length
+    const numberOfWinners = ctpUserIds.value.length
 
     if (numberOfWinners === 1) {
       return `Player gets ${penniesToUSD(ctpInPennies.value)}`
@@ -77,12 +77,12 @@
     return undefined
   })
 
-  const acePlayerIdsMessage = computed(() => {
-    if (acePlayerIdsErrorMessage.value) {
-      return acePlayerIdsErrorMessage.value
+  const aceUserIdsMessage = computed(() => {
+    if (aceUserIdsErrorMessage.value) {
+      return aceUserIdsErrorMessage.value
     }
 
-    const numberOfWinners = acePlayerIds.value.length
+    const numberOfWinners = aceUserIds.value.length
 
     if (numberOfWinners === 1) {
       return `Player gets ${penniesToUSD(aceInPennies.value)}`
@@ -98,7 +98,7 @@
 
   const { value: showingPlayersModal, setTrue: showPlayersModal } = useBoolean()
 
-  const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.playerId === player.id)))
+  const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.userId === player.id)))
   const playersInOptions = computed(() => sortByName(playersIn.value)
     .map<SelectOption>((player) => ({
       label: player.name,
@@ -106,10 +106,10 @@
     })),
   )
 
-  function getPlayer(playerId: string): PlayerSeason {
-    const emptyPlayer = { name: 'loading...' } as PlayerSeason
+  function getPlayer(userId: string): UserSeason {
+    const emptyPlayer = { name: 'loading...' } as UserSeason
 
-    return players.value.find((player) => player.id === playerId) ?? emptyPlayer
+    return players.value.find((player) => player.id === userId) ?? emptyPlayer
   }
 
   const ctpInPennies = computed(() => {
@@ -126,7 +126,7 @@
     })
   })
 
-  function sortByName(players: Player[]): Player[] {
+  function sortByName(players: User[]): User[] {
     return players.sort((aPlayer, bPlayer) => {
       return aPlayer.name > bPlayer.name ? 1 : -1
     })
@@ -136,8 +136,8 @@
     const request: Partial<EventRequest> = {
       players: eventPlayers.value,
       notes: notes.value,
-      ctpPlayerIds: ctpPlayerIds.value,
-      acePlayerIds: acePlayerIds.value,
+      ctpUserIds: ctpUserIds.value,
+      aceUserIds: aceUserIds.value,
       ctpStartingBalance: ctpStartingBalance.value * 100,
       aceStartingBalance: aceStartingBalance.value * 100,
       ctpPerPlayer: ctpPerPlayer.value * 100,
@@ -157,8 +157,8 @@
     const request: Partial<EventRequest> = {
       players: eventPlayers.value,
       notes: notes.value,
-      ctpPlayerIds: ctpPlayerIds.value,
-      acePlayerIds: acePlayerIds.value,
+      ctpUserIds: ctpUserIds.value,
+      aceUserIds: aceUserIds.value,
       ctpStartingBalance: ctpStartingBalance.value * 100,
       aceStartingBalance: aceStartingBalance.value * 100,
     }
@@ -169,8 +169,8 @@
 
   watch(() => props.event, (event) => {
     notes.value = event.notes
-    ctpPlayerIds.value = event.ctpPlayerIds
-    acePlayerIds.value = event.acePlayerIds
+    ctpUserIds.value = event.ctpUserIds
+    aceUserIds.value = event.aceUserIds
     ctpStartingBalance.value = event.ctpStartingBalance / 100
     aceStartingBalance.value = event.aceStartingBalance / 100
 
@@ -179,7 +179,7 @@
     } else {
       eventPlayers.value = event.players
         .map((player) => {
-          const { name } = players.value.find(({ id }) => id === player.playerId) ?? { name: 'loading...' }
+          const { name } = players.value.find(({ id }) => id === player.userId) ?? { name: 'loading...' }
 
           return {
             ...player,
@@ -220,13 +220,13 @@
 
       <template v-if="eventPlayers.length">
         <div class="event-manage__players">
-          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.playerId">
+          <template v-for="(eventPlayer, index) in eventPlayers" :key="eventPlayer.userId">
             <EventPlayerListItem
               v-model:event-player="eventPlayers[index]"
               :disabled="disabled"
-              :player="getPlayer(eventPlayer.playerId)"
-              :won-ctp="ctpPlayerIds.includes(eventPlayer.playerId)"
-              :won-ace="acePlayerIds.includes(eventPlayer.playerId)"
+              :player="getPlayer(eventPlayer.userId)"
+              :won-ctp="ctpUserIds.includes(eventPlayer.userId)"
+              :won-ace="aceUserIds.includes(eventPlayer.userId)"
             />
           </template>
         </div>
@@ -254,14 +254,14 @@
             </template>
           </p-label>
 
-          <p-label label="Who won ctp?" :message="ctpPlayerIdsMessage" :state="ctpPlayerIdsState">
+          <p-label label="Who won ctp?" :message="ctpUserIdsMessage" :state="ctpUserIdsState">
             <template #default="{ id }">
               <p-select
                 :id="id"
-                v-model="ctpPlayerIds"
+                v-model="ctpUserIds"
                 :disabled="disabled"
                 :options="playersInOptions"
-                :state="ctpPlayerIdsState"
+                :state="ctpUserIdsState"
               />
             </template>
           </p-label>
@@ -280,14 +280,14 @@
             </template>
           </p-label>
 
-          <p-label label="Any aces?" :message="acePlayerIdsMessage" :state="acePlayerIdsState">
+          <p-label label="Any aces?" :message="aceUserIdsMessage" :state="aceUserIdsState">
             <template #default="{ id }">
               <p-select
                 :id="id"
-                v-model="acePlayerIds"
+                v-model="aceUserIds"
                 :disabled="disabled"
                 :options="playersInOptions"
-                :state="acePlayerIdsState"
+                :state="aceUserIdsState"
               />
             </template>
           </p-label>

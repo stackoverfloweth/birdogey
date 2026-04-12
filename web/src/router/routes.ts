@@ -13,9 +13,9 @@ export const routes = {
   event: (eventId: string) => ({ name: 'events.view', params: { eventId } } as const),
   eventCreate: (seasonId: string) => ({ name: 'events.create', params: { seasonId } } as const),
   eventEdit: (eventId: string) => ({ name: 'events.edit', params: { eventId } } as const),
-  players: (seasonId: string) => ({ name: 'players.list', params: { seasonId } } as const),
-  playerCreate: (seasonId: string) => ({ name: 'players.create', params: { seasonId } } as const),
-  playerEdit: (seasonId: string, playerId: string) => ({ name: 'players.edit', params: { seasonId, playerId } } as const),
+  users: (seasonId: string) => ({ name: 'users.list', params: { seasonId } } as const),
+  userCreate: (seasonId: string) => ({ name: 'users.create', params: { seasonId } } as const),
+  userEdit: (seasonId: string, userId: string) => ({ name: 'users.edit', params: { seasonId, userId } } as const),
   notFound: () => ({ name: 'notFound' } as const),
 } satisfies RouteFunctionRecord
 

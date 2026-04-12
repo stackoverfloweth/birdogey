@@ -1,27 +1,27 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createPlayerApi } from '@birdogey/shared'
+import { createUserApi } from '@birdogey/shared'
 import { useAuth } from '../contexts/AuthContext'
 import { queryKeys } from './queryKeys'
 
-export function useUpdatePlayer(seasonId: string) {
+export function useUpdateUser(seasonId: string) {
   const { apiClient } = useAuth()
-  const playerApi = createPlayerApi(apiClient)
+  const userApi = createUserApi(apiClient)
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (data: {
-      playerId: string,
+      userId: string,
       name?: string,
       tagId?: number,
       entryPaid?: boolean,
       udiscId?: string,
       imageUrl?: string,
     }) => {
-      const { playerId, ...rest } = data
-      return playerApi.update(playerId, { seasonId, ...rest })
+      const { userId, ...rest } = data
+      return userApi.update(userId, { seasonId, ...rest })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.players.all(seasonId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all(seasonId) })
     },
   })
 }

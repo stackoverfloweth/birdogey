@@ -1,7 +1,7 @@
-import { Player } from './player'
+import { User } from './user'
 
 export type Card = {
   id: string,
-  players: Player[],
+  players: User[],
   maxPlayersCount: number,
 }

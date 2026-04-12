@@ -3,9 +3,9 @@
   import { useBoolean, useSubscription } from '@prefecthq/vue-compositions'
   import { computed, toRefs } from 'vue'
   import { useRouter } from 'vue-router'
-  import PlayerForm from '@/components/PlayerForm.vue'
+  import UserForm from '@/components/UserForm.vue'
   import { useApi } from '@/composables'
-  import { PlayerRequest } from '@birdogey/shared'
+  import { UserRequest } from '@birdogey/shared'
   import { routes } from '@/router/routes'
 
   const props = defineProps<{
@@ -30,24 +30,24 @@
   const router = useRouter()
 
   const { seasonId } = toRefs(props)
-  const playerSubscription = useSubscription(api.players.getSeasonList, [seasonId])
+  const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
-  async function addPlayer(request: PlayerRequest): Promise<void> {
+  async function addPlayer(request: UserRequest): Promise<void> {
     startLoading()
-    await api.players.create(request)
+    await api.users.create(request)
 
     showToast('Player Created!', 'success')
     playerSubscription.refresh()
     stopLoading()
 
-    router.push(routes.players(seasonId.value))
+    router.push(routes.users(seasonId.value))
   }
 </script>
 
 <template>
   <p-modal v-model:show-modal="isOpen" class="player-create-modal" title="Add Player" auto-close>
-    <PlayerForm
+    <UserForm
       :loading="loading"
       :season-id="seasonId"
       @submit="addPlayer"

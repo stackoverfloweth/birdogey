@@ -1,12 +1,12 @@
 import { Context, MiddlewareHandler } from 'hono'
 import jwt from 'jsonwebtoken'
-import { UserResponse } from '@birdogey/shared/api'
+import { UserAuthResponse } from '@birdogey/shared/api'
 import { env } from '../env.js'
 import { HttpError, JwtPayload } from '../types.js'
 
 const TOKEN_EXPIRY = '2h'
 
-export function generateToken(user: UserResponse): string {
+export function generateToken(user: UserAuthResponse): string {
   return jwt.sign(user, env().jwtSecret, { expiresIn: TOKEN_EXPIRY })
 }
 

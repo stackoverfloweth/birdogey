@@ -1,19 +1,19 @@
 <script lang="ts" setup>
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { ref } from 'vue'
-  import PlayerImageUpload from '@/components/PlayerImageUpload.vue'
-  import { PlayerRequest, PlayerSeason } from '@birdogey/shared'
+  import UserImageUpload from '@/components/UserImageUpload.vue'
+  import { UserRequest, UserSeason } from '@birdogey/shared'
   import { auth } from '@/services'
 
   const props = defineProps<{
     seasonId: string,
     loading?: boolean,
-    initialValues?: Partial<PlayerSeason>,
+    initialValues?: Partial<UserSeason>,
     showRemoveButton?: boolean,
   }>()
 
   const emit = defineEmits<{
-    submit: [value: PlayerRequest],
+    submit: [value: UserRequest],
     remove: [],
     cancel: [],
   }>()
@@ -44,7 +44,7 @@
 
 <template>
   <p-form class="player-form" @submit="submit">
-    <PlayerImageUpload v-model="imageUrl" />
+    <UserImageUpload v-model="imageUrl" />
 
     <p-label class="player-form__name" label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">

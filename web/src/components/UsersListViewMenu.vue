@@ -10,7 +10,7 @@
 <template>
   <AppMenu class="players-list-view-menu" icon="Bars3Icon">
     <template #default>
-      <p-overflow-menu-item icon="UserPlusIcon" label="Create New Player" :to="routes.playerCreate(seasonId)" />
+      <p-overflow-menu-item icon="UserPlusIcon" label="Create New Player" :to="routes.userCreate(seasonId)" />
     </template>
   </AppMenu>
 </template>

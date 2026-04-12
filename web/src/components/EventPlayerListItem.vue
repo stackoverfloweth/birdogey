@@ -2,15 +2,15 @@
   import { ValidationRule, useBoolean, usePatchRef, useValidation } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import EventPlayerEditModal from '@/components/EventPlayerEditModal.vue'
-  import PlayerEditModal from '@/components/PlayerEditModal.vue'
+  import UserEditModal from '@/components/UserEditModal.vue'
   import ScoreInput from '@/components/ScoreInput.vue'
-  import PlayerImage from '@/components/PlayerImage.vue'
-  import { EventPlayerRequest, PlayerSeason } from '@birdogey/shared'
+  import UserImage from '@/components/UserImage.vue'
+  import { EventPlayerRequest, UserSeason } from '@birdogey/shared'
 
   const props = defineProps<{
     disabled?: boolean,
     eventPlayer: EventPlayerRequest,
-    player?: PlayerSeason,
+    player?: UserSeason,
     wonCtp?: boolean,
     wonAce?: boolean,
   }>()
@@ -83,7 +83,7 @@
     </div>
 
     <div class="event-player-list-item__image">
-      <PlayerImage :image-url="player?.imageUrl" width="100%" />
+      <UserImage :image-url="player?.imageUrl" width="100%" />
     </div>
 
     <p-list-item class="event-player-list-item__player" :class="classes.player">
@@ -121,7 +121,7 @@
     </p-list-item>
 
     <template v-if="player && showingEditPlayerModal">
-      <PlayerEditModal v-model:is-open="showingEditPlayerModal" :season-id="player.seasonId" :player-id="player.id" />
+      <UserEditModal v-model:is-open="showingEditPlayerModal" :season-id="player.seasonId" :user-id="player.id" />
     </template>
     <template v-if="showingEditTagModal">
       <EventPlayerEditModal v-model:is-open="showingEditTagModal" v-model:event-player="eventPlayer" />

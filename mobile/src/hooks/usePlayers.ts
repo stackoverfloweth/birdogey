@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { createPlayerApi } from '@birdogey/shared'
+import { createUserApi } from '@birdogey/shared'
 import { useAuth } from '../contexts/AuthContext'
 import { queryKeys } from './queryKeys'
 
-export function usePlayersBySeason(seasonId: string) {
+export function useUsersBySeason(seasonId: string) {
   const { apiClient } = useAuth()
-  const playerApi = createPlayerApi(apiClient)
+  const userApi = createUserApi(apiClient)
 
   return useQuery({
-    queryKey: queryKeys.players.all(seasonId),
-    queryFn: () => playerApi.getList(seasonId),
+    queryKey: queryKeys.users.all(seasonId),
+    queryFn: () => userApi.getList(seasonId),
     enabled: !!seasonId,
   })
 }

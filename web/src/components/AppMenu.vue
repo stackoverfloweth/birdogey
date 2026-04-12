@@ -20,7 +20,7 @@
       <slot name="default" :close="close" />
 
       <template v-if="seasonId">
-        <p-overflow-menu-item icon="UsersIcon" label="Manage Players" :to="routes.players(seasonId)" />
+        <p-overflow-menu-item icon="UsersIcon" label="Manage Players" :to="routes.users(seasonId)" />
       </template>
 
       <p-overflow-menu-item icon="ArrowRightOnRectangleIcon" label="Logout" :to="routes.logout()" />

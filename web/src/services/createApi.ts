@@ -1,7 +1,7 @@
 import { createActions } from '@prefecthq/vue-compositions'
 import { showToast } from '@prefecthq/prefect-design'
 import { InjectionKey } from 'vue'
-import { FetchHttpClient, HttpClientConfig, createEventApi, createPlayerApi, createAuthApi, createImageKitApi } from '@birdogey/shared'
+import { FetchHttpClient, HttpClientConfig, createEventApi, createUserApi, createAuthApi, createImageKitApi } from '@birdogey/shared'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createApi(config: HttpClientConfig) {
@@ -16,7 +16,7 @@ export function createApi(config: HttpClientConfig) {
 
   return {
     events: createActions(createEventApi(client)),
-    players: createActions(createPlayerApi(client)),
+    users: createActions(createUserApi(client)),
     auth: createActions(createAuthApi(client)),
     imagekit: createActions(createImageKitApi(client)),
   }
