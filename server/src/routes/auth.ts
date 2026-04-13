@@ -24,8 +24,14 @@ auth.post('/send-code', async (context) => {
 
   const phoneNumber = normalizePhoneNumber(body.phoneNumber)
 
+  const { twilioBypassCode, twilioVerifyServiceSid } = env()
+
+  if (twilioBypassCode) {
+    console.warn(`[DEV] Twilio bypassed for ${phoneNumber} — use code: ${twilioBypassCode}`)
+    return context.json({ success: true })
+  }
+
   const client = getTwilioClient()
-  const { twilioVerifyServiceSid } = env()
 
   try {
     await client.verify.v2
@@ -51,23 +57,30 @@ auth.post('/verify-code', async (context) => {
 
   const phoneNumber = normalizePhoneNumber(body.phoneNumber)
 
-  const client = getTwilioClient()
-  const { twilioVerifyServiceSid } = env()
+  const { twilioBypassCode, twilioVerifyServiceSid } = env()
 
-  try {
-    const verification = await client.verify.v2
-      .services(twilioVerifyServiceSid)
-      .verificationChecks.create({
-        to: phoneNumber,
-        code: body.code,
-      })
-
-    if (verification.status !== 'approved') {
+  if (twilioBypassCode) {
+    if (body.code !== twilioBypassCode) {
       throw new HttpError(401, 'Invalid verification code')
     }
-  } catch (error) {
-    console.error('Twilio verify-code error:', error)
-    throw new HttpError(400, 'Verification failed')
+  } else {
+    const client = getTwilioClient()
+
+    try {
+      const verification = await client.verify.v2
+        .services(twilioVerifyServiceSid)
+        .verificationChecks.create({
+          to: phoneNumber,
+          code: body.code,
+        })
+
+      if (verification.status !== 'approved') {
+        throw new HttpError(401, 'Invalid verification code')
+      }
+    } catch (error) {
+      console.error('Twilio verify-code error:', error)
+      throw new HttpError(400, 'Verification failed')
+    }
   }
 
   const db = getDb()
