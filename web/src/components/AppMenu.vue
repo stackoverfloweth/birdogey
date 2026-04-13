@@ -2,6 +2,7 @@
   import { routes } from '@/router/routes'
   import { useRouteParam } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
+  import { format } from 'date-fns'
 
   const { position = 'left' } = defineProps<{
     position?: 'left' | 'right',
@@ -12,6 +13,8 @@
   const classes = computed(() => [
     `app-menu--${position}`,
   ])
+
+  const buildTime = new Date(__BUILD_TIME__)
 </script>
 
 <template>
@@ -24,6 +27,10 @@
       </template>
 
       <p-overflow-menu-item icon="ArrowRightOnRectangleIcon" label="Logout" :to="routes.logout()" />
+
+      <p class="app-menu__build-time">
+        {{ format(buildTime, 'yy.MM.dd.HH.mm.ss') }}
+      </p>
     </template>
   </p-icon-button-menu>
 </template>
@@ -44,5 +51,13 @@
 
 .app-menu__submenu {
   margin-left: 1px;
+}
+
+.app-menu__build-time {
+  font-size: 0.7rem;
+  margin-top: var(--space-sm);
+  align-self: center;
+  color: var(--color-fg-subtle, #888);
+  user-select: none;
 }
 </style>

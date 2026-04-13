@@ -17,6 +17,9 @@ export default defineConfig({
   resolve: {
     alias: [{ find: '@', replacement: resolve(__dirname, './src') }],
   },
+  define: {
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
   build: {
     target: ['es2022'],
     sourcemap: true,
