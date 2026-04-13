@@ -23,6 +23,7 @@ pnpm-debug.log*
 .env.sentry-build-plugin
 
 # Expo / React Native
+mobile copy
 mobile/.expo/
 mobile/dist/
 mobile/ios/
