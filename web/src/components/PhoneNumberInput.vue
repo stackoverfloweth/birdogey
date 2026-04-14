@@ -13,7 +13,10 @@
       return modelValue.value
     }
 
-    return normalizePhoneNumber(parsedValue.value.toString())
+    return normalizePhoneNumber(parsedValue.value.toString()).replace(
+      /^\+?1?(\d{3})(\d{3})(\d{4})$/,
+      '+1 ($1) $2-$3',
+    )
   })
 
   const parsedValue = computed({

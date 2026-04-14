@@ -9,7 +9,7 @@ import { env } from '@/utilities/env'
 import { install as VueRecaptcha } from 'vue3-recaptcha-v2'
 import * as Sentry from '@sentry/vue'
 
-import '@prefecthq/prefect-design/dist/style.css'
+import '@prefecthq/prefect-design/prefect-design.css'
 import '@/styles/index.css'
 
 const api = createApi({
