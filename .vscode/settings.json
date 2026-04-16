@@ -9,6 +9,7 @@
     "camelcase",
     "checkin",
     "composables",
+    "ephesis",
     "esbuild",
     "imagekit",
     "imagekitio",
