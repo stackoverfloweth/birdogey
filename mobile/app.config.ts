@@ -11,6 +11,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         fonts: ['./assets/fonts/Ephesis-Regular.ttf'],
       },
     ],
+    [
+      'expo-local-authentication',
+      {
+        faceIDPermission: 'Allow Birdogey to use Face ID for sign-in.',
+      },
+    ],
   ],
   extra: {
     ...config.extra,

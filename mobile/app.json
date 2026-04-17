@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.stackoverfloweth.birdogey",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "Allow Birdogey to use Face ID for sign-in."
       }
     },
     "android": {
