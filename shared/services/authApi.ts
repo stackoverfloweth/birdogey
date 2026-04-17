@@ -14,6 +14,9 @@ export function createAuthApi(client: HttpClient) {
     refresh(): Promise<User> {
       return client.post<UserAuthJson>('/auth/refresh').then(mapUserAuth)
     },
+    exchange(refreshToken: string): Promise<User> {
+      return client.post<UserAuthJson>('/auth/exchange', { refreshToken }).then(mapUserAuth)
+    },
     verifyRecaptcha(recaptchaToken: string, key: string): Promise<void> {
       return client.post('/recaptcha/verify', { recaptchaToken, key })
     },

@@ -6,8 +6,6 @@ import { Text } from 'react-native'
 export default function Index(): React.ReactNode {
   const { isAuthenticated, isLoading } = useAuth()
 
-  console.log({ isAuthenticated, isLoading })
-
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

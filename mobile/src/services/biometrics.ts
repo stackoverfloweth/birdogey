@@ -27,11 +27,14 @@ export async function setBiometricsEnabled(enabled: boolean): Promise<void> {
   await setStoredValue(BIOMETRICS_ENABLED_KEY, enabled ? 'true' : 'false')
 }
 
-export async function authenticateWithBiometrics(): Promise<boolean> {
+export async function authenticateWithBiometrics(): Promise<void> {
   const result = await LocalAuthentication.authenticateAsync({
     promptMessage: 'Authenticate to continue',
     fallbackLabel: 'Use Passcode',
     disableDeviceFallback: false,
   })
-  return result.success
+
+  if (!result.success) {
+    throw new Error('Failed to authenticate with biometrics')
+  }
 }

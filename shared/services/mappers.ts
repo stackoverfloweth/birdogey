@@ -74,7 +74,8 @@ export function mapSeason(source: SeasonJson): Season {
 
 export function mapUserAuth(source: UserAuthJson): User {
   return {
-    token: source.token,
+    accessToken: source.accessToken,
+    refreshToken: source.refreshToken,
     id: source._id ?? '',
     name: source.name ?? '',
     phoneNumber: source.phoneNumber,

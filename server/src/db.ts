@@ -1,5 +1,6 @@
-import { Db, MongoClient, ServerApiVersion } from 'mongodb'
+import { Collection, Db, MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
 import { env } from './env.js'
+import { RefreshTokenDocument } from './types.js'
 
 let client: MongoClient | null = null
 let db: Db | null = null
@@ -15,7 +16,6 @@ export async function connectDb(): Promise<void> {
 
   await client.connect()
   db = client.db(env().mongodbName)
-  console.log('Connected to MongoDB')
 }
 
 export function getDb(): Db {
@@ -31,6 +31,27 @@ export async function disconnectDb(): Promise<void> {
     await client.close()
     client = null
     db = null
-    console.log('Disconnected from MongoDB')
   }
+}
+
+function refreshTokens(): Collection<RefreshTokenDocument> {
+  return getDb().collection<RefreshTokenDocument>('refreshTokens')
+}
+
+export async function storeRefreshToken(token: string, userId: ObjectId): Promise<void> {
+  await deleteUserRefreshTokens(userId)
+
+  await refreshTokens().insertOne({
+    token,
+    userId,
+    createdAt: new Date(),
+  })
+}
+
+export async function findRefreshToken(token: string): Promise<RefreshTokenDocument | null> {
+  return refreshTokens().findOne({ token })
+}
+
+export async function deleteUserRefreshTokens(userId: ObjectId): Promise<void> {
+  await refreshTokens().deleteMany({ userId })
 }

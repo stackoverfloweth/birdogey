@@ -1,10 +1,11 @@
 import { Hono } from 'hono'
+import { ObjectId } from 'mongodb'
 import twilio, { Twilio } from 'twilio'
 import { normalizePhoneNumber } from '@birdogey/shared'
 import { UserAuthResponse, UserResponse } from '@birdogey/shared/api'
-import { getDb } from '../db.js'
+import { getDb, storeRefreshToken, findRefreshToken } from '../db.js'
 import { HttpError } from '../types.js'
-import { authMiddleware, generateToken, getJwtPayload } from '../middleware/auth.js'
+import { authMiddleware, generateAccessToken, generateRefreshToken, getJwtPayload, verifyRefreshToken } from '../middleware/auth.js'
 import { isValidRequest } from '../utilities/requestValidation.js'
 import { env } from '../env.js'
 
@@ -83,12 +84,75 @@ auth.post('/verify-code', async (context) => {
     }
   }
 
+  const user = await fetchUser({ phoneNumber })
+
+  if (!user) {
+    throw new HttpError(401, 'No account found for this phone number')
+  }
+
+  const accessToken = generateAccessToken(user)
+  const refreshToken = generateRefreshToken(user)
+  await storeRefreshToken(refreshToken, user._id)
+
+  return context.json({ ...user, accessToken, refreshToken })
+})
+
+// Refresh the access token for an active session.
+// Requires a valid access token in the Authorization header.
+// Returns a new access token and fresh user data.
+auth.post('/refresh', authMiddleware, async (context) => {
+  const jwtPayload = getJwtPayload(context)
+  const user = await fetchUser({ _id: ObjectId.createFromHexString(jwtPayload._id.toString()) })
+
+  if (!user) {
+    throw new HttpError(401, 'User not found')
+  }
+
+  const accessToken = generateAccessToken(user)
+
+  return context.json({ ...user, accessToken })
+})
+
+// Exchange a refresh token for new access + refresh tokens.
+// Used to revive a dead session (e.g. biometric login after app restart).
+// Does not require an Authorization header.
+auth.post('/exchange', async (context) => {
+  const body = await context.req.json()
+
+  if (!isValidRequest<{ refreshToken: string }>(body, [['refreshToken', 'string']])) {
+    throw new HttpError(400, 'Invalid request')
+  }
+
+  const payload = verifyRefreshToken(body.refreshToken)
+
+  if (!payload) {
+    throw new HttpError(401, 'Invalid or expired refresh token')
+  }
+
+  const storedToken = await findRefreshToken(body.refreshToken)
+
+  if (!storedToken) {
+    throw new HttpError(401, 'Refresh token has been revoked')
+  }
+
+  const user = await fetchUser({ _id: storedToken.userId })
+
+  if (!user) {
+    throw new HttpError(401, 'User not found')
+  }
+
+  const accessToken = generateAccessToken(user)
+  const refreshToken = generateRefreshToken(user)
+  await storeRefreshToken(refreshToken, user._id)
+
+  return context.json({ ...user, accessToken, refreshToken })
+})
+
+async function fetchUser(match: Record<string, unknown>): Promise<UserAuthResponse | undefined> {
   const db = getDb()
   const collection = db.collection<UserResponse>('users')
   const users = await collection.aggregate<UserAuthResponse>([
-    {
-      $match: { phoneNumber },
-    },
+    { $match: match },
     {
       $lookup: {
         from: 'seasons',
@@ -100,37 +164,19 @@ auth.post('/verify-code', async (context) => {
     { $project: { courseIds: 0, password: 0 } },
   ]).toArray()
 
-  const userAccount = getFirst(users)
+  const [userAccount] = users
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!userAccount) {
-    throw new HttpError(401, 'No account found for this phone number')
+    return undefined
   }
 
-  const user: UserAuthResponse = {
+  return {
     ...userAccount,
     isAuthorized: true,
     isAdmin: userAccount.isAdmin ?? false,
     isReadonly: userAccount.isReadonly ?? false,
-    seasons: userAccount.seasons ?? [],
   }
-
-  const token = generateToken(user)
-
-  return context.json({ ...user, token })
-})
-
-auth.post('/refresh', authMiddleware, async (context) => {
-  const jwtPayload = getJwtPayload(context)
-  const { iat, exp, ...userPayload } = jwtPayload
-
-  const newToken = generateToken(userPayload)
-
-  return context.json({ ...userPayload, token: newToken })
-})
-
-function getFirst<T>(array: T[]): T | undefined {
-  const [first] = array
-  return first
 }
 
 export { auth }

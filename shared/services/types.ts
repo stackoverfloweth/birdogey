@@ -15,7 +15,8 @@ export type SeasonJson = {
 }
 
 export type UserAuthJson = {
-  token?: string,
+  accessToken?: string,
+  refreshToken?: string,
   _id?: string,
   name?: string,
   phoneNumber?: string,

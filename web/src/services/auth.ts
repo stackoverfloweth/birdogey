@@ -10,18 +10,20 @@ export const auth = reactive<User>({
   isAuthorized: false,
   isReadonly: true,
   seasons: [],
-  token: undefined,
+  accessToken: undefined,
 })
 
-const { value: storedToken, set: setStoredToken, remove: removeStoredToken } = useLocalStorage('BIRDOGEY_TOKEN')
+const { value: storedAccessToken, set: setStoredAccessToken, remove: removeStoredAccessToken } = useLocalStorage('BIRDOGEY_ACCESS_TOKEN')
+const { value: storedRefreshToken, set: setStoredRefreshToken, remove: removeStoredRefreshToken } = useLocalStorage('BIRDOGEY_REFRESH_TOKEN')
 
 export async function initAuthFromStorage(api: CreateApi): Promise<void> {
   try {
-    if (storedToken.value) {
-      Object.assign(auth, { token: storedToken })
+    if (storedRefreshToken.value) {
+      Object.assign(auth, { accessToken: storedAccessToken })
 
-      const user = await api.auth.refresh()
+      const user = await api.auth.exchange(storedRefreshToken.value)
       Object.assign(auth, user)
+      saveAuthToStorage(auth)
     }
   } catch {
     clearStoredAuth()
@@ -30,8 +32,11 @@ export async function initAuthFromStorage(api: CreateApi): Promise<void> {
 
 function saveAuthToStorage(userData: User): void {
   try {
-    if (userData.token) {
-      setStoredToken(userData.token)
+    if (userData.accessToken) {
+      setStoredAccessToken(userData.accessToken)
+    }
+    if (userData.refreshToken) {
+      setStoredRefreshToken(userData.refreshToken)
     }
   } catch (error) {
     console.error('Error saving auth to storage:', error)
@@ -39,7 +44,8 @@ function saveAuthToStorage(userData: User): void {
 }
 
 export function clearStoredAuth(): void {
-  removeStoredToken()
+  removeStoredAccessToken()
+  removeStoredRefreshToken()
 
   Object.assign(auth, {
     id: undefined,
@@ -47,7 +53,7 @@ export function clearStoredAuth(): void {
     isAuthorized: false,
     isReadonly: true,
     seasons: [],
-    token: undefined,
+    accessToken: undefined,
   })
 }
 
@@ -64,7 +70,7 @@ export async function verifyCode(api: CreateApi, phoneNumber: string, code: stri
   return auth.isAuthorized
 }
 
-export async function refreshAuthToken(api: CreateApi): Promise<User | null> {
+export async function refreshAccessToken(api: CreateApi): Promise<User | null> {
   if (!auth.isAuthorized) {
     return null
   }
@@ -77,6 +83,6 @@ export async function refreshAuthToken(api: CreateApi): Promise<User | null> {
   return user
 }
 
-export function getAuthToken(): string | undefined {
-  return auth.token
+export function getAccessToken(): string | undefined {
+  return auth.accessToken
 }
