@@ -11,5 +11,6 @@ export type UserAuthResponse = {
   isAdmin?: boolean,
   isAuthorized?: boolean,
   isReadonly?: boolean,
-  token?: string,
+  accessToken?: string,
+  refreshToken?: string,
 }

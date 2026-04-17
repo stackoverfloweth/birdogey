@@ -22,7 +22,7 @@ export class ApiError extends Error {
 
 export type HttpClientConfig = {
   baseUrl: string,
-  getToken: () => string | null | Promise<string | null>,
+  getAccessToken: () => string | null | Promise<string | null>,
   onError?: (error: unknown) => void,
 }
 
@@ -37,7 +37,7 @@ export class FetchHttpClient implements HttpClient {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
-    const token = await this.config.getToken()
+    const token = await this.config.getAccessToken()
     if (token) {
       headers.Authorization = `Bearer ${token}`
     }

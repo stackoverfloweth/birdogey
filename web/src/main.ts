@@ -14,7 +14,7 @@ import '@/styles/index.css'
 
 const api = createApi({
   baseUrl: env().baseApiUrl,
-  getToken: () => auth.token ?? null,
+  getAccessToken: () => auth.accessToken ?? null,
 })
 
 await initAuthFromStorage(api)

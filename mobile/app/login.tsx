@@ -1,48 +1,41 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { useCallback, useState } from 'react'
-import { Text, StyleSheet, Image, View, Pressable, Modal } from 'react-native'
+import { Text, StyleSheet, Image, View, Pressable, Modal, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import splashImage from '../../assets/splash.png'
-import { Controller, useForm } from 'react-hook-form'
-import { LoginSchema, loginSchema } from '@/schemas/loginSchema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { TextInput } from '@/components/TextInput'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
+import { formStyles } from '@/theme/forms'
 import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { authenticateWithBiometrics, setBiometricsEnabled } from '@/services/biometrics'
+import { LoginPhoneStep } from '@/components/LoginPhoneStep'
+import { LoginCodeStep } from '@/components/LoginCodeStep'
 
 export default function Login(): React.ReactNode {
-  const { sendCode, verifyCode, availableBiometrics, biometricsEnabled } = useAuth()
+  const { sendCode, verifyCode, exchange, availableBiometrics, biometricsEnabled } = useAuth()
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null)
   const [askEnableBiometrics, setAskEnableBiometrics] = useState(false)
+  const [exchangeFailed, setExchangeFailed] = useState(false)
 
   const isFaceIdAvailable = availableBiometrics.includes(
     LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
   )
-
   const isTouchIDAvailable = availableBiometrics.includes(
     LocalAuthentication.AuthenticationType.FINGERPRINT,
   )
+  const showBiometrics = !exchangeFailed && !!biometricsEnabled && (isFaceIdAvailable || isTouchIDAvailable)
 
-  const showBiometrics = !!biometricsEnabled && (isFaceIdAvailable || isTouchIDAvailable)
-
-  const { control, handleSubmit, formState: { errors, isValid, isLoading, isSubmitted } } = useForm<LoginSchema>({
-    mode: 'onChange',
-    resolver: zodResolver(loginSchema),
-  })
-
-  const onSubmit = (data: LoginSchema) => {
-    console.log('Submitted Data:', data)
-    handleVerifyCode(data.phoneNumber, '123456')
+  async function handleCodeSent(phoneNumber: string): Promise<void> {
+    await sendCode(phoneNumber)
+    setPhoneNumber(phoneNumber)
   }
 
-  async function handleVerifyCode(phoneNumber: string, code: string): Promise<void> {
+  async function handleCodeVerified(code: string): Promise<void> {
+    if (phoneNumber === null) return
     await verifyCode(phoneNumber, code)
-
     if (biometricsEnabled === null && availableBiometrics.length > 0) {
-      console.log('askEnableBiometrics', availableBiometrics)
       setAskEnableBiometrics(true)
     } else {
       router.replace('/')
@@ -62,11 +55,15 @@ export default function Login(): React.ReactNode {
   }, [])
 
   const handleBiometricsLogin = useCallback(async () => {
-    const success = await authenticateWithBiometrics()
-    if (success) {
+    try {
+      await authenticateWithBiometrics()
+      await exchange()
       router.replace('/')
+    } catch {
+      Alert.alert('Error', 'Failed to authenticate with biometrics')
+      setExchangeFailed(true)
     }
-  }, [])
+  }, [exchange])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,36 +83,13 @@ export default function Login(): React.ReactNode {
       </View>
       <Text style={styles.title}>Birdogey</Text>
 
-      <View style={styles.form}>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Phone Number</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={styles.input}
-                placeholder="(555) 555-5555"
-                keyboardType="numeric"
-                maxLength={10}
-                icon={<SymbolView name="phone" size={20} tintColor={colors.primary} />}
-              />
-            )}
-            name="phoneNumber"
-          />
-          {isSubmitted && errors.phoneNumber && <Text style={styles.errorText}>{errors.phoneNumber.message}</Text>}
-        </View>
-
-        <Pressable
-          disabled={isLoading}
-          style={[styles.button, !isValid && styles.buttonDisabled]}
-          onPress={() => void handleSubmit(onSubmit)()}
-        >
-          <Text style={styles.buttonText}>Send Code</Text>
-          <SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />
-        </Pressable>
+      <View style={formStyles.form}>
+        {phoneNumber === null && (
+          <LoginPhoneStep onSuccess={(data) => void handleCodeSent(data)} />
+        )}
+        {phoneNumber !== null && (
+          <LoginCodeStep onSuccess={(code) => void handleCodeVerified(code)} />
+        )}
 
         {showBiometrics && (
           <>
@@ -158,11 +132,11 @@ export default function Login(): React.ReactNode {
           </View>
 
           <View style={styles.modalButtons}>
-            <Pressable style={styles.button} onPress={handleEnableBiometrics}>
-              <Text style={styles.buttonText}>Yes</Text>
+            <Pressable style={formStyles.button} onPress={() => void handleEnableBiometrics()}>
+              <Text style={formStyles.buttonText}>Yes</Text>
             </Pressable>
-            <Pressable style={styles.secondaryButton} onPress={handleDisableBiometrics}>
-              <Text style={styles.secondaryButtonText}>No</Text>
+            <Pressable style={formStyles.secondaryButton} onPress={() => void handleDisableBiometrics()}>
+              <Text style={formStyles.secondaryButtonText}>No</Text>
             </Pressable>
           </View>
         </View>
@@ -199,67 +173,12 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
   },
-  form: {
-    padding: 24,
-    gap: 16,
-  },
-  formGroup: {
-    gap: 8,
-    paddingHorizontal: 18,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    color: colors.on_surface_variant,
-  },
-  input: {
-    marginHorizontal: -18,
-  },
-  errorText: {
-    color: colors.error,
-  },
   title: {
     fontFamily: 'Ephesis',
     fontSize: 64,
     textAlign: 'center',
     marginBottom: 24,
     color: colors.on_surface,
-  },
-  button: {
-    backgroundColor: colors.primary_500,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 9999,
-    gap: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    opacity: 0.4,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  secondaryButton: {
-    backgroundColor: colors.surface_container_lowest,
-    borderWidth: 1,
-    borderColor: colors.on_surface_variant,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 9999,
-    gap: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    color: colors.on_surface_variant,
-    fontWeight: 'bold',
-    fontSize: 18,
   },
   divider: {
     flexDirection: 'row',
