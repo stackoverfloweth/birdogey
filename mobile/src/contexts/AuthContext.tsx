@@ -1,10 +1,10 @@
-import { config } from '@/config/env'
-import { getAccessToken, setAccessToken, removeAccessToken, getRefreshToken, setRefreshToken, removeRefreshToken } from '@/services/tokenStorage'
+import { setAccessToken, removeAccessToken, getRefreshToken, setRefreshToken, removeRefreshToken } from '@/services/tokenStorage'
 import { isBiometricsEnabled, getAvailableBiometrics } from '@/services/biometrics'
 import * as LocalAuthentication from 'expo-local-authentication'
-import { createAuthApi, FetchHttpClient, MINUTE, User } from '@birdogey/shared'
+import { MINUTE, User } from '@birdogey/shared'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useApiClient } from './ApiClientContext'
 
 type AuthState = {
   user: User | null,
@@ -21,29 +21,20 @@ type AuthState = {
 const AuthContext = createContext<AuthState | null>(null)
 
 export function AuthProvider({ children }: { children: React.ReactNode }): React.ReactNode {
+  const api = useApiClient()
   const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [availableBiometrics, setAvailableBiometrics] = useState<LocalAuthentication.AuthenticationType[]>([])
-  const [biometricsEnabled, setBiometricsEnabled] = useState<boolean | null>(null)
 
-  const apiClient = useRef<FetchHttpClient | null>(null)
   const isAuthenticated = useMemo(() => !!user, [user])
 
-  apiClient.current ??= new FetchHttpClient({ baseUrl: config.apiBaseUrl, getAccessToken })
-
-  const authApiRef = useRef<ReturnType<typeof createAuthApi> | null>(null)
-
-  authApiRef.current ??= createAuthApi(apiClient.current)
-
   const refreshAccessToken = useCallback(async (): Promise<User | null> => {
-    const user = await authApiRef.current?.refresh()
+    const user = await api.auth.refresh()
     if (user?.accessToken) {
       setAccessToken(user.accessToken)
       setUser(user)
     }
 
     return user ?? null
-  }, [])
+  }, [api])
 
   const exchange = useCallback(async (): Promise<void> => {
     const refreshToken = await getRefreshToken()
@@ -51,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
       throw new Error('No refresh token found')
     }
 
-    const user = await authApiRef.current?.exchange(refreshToken)
+    const user = await api.auth.exchange(refreshToken)
 
     if (!user) {
       throw new Error('No user found')
@@ -65,21 +56,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     if (user.refreshToken) {
       setRefreshToken(user.refreshToken)
     }
-  }, [])
-
-  const initAuth = useCallback(async (): Promise<void> => {
-    const refreshToken = await getRefreshToken()
-    const availableBiometrics = await getAvailableBiometrics()
-    setAvailableBiometrics(availableBiometrics)
-
-    const biometricsEnabled = await isBiometricsEnabled()
-    setBiometricsEnabled(biometricsEnabled)
-  }, [])
+  }, [api])
 
   const queryClient = useQueryClient()
-  const { error } = useQuery({
+
+  useQuery({
     queryKey: ['refreshLogin'],
-    queryFn: refreshAccessToken,
+    queryFn: () => refreshAccessToken().catch(logout),
     enabled: () => isAuthenticated,
     refetchInterval: MINUTE * 5,
     staleTime: MINUTE * 1,
@@ -87,12 +70,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     retry: false,
   })
 
+  const { data: availableBiometrics = [], isLoading: isAvailableBiometricsLoading } = useQuery({
+    queryKey: ['biometrics', 'available'],
+    queryFn: getAvailableBiometrics,
+    staleTime: Infinity,
+  })
+
+  const { data: biometricsEnabled = null, isLoading: isBiometricsEnabledLoading } = useQuery({
+    queryKey: ['biometrics', 'enabled'],
+    queryFn: isBiometricsEnabled,
+    staleTime: Infinity,
+  })
+
   const sendCode = useCallback(async (phoneNumber: string) => {
-    await authApiRef.current?.sendCode(phoneNumber)
-  }, [])
+    await api.auth.sendCode(phoneNumber)
+  }, [api])
 
   const verifyCode = useCallback(async (phoneNumber: string, code: string) => {
-    const user = await authApiRef.current?.verifyCode(phoneNumber, code)
+    const user = await api.auth.verifyCode(phoneNumber, code)
 
     if (user?.accessToken) {
       setAccessToken(user.accessToken)
@@ -104,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
       // prevents query from triggering when initialized
       queryClient.setQueryData(['refreshLogin'], user)
     }
-  }, [queryClient])
+  }, [api, queryClient])
 
   const logout = useCallback(async () => {
     removeAccessToken()
@@ -112,15 +107,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     setUser(null)
   }, [])
 
-  useEffect(() => {
-    if (error) {
-      logout()
-    }
-  }, [error, logout])
-
-  useEffect(() => {
-    initAuth().finally(() => setIsLoading(false))
-  }, [initAuth])
+  const isLoading = useMemo(() => {
+    return isAvailableBiometricsLoading || isBiometricsEnabledLoading
+  }, [isAvailableBiometricsLoading, isBiometricsEnabledLoading])
 
   const value = useMemo<AuthState>(() => ({
     user,
