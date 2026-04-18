@@ -21,5 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     ...config.extra,
     apiBaseUrl: process.env.API_BASE_URL,
+    imageKitUrl: process.env.IMAGEKIT_URL,
+    imageKitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   },
 })

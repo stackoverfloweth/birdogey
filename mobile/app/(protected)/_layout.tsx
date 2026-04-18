@@ -26,7 +26,7 @@ export default function ProtectedLayout(): React.ReactNode {
           }}
         />
         <Tabs.Screen
-          name="Events"
+          name="events"
           options={{
             tabBarLabel: 'Events',
             tabBarIcon: ({ color }) => (
@@ -35,7 +35,7 @@ export default function ProtectedLayout(): React.ReactNode {
           }}
         />
         <Tabs.Screen
-          name="Players"
+          name="players"
           options={{
             tabBarLabel: 'Players',
             tabBarIcon: ({ color }) => (
@@ -44,7 +44,7 @@ export default function ProtectedLayout(): React.ReactNode {
           }}
         />
         <Tabs.Screen
-          name="Settings"
+          name="settings"
           options={{
             tabBarLabel: 'Settings',
             tabBarIcon: ({ color }) => (
