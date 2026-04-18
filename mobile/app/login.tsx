@@ -7,6 +7,7 @@ import splashImage from '../../assets/splash.png'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
+import { modalsStyles } from '@/theme/modals'
 import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { authenticateWithBiometrics, setBiometricsEnabled } from '@/services/biometrics'
@@ -115,23 +116,23 @@ export default function Login(): React.ReactNode {
       </View>
 
       <Modal animationType="slide" transparent={true} visible={askEnableBiometrics}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
+        <View style={[styles.modalContent, modalsStyles.content]}>
+          <View style={[modalsStyles.header]}>
             {isFaceIdAvailable && (
               <>
                 <SymbolView name="faceid" size={28} tintColor={colors.on_surface} />
-                <Text style={styles.modalTitle}>Enable Face ID?</Text>
+                <Text style={modalsStyles.title}>Enable Face ID?</Text>
               </>
             )}
             {isTouchIDAvailable && (
               <>
                 <SymbolView name="touchid" size={28} tintColor={colors.on_surface} />
-                <Text style={styles.modalTitle}>Enable Touch ID?</Text>
+                <Text style={modalsStyles.title}>Enable Touch ID?</Text>
               </>
             )}
           </View>
 
-          <View style={styles.modalButtons}>
+          <View style={modalsStyles.buttons}>
             <Pressable style={formStyles.button} onPress={() => void handleEnableBiometrics()}>
               <Text style={formStyles.buttonText}>Yes</Text>
             </Pressable>
@@ -215,34 +216,6 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     height: 160,
-    width: '100%',
-    backgroundColor: colors.surface_container_lowest,
-    borderTopRightRadius: 18,
-    borderTopLeftRadius: 18,
-    position: 'absolute',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    bottom: 0,
     padding: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  modalTitle: {
-    fontSize: 18,
-    color: colors.on_surface,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 12,
   },
 })
