@@ -2,6 +2,7 @@ import { ProfileForm } from '@/components/ProfileForm'
 import { useAuth } from '@/contexts/AuthContext'
 import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
+import { router } from 'expo-router'
 import { SymbolView } from 'expo-symbols'
 import { useCallback } from 'react'
 import { StyleSheet, Text, Pressable } from 'react-native'
@@ -12,6 +13,7 @@ export default function Settings(): React.ReactNode {
 
   const handleLogout = useCallback(() => {
     logout()
+    router.push('/login')
   }, [logout])
 
   return (

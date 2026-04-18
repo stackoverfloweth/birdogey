@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     padding: 16,
-    borderBottomWidth: 1,
-    borderColor: colors.surface_container_high,
+    backgroundColor: colors.surface_container_lowest,
+    borderRadius: 9999,
   },
 })

@@ -105,7 +105,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     removeAccessToken()
     removeRefreshToken()
     setUser(null)
-  }, [])
+    queryClient.invalidateQueries()
+  }, [queryClient])
 
   const isLoading = useMemo(() => {
     return isAvailableBiometricsLoading || isBiometricsEnabledLoading
