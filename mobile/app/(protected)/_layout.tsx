@@ -8,6 +8,9 @@ export default function ProtectedLayout(): React.ReactNode {
       <Tabs screenOptions={{
         title: 'Birdogey',
         headerShown: true,
+        headerStyle: {
+          backgroundColor: 'transparent',
+        },
         headerTitleStyle: {
           fontFamily: 'Ephesis',
           fontSize: 32,
@@ -20,6 +23,7 @@ export default function ProtectedLayout(): React.ReactNode {
           name="index"
           options={{
             tabBarLabel: 'Home',
+            tabBarActiveTintColor: colors.primary_500,
             tabBarIcon: ({ color }) => (
               <SymbolView name="house.fill" tintColor={color} size={28} />
             ),
@@ -29,6 +33,7 @@ export default function ProtectedLayout(): React.ReactNode {
           name="events"
           options={{
             tabBarLabel: 'Events',
+            tabBarActiveTintColor: colors.primary_500,
             tabBarIcon: ({ color }) => (
               <SymbolView name="calendar" tintColor={color} size={28} />
             ),
@@ -38,6 +43,7 @@ export default function ProtectedLayout(): React.ReactNode {
           name="players"
           options={{
             tabBarLabel: 'Players',
+            tabBarActiveTintColor: colors.primary_500,
             tabBarIcon: ({ color }) => (
               <SymbolView name="person.2.fill" tintColor={color} size={28} />
             ),
@@ -47,6 +53,7 @@ export default function ProtectedLayout(): React.ReactNode {
           name="settings"
           options={{
             tabBarLabel: 'Settings',
+            tabBarActiveTintColor: colors.primary_500,
             tabBarIcon: ({ color }) => (
               <SymbolView name="gearshape.fill" tintColor={color} size={28} />
             ),
