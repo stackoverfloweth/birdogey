@@ -32,7 +32,7 @@ users.get('/', authMiddleware, async (context) => {
 
   const result = await collection
     .aggregate([
-      { $match: { userId: { $in: seasonIds.map((id) => new ObjectId(id)) } } },
+      { $match: { seasonId: { $in: seasonIds.map((id) => new ObjectId(id)) } } },
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
       {
