@@ -155,13 +155,38 @@ async function fetchUser(match: Record<string, unknown>): Promise<UserAuthRespon
     { $match: match },
     {
       $lookup: {
+        from: 'userSeasons',
+        localField: '_id',
+        foreignField: 'userId',
+        as: 'userSeasonDocs',
+      },
+    },
+    {
+      $addFields: {
+        seasonIds: '$userSeasonDocs.seasonId',
+      },
+    },
+    {
+      $lookup: {
         from: 'seasons',
-        localField: 'courseIds',
-        foreignField: 'courseId',
+        let: { seasonIds: '$seasonIds' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $in: ['$_id', '$$seasonIds'] },
+                  { $or: [{ $eq: [{ $type: '$start' }, 'missing'] }, { $lte: ['$start', '$$NOW'] }] },
+                  { $or: [{ $eq: [{ $type: '$end' }, 'missing'] }, { $gte: ['$end', '$$NOW'] }] },
+                ],
+              },
+            },
+          },
+        ],
         as: 'seasons',
       },
     },
-    { $project: { courseIds: 0, password: 0 } },
+    { $project: { password: 0, userSeasonDocs: 0, seasonIds: 0 } },
   ]).toArray()
 
   const [userAccount] = users

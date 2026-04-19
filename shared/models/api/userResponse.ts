@@ -8,5 +8,4 @@ export type UserResponse = {
   imageUrl?: string,
   isAdmin?: boolean,
   isReadonly?: boolean,
-  courseIds?: ObjectId[],
 }
