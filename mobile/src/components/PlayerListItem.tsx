@@ -3,10 +3,10 @@ import type { User } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
 import { UserImage } from './UserImage'
 
-export function PlayerListItem({ player }: { player: User }): React.ReactNode {
+export function PlayerListItem({ player, visible }: { player: User, visible: boolean }): React.ReactNode {
   return (
     <Pressable style={styles.container}>
-      <UserImage imageUrl={player.imageUrl} width={40} height={40} />
+      <UserImage imageUrl={visible ? player.imageUrl : undefined} width={40} height={40} />
       <Text>{player.name}</Text>
     </Pressable>
   )
