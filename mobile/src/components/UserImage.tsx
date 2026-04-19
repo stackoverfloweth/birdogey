@@ -1,18 +1,8 @@
+import { usePlayerImage } from '@/hooks/usePlayerImage'
 import { DimensionValue, Image, StyleSheet } from 'react-native'
-import { config } from '@/config/env'
-import ImageKit from 'imagekit-javascript'
 
 export function UserImage({ imageUrl, width = '100%', height = '100%' }: { imageUrl?: string, width?: DimensionValue, height?: DimensionValue }): React.ReactNode {
-  const imagekit = new ImageKit({
-    urlEndpoint: config.imageKitUrl,
-    publicKey: config.imageKitPublicKey,
-  })
-  const uri = imagekit.url({
-    path: `/players/${imageUrl ?? 'default.png'}`,
-    transformation: [
-      { raw: 'fo-face,r-max' },
-    ],
-  })
+  const { data: uri } = usePlayerImage(imageUrl)
 
   return (
     <Image
