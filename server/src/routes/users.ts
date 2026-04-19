@@ -11,28 +11,38 @@ import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
 const users = new Hono()
 
 users.get('/', authMiddleware, async (context) => {
-  const seasonIds = context.req.query('seasonIds')?.split(',')
-    .filter(Boolean) ?? []
-
   const token = getJwtPayload(context)
   const db = getDb()
-
-  if (seasonIds.length) {
-    seasonIds.forEach((seasonId) => checkSeasonAccess(seasonId, token))
-  }
-
-  if (!seasonIds.length) {
-    const collection = db.collection<UserResponse>('users')
-    const result = await collection.find({}).toArray()
-
-    return context.json(result)
-  }
-
   const collection = db.collection<UserSeasonResponse>('userSeasons')
+
+  async function getAllUserSeasonIds(): Promise<ObjectId[]> {
+    const userId = ObjectId.createFromHexString(token._id.toString())
+
+    const distinctSeasonIds = await collection
+      .aggregate<{ _id: ObjectId }>([
+        { $match: { userId } },
+        { $group: { _id: '$seasonId' } },
+      ])
+      .toArray()
+
+    return distinctSeasonIds.map(({ _id }) => _id)
+  }
+
+  const seasonIds = context.req.query('seasonIds')?.split(',')
+    .filter((season) => {
+      if (!season) {
+        return false
+      }
+
+      checkSeasonAccess(season, token)
+
+      return true
+    })
+    .map((season) => new ObjectId(season)) ?? await getAllUserSeasonIds()
 
   const result = await collection
     .aggregate([
-      { $match: { userId: { $in: seasonIds.map((id) => new ObjectId(id)) } } },
+      { $match: { seasonId: { $in: seasonIds } } },
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
       {
