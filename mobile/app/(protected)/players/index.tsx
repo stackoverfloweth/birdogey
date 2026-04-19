@@ -3,13 +3,13 @@ import { useApiClient } from '@/contexts/ApiClientContext'
 import { useQuery } from '@tanstack/react-query'
 import { SymbolView } from 'expo-symbols'
 import { formStyles } from '@/theme/forms'
-import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native'
+import { StyleSheet, View, Text, FlatList, Pressable, RefreshControl } from 'react-native'
 import { router } from 'expo-router'
 
 export default function Players(): React.ReactNode {
   const api = useApiClient()
 
-  const { data: players = [] } = useQuery({
+  const { data: players = [], refetch, isFetching } = useQuery({
     queryKey: ['players'],
     queryFn: () => api.user.getList(),
   })
@@ -28,6 +28,7 @@ export default function Players(): React.ReactNode {
           <PlayerListItem player={item} />
         )}
         keyExtractor={(item) => item.id}
+        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => void refetch()} />}
       />
     </View>
   )
