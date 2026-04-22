@@ -12,20 +12,38 @@ const events = new Hono()
 events.use(authMiddleware)
 
 events.get('/', async (context) => {
-  const seasonId = context.req.query('seasonId')
+  const token = getJwtPayload(context)
+  const db = getDb()
+  const eventsCollection = db.collection<EventResponse>('events')
+  const userSeasonsCollection = db.collection<UserSeasonResponse>('userSeasons')
 
-  if (!seasonId) {
-    throw new HttpError(400, 'seasonId query parameter is required')
+  async function getAllUserSeasonIds(): Promise<ObjectId[]> {
+    const userId = ObjectId.createFromHexString(token._id.toString())
+
+    const distinctSeasonIds = await userSeasonsCollection
+      .aggregate<{ _id: ObjectId }>([
+        { $match: { userId } },
+        { $group: { _id: '$seasonId' } },
+      ])
+      .toArray()
+
+    return distinctSeasonIds.map(({ _id }) => _id)
   }
 
-  const token = getJwtPayload(context)
-  checkSeasonAccess(seasonId, token)
+  const seasonIds = context.req.query('seasonIds')?.split(',')
+    .filter((season) => {
+      if (!season) {
+        return false
+      }
 
-  const db = getDb()
-  const collection = db.collection<EventResponse>('events')
+      checkSeasonAccess(season, token)
 
-  const result = await collection.find({
-    seasonId: new ObjectId(seasonId),
+      return true
+    })
+    .map((season) => new ObjectId(season)) ?? await getAllUserSeasonIds()
+
+  const result = await eventsCollection.find({
+    seasonId: { $in: seasonIds },
   })
     .sort({ created: -1 })
     .toArray()
