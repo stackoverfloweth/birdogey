@@ -5,13 +5,22 @@ import type { EventJson } from './types'
 import { mapEvent } from './mappers'
 
 export function createEventApi(client: HttpClient) {
+  function getList(seasonId?: string): Promise<Event[]>
+  function getList(seasonIds?: string[]): Promise<Event[]>
+  function getList(seasonIds?: string | string[]): Promise<Event[]> {
+    if (typeof seasonIds === 'string') {
+      return getList([seasonIds])
+    }
+
+    const params = seasonIds?.length ? { seasonIds: seasonIds.join(',') } : undefined
+    return client.get<EventJson[]>('/events', params).then((data) => data.map(mapEvent))
+  }
+
   return {
     getById(id: string): Promise<Event> {
       return client.get<EventJson>(`/events/${id}`).then(mapEvent)
     },
-    getList(seasonId: string): Promise<Event[]> {
-      return client.get<EventJson[]>('/events', { seasonId }).then((data) => data.map(mapEvent))
-    },
+    getList,
     create(request: EventRequest): Promise<string> {
       return client.post<string>('/events', request)
     },

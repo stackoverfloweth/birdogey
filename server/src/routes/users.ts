@@ -53,6 +53,7 @@ users.get('/', authMiddleware, async (context) => {
           imageUrl: { $first: '$user.imageUrl' },
         },
       },
+      { $sort: { name: 1 } },
     ])
     .toArray()
 
