@@ -7,14 +7,18 @@ type PlayerListItemProps = {
   player: User,
   visible?: boolean,
   right?: React.ReactNode,
+  subTitle?: React.ReactNode,
 }
 
-export function PlayerListItem({ player, visible = true, right }: PlayerListItemProps): React.ReactNode {
+export function PlayerListItem({ player, visible = true, right, subTitle }: PlayerListItemProps): React.ReactNode {
   return (
     <View style={styles.container}>
       <View style={styles.primary}>
         <UserImage imageUrl={visible ? player.imageUrl : undefined} width={40} height={40} />
-        <Text style={styles.primaryText}>{player.name}</Text>
+        <View style={{ gap: 2 }}>
+          <Text style={styles.primaryText}>{player.name}</Text>
+          {subTitle}
+        </View>
       </View>
       {right}
     </View>

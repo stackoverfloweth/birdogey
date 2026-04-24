@@ -7,6 +7,7 @@ import { colors } from '@/theme/colors'
 import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, EventRequest, penniesToUSD, pluralize } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { EventPlayersList } from '@/components/EventPlayersList'
+import { ActiveEventPlayersList } from '@/components/ActiveEventPlayersList'
 
 export default function EventView(): React.ReactNode {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -22,7 +23,7 @@ export default function EventView(): React.ReactNode {
 
   const { mutate: updateEventPlayers } = useMutation({
     mutationFn: (players: EventPlayerRequest[]) => api.event.update(id, { players }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event', id] })
     },
   })
@@ -65,6 +66,43 @@ export default function EventView(): React.ReactNode {
     })
   }, [event, eventPlayers])
 
+  function renderListHeader(): React.ReactNode {
+    return (
+      <>
+        <View style={[styles.header, { backgroundColor: colors.surface }]}>
+          <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-start' }]}>
+            <Text style={[styles.headerItemSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
+            <Text style={[styles.headerItemPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
+          </View>
+          <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-end' }]}>
+            <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
+          </View>
+        </View>
+        <View style={styles.header}>
+          <View style={styles.headerItem}>
+            <Text style={styles.headerItemSecondaryText}>Ace Pot</Text>
+            <Text style={styles.headerItemPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
+            <Text style={styles.headerItemSecondaryText}>
+              {aceUsers.length}
+              {' '}
+              {pluralize(aceUsers.length, 'player')}
+            </Text>
+          </View>
+
+          <View style={styles.headerItem}>
+            <Text style={styles.headerItemSecondaryText}>CTP Pool</Text>
+            <Text style={styles.headerItemPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
+            <Text style={styles.headerItemSecondaryText}>
+              {ctpUsers.length}
+              {' '}
+              {pluralize(ctpUsers.length, 'player')}
+            </Text>
+          </View>
+        </View>
+      </>
+    )
+  }
+
   return (
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="large" color={colors.primary} />}
@@ -72,43 +110,19 @@ export default function EventView(): React.ReactNode {
         <EventPlayersList
           seasonId={event.seasonId}
           eventPlayers={eventPlayers}
+          isRefreshing={isRefetching}
+          onRefresh={() => void refetch()}
+          listHeader={renderListHeader()}
+        />
+      )}
+      {!!event && 1 == 2 && (
+        <ActiveEventPlayersList
+          seasonId={event.seasonId}
+          eventPlayers={eventPlayers}
           onPlayersChanged={updateEventPlayers}
           isRefreshing={isRefetching}
           onRefresh={() => void refetch()}
-          listHeader={(
-            <>
-              <View style={[styles.header, { backgroundColor: colors.surface }]}>
-                <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-start' }]}>
-                  <Text style={[styles.headerItemSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
-                  <Text style={[styles.headerItemPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
-                </View>
-                <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-end' }]}>
-                  <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
-                </View>
-              </View>
-              <View style={styles.header}>
-                <View style={styles.headerItem}>
-                  <Text style={styles.headerItemSecondaryText}>Ace Pot</Text>
-                  <Text style={styles.headerItemPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
-                  <Text style={styles.headerItemSecondaryText}>
-                    {aceUsers.length}
-                    {' '}
-                    {pluralize(aceUsers.length, 'player')}
-                  </Text>
-                </View>
-
-                <View style={styles.headerItem}>
-                  <Text style={styles.headerItemSecondaryText}>CTP Pool</Text>
-                  <Text style={styles.headerItemPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
-                  <Text style={styles.headerItemSecondaryText}>
-                    {ctpUsers.length}
-                    {' '}
-                    {pluralize(ctpUsers.length, 'player')}
-                  </Text>
-                </View>
-              </View>
-            </>
-          )}
+          listHeader={renderListHeader()}
         />
       )}
     </View>
