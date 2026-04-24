@@ -21,6 +21,7 @@ export type UserAuthJson = {
   name?: string,
   phoneNumber?: string,
   udiscId?: string,
+  pdgaNumber?: string,
   imageUrl?: string,
   isAdmin?: boolean,
   isAuthorized?: boolean,
@@ -33,6 +34,7 @@ export type UserJson = {
   name: string,
   phoneNumber?: string,
   udiscId?: string,
+  pdgaNumber?: string,
   imageUrl?: string,
 }
 

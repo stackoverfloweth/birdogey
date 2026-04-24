@@ -5,6 +5,7 @@ export type UserResponse = {
   name: string,
   phoneNumber?: string,
   udiscId?: string,
+  pdgaNumber?: string,
   imageUrl?: string,
   isAdmin?: boolean,
   isReadonly?: boolean,

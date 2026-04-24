@@ -4,7 +4,8 @@
   import { computed, ref, watch } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
-  import { useApi } from '@/composables'
+  import UDiscImportModal from '@/components/UDiscImportModal.vue'
+  import { useApi, type UDiscScorePatch } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, User, UserSeason, penniesToUSD } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import EventPlayersModal from './EventPlayersModal.vue'
@@ -96,6 +97,7 @@
   })
 
   const { value: showingPlayersModal, setTrue: showPlayersModal } = useBoolean()
+  const { value: showingUDiscModal, setTrue: showUDiscModal } = useBoolean()
 
   const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.userId === player.id)))
   const playersInOptions = computed(() => sortByName(playersIn.value)
@@ -129,6 +131,22 @@
     return players.sort((aPlayer, bPlayer) => {
       return aPlayer.name > bPlayer.name ? 1 : -1
     })
+  }
+
+  async function applyUDiscImport(payload: {
+    scorePatches: UDiscScorePatch[],
+    metadataUpdates: { userId: string, udiscId?: string, pdgaNumber?: string }[],
+  }): Promise<void> {
+    eventPlayers.value = eventPlayers.value.map((ep) => {
+      const patch = payload.scorePatches.find((scorePatch) => scorePatch.userId === ep.userId)
+      return patch ? { ...ep, score: patch.score } : ep
+    })
+
+    updateEvent()
+
+    await Promise.all(
+      payload.metadataUpdates.map(({ userId, udiscId, pdgaNumber }) => api.users.update(userId, { udiscId, pdgaNumber })),
+    )
   }
 
   function updateEvent(): void {
@@ -210,6 +228,10 @@
 
         <p-button icon="UserGroupIcon" @click="showPlayersModal">
           Players
+        </p-button>
+
+        <p-button icon="ArrowUpTrayIcon" @click="showUDiscModal">
+          Import UDisc Scores
         </p-button>
 
         <p-button icon="CloudArrowDownIcon" @click="updateEvent">
@@ -310,6 +332,15 @@
 
     <template v-if="showingPlayersModal">
       <EventPlayersModal v-model:is-open="showingPlayersModal" v-model="eventPlayers" :players="players" />
+    </template>
+
+    <template v-if="showingUDiscModal">
+      <UDiscImportModal
+        v-model:is-open="showingUDiscModal"
+        :players="players"
+        :event-players="eventPlayers"
+        @import="applyUDiscImport"
+      />
     </template>
   </p-form>
 </template>
