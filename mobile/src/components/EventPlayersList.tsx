@@ -1,6 +1,7 @@
-import { EventPlayerRequest, UserSeason } from '@birdogey/shared'
+import { EventPlayerRequest, UserSeason, Event } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
 import { FlatList, Keyboard, Pressable, StyleSheet, Text, View, ViewToken } from 'react-native'
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { formStyles } from '@/theme/forms'
@@ -8,15 +9,17 @@ import { TextInput } from '@/components/TextInput'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
 import { PlayerListItem } from './PlayerListItem'
-import { router } from 'expo-router'
 
 type EventPlayersListProps = {
   seasonId: string,
+  event: Event,
   eventPlayers: EventPlayerRequest[],
   onPlayersChanged?: (players: EventPlayerRequest[]) => void,
+  onEventChanged?: (event: Event) => void,
+  listHeader?: React.ReactNode,
 }
 
-export function EventPlayersList({ seasonId, eventPlayers, onPlayersChanged }: EventPlayersListProps): React.ReactNode {
+export function EventPlayersList({ seasonId, event, eventPlayers, onPlayersChanged, onEventChanged, listHeader }: EventPlayersListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchFocused, setPlayerSearchFocused] = useState(false)
   const api = useApiClient()
@@ -29,8 +32,9 @@ export function EventPlayersList({ seasonId, eventPlayers, onPlayersChanged }: E
 
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-    setVisibleIds(new Set(viewableItems.map((item) => item.item.userId)))
+    setVisibleIds(new Set(viewableItems.map((item) => item.item.id)))
   }, [])
+
   const playersInEvent = useMemo(() => {
     return players.filter((player) => eventPlayers.some((eventPlayer) => eventPlayer.userId === player.id))
   }, [players, eventPlayers])
@@ -54,6 +58,50 @@ export function EventPlayersList({ seasonId, eventPlayers, onPlayersChanged }: E
     setDoneAddingPlayers()
   }
 
+  function handlePlayerRemove(userId: string): void {
+    onPlayersChanged?.(eventPlayers.filter((eventPlayer) => eventPlayer.userId !== userId))
+  }
+
+  function handleCtpToggle(player: UserSeason): void {
+    const ctpUserIds = event.ctpUserIds.includes(player.id) ? event.ctpUserIds.filter((userId) => userId !== player.id) : [...event.ctpUserIds, player.id]
+    onEventChanged?.({
+      ...event,
+      ctpUserIds,
+    })
+  }
+
+  function handleAceToggle(player: UserSeason): void {
+    const aceUserIds = event.aceUserIds.includes(player.id) ? event.aceUserIds.filter((userId) => userId !== player.id) : [...event.aceUserIds, player.id]
+    onEventChanged?.({
+      ...event,
+      aceUserIds,
+    })
+  }
+
+  function renderRightActions(player: UserSeason): React.ReactNode {
+    return (
+      <View style={styles.swipeActions}>
+        <Pressable style={[styles.swipeAction, event.aceUserIds.includes(player.id) ? styles.swipeActionActive : undefined]} onPress={() => handleAceToggle(player)}>
+          <Text style={styles.swipeActionText}>ACE</Text>
+        </Pressable>
+        <Pressable style={[styles.swipeAction, event.ctpUserIds.includes(player.id) ? styles.swipeActionActive : undefined]} onPress={() => handleCtpToggle(player)}>
+          <Text style={styles.swipeActionText}>CTP</Text>
+        </Pressable>
+        <Pressable style={[styles.swipeAction, styles.swipeActionRemove]} onPress={() => handlePlayerRemove(player.id)}>
+          <SymbolView name="trash" size={24} tintColor="#fff" weight="bold" />
+        </Pressable>
+      </View>
+    )
+  }
+
+  function renderRightState(player: UserSeason): React.ReactNode {
+    return (
+      <View style={styles.swipeActions}>
+        <Text>Pocket Change</Text>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
@@ -72,18 +120,13 @@ export function EventPlayersList({ seasonId, eventPlayers, onPlayersChanged }: E
           </Pressable>
         )}
       </View>
-      {eventPlayers.length === 0 && !playerSearchFocused && (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateText}>No players yet</Text>
-        </View>
-      )}
       {searchResults.length > 0 && playerSearchFocused && (
         <FlatList
           data={searchResults}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <Pressable onPress={() => handlePlayerAdd(item)}>
-              <PlayerListItem player={item} />
+              <PlayerListItem player={item} right={renderRightState(item)} />
             </Pressable>
           )}
           keyExtractor={(item) => item.id}
@@ -93,7 +136,13 @@ export function EventPlayersList({ seasonId, eventPlayers, onPlayersChanged }: E
         <FlatList
           data={playersInEvent}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => <PlayerListItem player={item} visible={visibleIds.has(item.id)} />}
+          ListHeaderComponent={listHeader ? <>{listHeader}</> : null}
+          ListHeaderComponentStyle={listHeader ? styles.listHeader : undefined}
+          renderItem={({ item }) => (
+            <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
+              <PlayerListItem player={item} visible={visibleIds.has(item.id)} right={renderRightState(item)} />
+            </ReanimatedSwipeable>
+          )}
           keyExtractor={(item) => item.id}
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
@@ -118,5 +167,36 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: 8,
+    paddingBottom: 16,
+  },
+  listHeader: {
+    gap: 16,
+    marginBottom: 16,
+  },
+  swipeActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingLeft: 8,
+  },
+  swipeAction: {
+    width: 72,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 9999,
+    gap: 4,
+    backgroundColor: colors.outline_variant,
+  },
+  swipeActionText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: colors.surface_container_lowest,
+  },
+  swipeActionActive: {
+    backgroundColor: colors.primary_500,
+  },
+  swipeActionRemove: {
+    backgroundColor: colors.error,
   },
 })

@@ -6,13 +6,17 @@ import { UserImage } from './UserImage'
 type PlayerListItemProps = {
   player: User,
   visible?: boolean,
+  right?: React.ReactNode,
 }
 
-export function PlayerListItem({ player, visible = true }: PlayerListItemProps): React.ReactNode {
+export function PlayerListItem({ player, visible = true, right }: PlayerListItemProps): React.ReactNode {
   return (
     <View style={styles.container}>
-      <UserImage imageUrl={visible ? player.imageUrl : undefined} width={40} height={40} />
-      <Text>{player.name}</Text>
+      <View style={styles.primary}>
+        <UserImage imageUrl={visible ? player.imageUrl : undefined} width={40} height={40} />
+        <Text style={styles.primaryText}>{player.name}</Text>
+      </View>
+      {right}
     </View>
   )
 }
@@ -26,5 +30,15 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: colors.surface_container_lowest,
     borderRadius: 9999,
+  },
+  primary: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  primaryText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 })

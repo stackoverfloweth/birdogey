@@ -3,7 +3,7 @@ import { isBiometricsEnabled, getAvailableBiometrics } from '@/services/biometri
 import * as LocalAuthentication from 'expo-local-authentication'
 import { MINUTE, User } from '@birdogey/shared'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { useApiClient } from './ApiClientContext'
 
 type AuthState = {
@@ -28,12 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
 
   const refreshAccessToken = useCallback(async (): Promise<User | null> => {
     const user = await api.auth.refresh()
-    if (user?.accessToken) {
+    if (user.accessToken) {
       setAccessToken(user.accessToken)
       setUser(user)
     }
 
-    return user ?? null
+    return user
   }, [api])
 
   const exchange = useCallback(async (): Promise<void> => {
@@ -43,10 +43,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     }
 
     const user = await api.auth.exchange(refreshToken)
-
-    if (!user) {
-      throw new Error('No user found')
-    }
 
     if (user.accessToken) {
       setAccessToken(user.accessToken)
@@ -62,7 +58,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
 
   useQuery({
     queryKey: ['refreshLogin'],
-    queryFn: () => refreshAccessToken().catch(logout),
+    queryFn: () => refreshAccessToken()
+      .then(() => null)
+      .catch(logout),
     enabled: () => isAuthenticated,
     refetchInterval: MINUTE * 5,
     staleTime: MINUTE * 1,
@@ -89,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const verifyCode = useCallback(async (phoneNumber: string, code: string) => {
     const user = await api.auth.verifyCode(phoneNumber, code)
 
-    if (user?.accessToken) {
+    if (user.accessToken) {
       setAccessToken(user.accessToken)
       if (user.refreshToken) {
         setRefreshToken(user.refreshToken)

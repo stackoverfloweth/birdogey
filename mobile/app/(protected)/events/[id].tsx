@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { colors } from '@/theme/colors'
-import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, penniesToUSD, pluralize } from '@birdogey/shared'
+import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, EventRequest, penniesToUSD, pluralize } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { EventPlayersList } from '@/components/EventPlayersList'
 
@@ -12,17 +12,29 @@ export default function EventView(): React.ReactNode {
   const { id } = useLocalSearchParams<{ id: string }>()
 
   const api = useApiClient()
+  const queryClient = useQueryClient()
   const { data: event, isLoading } = useQuery({
     queryKey: ['event', id],
     queryFn: () => api.event.getById(id),
   })
-  const { data: players = [] } = useQuery({
-    queryKey: ['players', event?.seasonId],
-    queryFn: () => api.user.getList(event?.seasonId ? [event.seasonId] : undefined),
-    enabled: !!event?.seasonId,
+
+  const eventPlayers = useMemo(() => event?.players ?? [], [event])
+
+  const { mutate: updateEventPlayers } = useMutation({
+    mutationFn: (players: EventPlayerRequest[]) => api.event.update(id, { players }),
+    onSuccess: (data) => {
+      console.log('data', data)
+      queryClient.invalidateQueries({ queryKey: ['event', id] })
+    },
   })
 
-  const [eventPlayers, setEventPlayers] = useState<EventPlayerRequest[]>([])
+  const { mutate: updateEvent } = useMutation({
+    mutationFn: (event: Partial<EventRequest>) => api.event.update(id, event),
+    onSuccess: (data) => {
+      console.log('data', data)
+      queryClient.invalidateQueries({ queryKey: ['event', id] })
+    },
+  })
 
   const ctpUserIds = useMemo(() => event?.ctpUserIds, [event])
   const aceUserIds = useMemo(() => event?.aceUserIds, [event])
@@ -57,41 +69,47 @@ export default function EventView(): React.ReactNode {
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="large" color={colors.primary} />}
       {!isLoading && !!event && (
-        <>
-          <View style={[styles.header, { backgroundColor: colors.surface }]}>
-            <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-start' }]}>
-              <Text style={[styles.headerItemSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
-              <Text style={[styles.headerItemPrimaryText, { color: colors.on_surface }]}>{ctpUserIds?.length ?? 0}</Text>
-            </View>
-            <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-end' }]}>
-              <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
-            </View>
-          </View>
-          <View style={styles.header}>
-            <View style={styles.headerItem}>
-              <Text style={styles.headerItemSecondaryText}>Ace Pot</Text>
-              <Text style={styles.headerItemPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
-              <Text style={styles.headerItemSecondaryText}>
-                {ctpUserIds?.length}
-                {' '}
-                {pluralize(ctpUserIds?.length ?? 0, 'player')}
-              </Text>
-            </View>
+        <EventPlayersList
+          seasonId={event.seasonId}
+          event={event}
+          eventPlayers={eventPlayers}
+          onPlayersChanged={updateEventPlayers}
+          onEventChanged={updateEvent}
+          listHeader={(
+            <>
+              <View style={[styles.header, { backgroundColor: colors.surface }]}>
+                <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-start' }]}>
+                  <Text style={[styles.headerItemSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
+                  <Text style={[styles.headerItemPrimaryText, { color: colors.on_surface }]}>{ctpUserIds?.length ?? 0}</Text>
+                </View>
+                <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-end' }]}>
+                  <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
+                </View>
+              </View>
+              <View style={styles.header}>
+                <View style={styles.headerItem}>
+                  <Text style={styles.headerItemSecondaryText}>Ace Pot</Text>
+                  <Text style={styles.headerItemPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
+                  <Text style={styles.headerItemSecondaryText}>
+                    {aceUserIds?.length}
+                    {' '}
+                    {pluralize(aceUserIds?.length ?? 0, 'player')}
+                  </Text>
+                </View>
 
-            <View style={styles.headerItem}>
-              <Text style={styles.headerItemSecondaryText}>CTP Pool</Text>
-              <Text style={styles.headerItemPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
-              <Text style={styles.headerItemSecondaryText}>
-                {ctpUserIds?.length}
-                {' '}
-                {pluralize(ctpUserIds?.length ?? 0, 'player')}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.playersList}>
-            <EventPlayersList seasonId={event.seasonId} eventPlayers={eventPlayers} onPlayersChanged={setEventPlayers} />
-          </View>
-        </>
+                <View style={styles.headerItem}>
+                  <Text style={styles.headerItemSecondaryText}>CTP Pool</Text>
+                  <Text style={styles.headerItemPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
+                  <Text style={styles.headerItemSecondaryText}>
+                    {ctpUserIds?.length}
+                    {' '}
+                    {pluralize(ctpUserIds?.length ?? 0, 'player')}
+                  </Text>
+                </View>
+              </View>
+            </>
+          )}
+        />
       )}
     </View>
   )
@@ -101,7 +119,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    gap: 16,
   },
   header: {
     flexDirection: 'row',
@@ -126,8 +143,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'normal',
     color: colors.surface_container_highest,
-  },
-  playersList: {
-    flex: 1,
   },
 })
