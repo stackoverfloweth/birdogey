@@ -9,4 +9,6 @@ export type SeasonResponse = {
   end?: Date,
   password: string,
   course: CourseResponse,
+  ctpInPennies?: number,
+  aceInPennies?: number,
 }

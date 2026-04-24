@@ -9,7 +9,7 @@ import { router } from 'expo-router'
 export default function Events(): React.ReactNode {
   const api = useApiClient()
 
-  const { data: events = [], refetch, isFetching } = useQuery({
+  const { data: events = [], refetch, isRefetching } = useQuery({
     queryKey: ['events'],
     queryFn: () => api.event.getList(),
   })
@@ -29,7 +29,7 @@ export default function Events(): React.ReactNode {
         )}
         keyExtractor={(item) => item.id}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => void refetch()} />}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} />}
       />
     </View>
   )

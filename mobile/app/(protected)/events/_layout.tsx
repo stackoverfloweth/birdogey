@@ -5,7 +5,7 @@ export default function EventsLayout(): React.ReactNode {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="create" />
-      <Stack.Screen name="view" />
+      <Stack.Screen name="[id]" />
     </Stack>
   )
 }

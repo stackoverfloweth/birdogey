@@ -1,6 +1,6 @@
-import { EventPlayerRequest, UserSeason, Event } from '@birdogey/shared'
+import { EventPlayerRequest, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
-import { FlatList, Keyboard, Pressable, StyleSheet, Text, View, ViewToken } from 'react-native'
+import { FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
@@ -12,32 +12,58 @@ import { PlayerListItem } from './PlayerListItem'
 
 type EventPlayersListProps = {
   seasonId: string,
-  event: Event,
   eventPlayers: EventPlayerRequest[],
   onPlayersChanged?: (players: EventPlayerRequest[]) => void,
-  onEventChanged?: (event: Event) => void,
+  isRefreshing?: boolean,
+  onRefresh?: () => void,
   listHeader?: React.ReactNode,
 }
 
-export function EventPlayersList({ seasonId, event, eventPlayers, onPlayersChanged, onEventChanged, listHeader }: EventPlayersListProps): React.ReactNode {
+type PlayerInEvent = EventPlayerRequest & UserSeason
+
+export function EventPlayersList({ seasonId, eventPlayers, onPlayersChanged, isRefreshing, onRefresh, listHeader }: EventPlayersListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchFocused, setPlayerSearchFocused] = useState(false)
   const api = useApiClient()
 
-  const { data: players = [] } = useQuery({
+  const { data: players = [], isFetched } = useQuery({
     queryKey: ['players', seasonId],
     queryFn: () => api.user.getSeasonList(seasonId),
     enabled: !!seasonId,
   })
+
+  const playersMap = useMemo(() => {
+    return players.reduce((players, player) => {
+      players.set(player.id, player)
+      return players
+    }, new Map<string, UserSeason>())
+  }, [players])
+
+  const getPlayer = useCallback((userId: string): UserSeason => {
+    const player = playersMap.get(userId)
+
+    if (!player) {
+      throw new Error(`Player not found: ${userId}`)
+    }
+
+    return player
+  }, [playersMap])
 
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     setVisibleIds(new Set(viewableItems.map((item) => item.item.id)))
   }, [])
 
-  const playersInEvent = useMemo(() => {
-    return players.filter((player) => eventPlayers.some((eventPlayer) => eventPlayer.userId === player.id))
-  }, [players, eventPlayers])
+  const playersInEvent = useMemo<PlayerInEvent[]>(() => {
+    if (!isFetched) {
+      return []
+    }
+
+    return eventPlayers.map((player) => ({
+      ...player,
+      ...getPlayer(player.userId),
+    }))
+  }, [getPlayer, eventPlayers, isFetched])
 
   const playersNotInEvent = useMemo(() => {
     return players.filter((player) => !eventPlayers.some((eventPlayer) => eventPlayer.userId === player.id))
@@ -62,42 +88,47 @@ export function EventPlayersList({ seasonId, event, eventPlayers, onPlayersChang
     onPlayersChanged?.(eventPlayers.filter((eventPlayer) => eventPlayer.userId !== userId))
   }
 
-  function handleCtpToggle(player: UserSeason): void {
-    const ctpUserIds = event.ctpUserIds.includes(player.id) ? event.ctpUserIds.filter((userId) => userId !== player.id) : [...event.ctpUserIds, player.id]
-    onEventChanged?.({
-      ...event,
-      ctpUserIds,
-    })
+  function handlePlayerChanged(player: PlayerInEvent): void {
+    onPlayersChanged?.(eventPlayers.map((existingPlayer) => (existingPlayer.userId === player.userId ? player : existingPlayer)))
   }
 
-  function handleAceToggle(player: UserSeason): void {
-    const aceUserIds = event.aceUserIds.includes(player.id) ? event.aceUserIds.filter((userId) => userId !== player.id) : [...event.aceUserIds, player.id]
-    onEventChanged?.({
-      ...event,
-      aceUserIds,
-    })
+  function handleCtpToggle(player: PlayerInEvent): void {
+    const inForCtp = !player.inForCtp
+    handlePlayerChanged({ ...player, inForCtp })
   }
 
-  function renderRightActions(player: UserSeason): React.ReactNode {
+  function handleAceToggle(player: PlayerInEvent): void {
+    const inForAce = !player.inForAce
+    handlePlayerChanged({ ...player, inForAce })
+  }
+
+  function renderRightActions(player: PlayerInEvent): React.ReactNode {
     return (
       <View style={styles.swipeActions}>
-        <Pressable style={[styles.swipeAction, event.aceUserIds.includes(player.id) ? styles.swipeActionActive : undefined]} onPress={() => handleAceToggle(player)}>
+        <Pressable style={[styles.swipeAction, player.inForAce ? styles.swipeActionActive : undefined]} onPress={() => handleAceToggle(player)}>
           <Text style={styles.swipeActionText}>ACE</Text>
         </Pressable>
-        <Pressable style={[styles.swipeAction, event.ctpUserIds.includes(player.id) ? styles.swipeActionActive : undefined]} onPress={() => handleCtpToggle(player)}>
+        <Pressable style={[styles.swipeAction, player.inForCtp ? styles.swipeActionActive : undefined]} onPress={() => handleCtpToggle(player)}>
           <Text style={styles.swipeActionText}>CTP</Text>
         </Pressable>
-        <Pressable style={[styles.swipeAction, styles.swipeActionRemove]} onPress={() => handlePlayerRemove(player.id)}>
+        <Pressable style={[styles.swipeAction, styles.swipeActionRemove]} onPress={() => handlePlayerRemove(player.userId)}>
           <SymbolView name="trash" size={24} tintColor="#fff" weight="bold" />
         </Pressable>
       </View>
     )
   }
 
-  function renderRightState(player: UserSeason): React.ReactNode {
+  function renderRightState(player: PlayerInEvent): React.ReactNode {
     return (
-      <View style={styles.swipeActions}>
-        <Text>Pocket Change</Text>
+      <View style={{ gap: 2 }}>
+        <View style={styles.swipeActions}>
+          <SymbolView name={player.inForAce ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForAce ? colors.primary : colors.on_surface_variant} />
+          <Text style={player.inForAce ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>ACE</Text>
+        </View>
+        <View style={styles.swipeActions}>
+          <SymbolView name={player.inForCtp ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForCtp ? colors.primary : colors.on_surface_variant} />
+          <Text style={player.inForCtp ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>CTP</Text>
+        </View>
       </View>
     )
   }
@@ -126,7 +157,7 @@ export function EventPlayersList({ seasonId, event, eventPlayers, onPlayersChang
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <Pressable onPress={() => handlePlayerAdd(item)}>
-              <PlayerListItem player={item} right={renderRightState(item)} />
+              <PlayerListItem player={item} />
             </Pressable>
           )}
           keyExtractor={(item) => item.id}
@@ -145,6 +176,7 @@ export function EventPlayersList({ seasonId, event, eventPlayers, onPlayersChang
           )}
           keyExtractor={(item) => item.id}
           onViewableItemsChanged={onViewableItemsChanged}
+          refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
           viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
         />
       )}

@@ -13,7 +13,7 @@ export default function EventView(): React.ReactNode {
 
   const api = useApiClient()
   const queryClient = useQueryClient()
-  const { data: event, isLoading } = useQuery({
+  const { data: event, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ['event', id],
     queryFn: () => api.event.getById(id),
   })
@@ -23,21 +23,21 @@ export default function EventView(): React.ReactNode {
   const { mutate: updateEventPlayers } = useMutation({
     mutationFn: (players: EventPlayerRequest[]) => api.event.update(id, { players }),
     onSuccess: (data) => {
-      console.log('data', data)
       queryClient.invalidateQueries({ queryKey: ['event', id] })
     },
   })
 
   const { mutate: updateEvent } = useMutation({
     mutationFn: (event: Partial<EventRequest>) => api.event.update(id, event),
-    onSuccess: (data) => {
-      console.log('data', data)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event', id] })
     },
   })
 
-  const ctpUserIds = useMemo(() => event?.ctpUserIds, [event])
-  const aceUserIds = useMemo(() => event?.aceUserIds, [event])
+  const ctpWinnerUserIds = useMemo(() => event?.ctpUserIds, [event])
+  const aceWinnerUserIds = useMemo(() => event?.aceUserIds, [event])
+  const ctpUsers = useMemo(() => eventPlayers.filter((player) => player.inForCtp), [eventPlayers])
+  const aceUsers = useMemo(() => eventPlayers.filter((player) => player.inForAce), [eventPlayers])
   const ctpStartingBalance = useMemo(() => event?.ctpStartingBalance ?? 0 / 100, [event])
   const aceStartingBalance = useMemo(() => event?.aceStartingBalance ?? 0 / 100, [event])
   const ctpPerPlayer = useMemo(() => event?.ctpPerPlayer ?? 0 / 100, [event])
@@ -71,16 +71,16 @@ export default function EventView(): React.ReactNode {
       {!isLoading && !!event && (
         <EventPlayersList
           seasonId={event.seasonId}
-          event={event}
           eventPlayers={eventPlayers}
           onPlayersChanged={updateEventPlayers}
-          onEventChanged={updateEvent}
+          isRefreshing={isRefetching}
+          onRefresh={() => void refetch()}
           listHeader={(
             <>
               <View style={[styles.header, { backgroundColor: colors.surface }]}>
                 <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-start' }]}>
                   <Text style={[styles.headerItemSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
-                  <Text style={[styles.headerItemPrimaryText, { color: colors.on_surface }]}>{ctpUserIds?.length ?? 0}</Text>
+                  <Text style={[styles.headerItemPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
                 </View>
                 <View style={[styles.headerItem, { backgroundColor: 'transparent', alignItems: 'flex-end' }]}>
                   <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
@@ -91,9 +91,9 @@ export default function EventView(): React.ReactNode {
                   <Text style={styles.headerItemSecondaryText}>Ace Pot</Text>
                   <Text style={styles.headerItemPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
                   <Text style={styles.headerItemSecondaryText}>
-                    {aceUserIds?.length}
+                    {aceUsers.length}
                     {' '}
-                    {pluralize(aceUserIds?.length ?? 0, 'player')}
+                    {pluralize(aceUsers.length, 'player')}
                   </Text>
                 </View>
 
@@ -101,9 +101,9 @@ export default function EventView(): React.ReactNode {
                   <Text style={styles.headerItemSecondaryText}>CTP Pool</Text>
                   <Text style={styles.headerItemPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
                   <Text style={styles.headerItemSecondaryText}>
-                    {ctpUserIds?.length}
+                    {ctpUsers.length}
                     {' '}
-                    {pluralize(ctpUserIds?.length ?? 0, 'player')}
+                    {pluralize(ctpUsers.length, 'player')}
                   </Text>
                 </View>
               </View>
