@@ -7,6 +7,7 @@ export type User = {
   name: string,
   phoneNumber?: string,
   udiscId?: string,
+  pdgaNumber?: string,
   imageUrl?: string,
   isAdmin: boolean,
   isAuthorized: boolean,
