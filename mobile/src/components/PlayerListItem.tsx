@@ -1,14 +1,19 @@
-import { Text, StyleSheet, Pressable } from 'react-native'
+import { Text, StyleSheet, View } from 'react-native'
 import type { User } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
 import { UserImage } from './UserImage'
 
-export function PlayerListItem({ player, visible }: { player: User, visible: boolean }): React.ReactNode {
+type PlayerListItemProps = {
+  player: User,
+  visible?: boolean,
+}
+
+export function PlayerListItem({ player, visible = true }: PlayerListItemProps): React.ReactNode {
   return (
-    <Pressable style={styles.container}>
+    <View style={styles.container}>
       <UserImage imageUrl={visible ? player.imageUrl : undefined} width={40} height={40} />
       <Text>{player.name}</Text>
-    </Pressable>
+    </View>
   )
 }
 

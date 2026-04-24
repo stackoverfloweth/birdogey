@@ -5,9 +5,8 @@
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import { useApi } from '@/composables'
-  import { Event, EventPlayerRequest, EventRequest, User, UserSeason } from '@birdogey/shared'
+  import { Event, EventPlayerRequest, EventRequest, User, UserSeason, penniesToUSD } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
-  import { penniesToUSD } from '@/utilities'
   import EventPlayersModal from './EventPlayersModal.vue'
 
   const props = defineProps<{

@@ -4,6 +4,7 @@ import { queryClient } from '@/services/queryClient'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ApiClientProvider } from '@/contexts/ApiClientContext'
+import 'intl-pluralrules'
 
 export default function RootLayout(): React.ReactNode {
   return (

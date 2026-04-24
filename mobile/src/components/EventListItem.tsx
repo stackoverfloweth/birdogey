@@ -1,11 +1,12 @@
 import { Text, StyleSheet, Pressable } from 'react-native'
 import { colors } from '@/theme/colors'
 import type { Event } from '@birdogey/shared'
+import { router } from 'expo-router'
 
 export function EventListItem({ event }: { event: Event }): React.ReactNode {
   return (
-    <Pressable style={styles.container}>
-      <Text>{event.created.toLocaleDateString()}</Text>
+    <Pressable style={styles.container} onPress={() => router.push(`/events/${event.id}`)}>
+      <Text>{event.name}</Text>
     </Pressable>
   )
 }
