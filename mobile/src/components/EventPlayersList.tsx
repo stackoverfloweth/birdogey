@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { FlatList, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
-import { PlayerListItem } from './PlayerListItem'
+import { PlayerListItem } from '@/components/PlayerListItem'
 
 type EventPlayersListProps = {
   seasonId: string,

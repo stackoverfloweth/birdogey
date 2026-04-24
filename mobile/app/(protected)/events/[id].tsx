@@ -8,6 +8,7 @@ import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, EventRe
 import { SymbolView } from 'expo-symbols'
 import { EventPlayersList } from '@/components/EventPlayersList'
 import { ActiveEventPlayersList } from '@/components/ActiveEventPlayersList'
+import { StackedPlayerImages } from '@/components/StackedPlayerImages'
 
 export default function EventView(): React.ReactNode {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -35,8 +36,8 @@ export default function EventView(): React.ReactNode {
     },
   })
 
-  const ctpWinnerUserIds = useMemo(() => event?.ctpUserIds, [event])
-  const aceWinnerUserIds = useMemo(() => event?.aceUserIds, [event])
+  const ctpWinnerUserIds = useMemo(() => event?.ctpUserIds ?? [], [event])
+  const aceWinnerUserIds = useMemo(() => event?.aceUserIds ?? [], [event])
   const ctpUsers = useMemo(() => eventPlayers.filter((player) => player.inForCtp), [eventPlayers])
   const aceUsers = useMemo(() => eventPlayers.filter((player) => player.inForAce), [eventPlayers])
   const ctpStartingBalance = useMemo(() => event?.ctpStartingBalance ?? 0 / 100, [event])
@@ -82,21 +83,17 @@ export default function EventView(): React.ReactNode {
           <View style={styles.headerItem}>
             <Text style={styles.headerItemSecondaryText}>Ace Pot</Text>
             <Text style={styles.headerItemPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
-            <Text style={styles.headerItemSecondaryText}>
-              {aceUsers.length}
-              {' '}
-              {pluralize(aceUsers.length, 'player')}
-            </Text>
+            <View style={{ gap: 2 }}>
+              <StackedPlayerImages playerIds={aceWinnerUserIds} />
+            </View>
           </View>
 
           <View style={styles.headerItem}>
             <Text style={styles.headerItemSecondaryText}>CTP Pool</Text>
             <Text style={styles.headerItemPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
-            <Text style={styles.headerItemSecondaryText}>
-              {ctpUsers.length}
-              {' '}
-              {pluralize(ctpUsers.length, 'player')}
-            </Text>
+            <View style={{ gap: 2 }}>
+              <StackedPlayerImages playerIds={ctpWinnerUserIds} />
+            </View>
           </View>
         </View>
       </>
@@ -142,7 +139,6 @@ const styles = StyleSheet.create({
   },
   headerItem: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: colors.primary,
     padding: 24,
     borderRadius: 42,
