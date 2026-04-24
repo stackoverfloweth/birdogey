@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { colors } from '@/theme/colors'
-import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, EventRequest, penniesToUSD, pluralize } from '@birdogey/shared'
+import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, EventRequest, penniesToUSD, pluralize, isActiveEvent } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { EventPlayersList } from '@/components/EventPlayersList'
 import { ActiveEventPlayersList } from '@/components/ActiveEventPlayersList'
@@ -106,7 +106,7 @@ export default function EventView(): React.ReactNode {
   return (
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="large" color={colors.primary} />}
-      {!isLoading && !!event && (
+      {!isLoading && !!event && !isActiveEvent(event) && (
         <EventPlayersList
           seasonId={event.seasonId}
           eventPlayers={eventPlayers}
@@ -115,7 +115,7 @@ export default function EventView(): React.ReactNode {
           listHeader={renderListHeader()}
         />
       )}
-      {!!event && 1 == 2 && (
+      {!isLoading && !!event && isActiveEvent(event) && (
         <ActiveEventPlayersList
           seasonId={event.seasonId}
           eventPlayers={eventPlayers}
