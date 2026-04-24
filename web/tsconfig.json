@@ -32,7 +32,7 @@
     "src/**/*.ts", 
     "src/**/*.d.ts", 
     "src/**/*.tsx",
-    "src/**/*.vue",
+    "src/**/*.vue", "src/utilities/currency.ts",
   ],
   "exclude": ["/node_modules", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

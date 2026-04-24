@@ -2,9 +2,8 @@
   import { useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import { useApi } from '@/composables'
-  import { Event } from '@birdogey/shared'
+  import { Event, penniesToUSD } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
-  import { penniesToUSD } from '@/utilities'
   import UserImage from '@/components/UserImage.vue'
 
   const props = defineProps<{

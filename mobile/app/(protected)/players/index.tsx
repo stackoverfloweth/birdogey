@@ -9,13 +9,13 @@ import { useCallback, useState } from 'react'
 
 export default function Players(): React.ReactNode {
   const api = useApiClient()
-  const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
 
   const { data: players = [], refetch, isFetching } = useQuery({
     queryKey: ['players'],
     queryFn: () => api.user.getList(),
   })
 
+  const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     setVisibleIds(new Set(viewableItems.map((item) => item.item.id)))
   }, [])
