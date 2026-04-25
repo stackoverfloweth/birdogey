@@ -5,7 +5,7 @@
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import UDiscImportModal from '@/components/UDiscImportModal.vue'
-  import { useApi, type UDiscScorePatch } from '@/composables'
+  import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, User, UserSeason, penniesToUSD } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import EventPlayersModal from './EventPlayersModal.vue'
@@ -133,20 +133,18 @@
     })
   }
 
-  async function applyUDiscImport(payload: {
-    scorePatches: UDiscScorePatch[],
-    metadataUpdates: { userId: string, udiscId?: string, pdgaNumber?: string }[],
-  }): Promise<void> {
-    eventPlayers.value = eventPlayers.value.map((ep) => {
-      const patch = payload.scorePatches.find((scorePatch) => scorePatch.userId === ep.userId)
-      return patch ? { ...ep, score: patch.score } : ep
+  async function applyScores(scores: Map<string, number>): Promise<void> {
+    eventPlayers.value = eventPlayers.value.map((player) => {
+      const score = scores.get(player.userId)
+
+      if (typeof score === 'number') {
+        return { ...player, score }
+      }
+
+      return player
     })
 
     updateEvent()
-
-    await Promise.all(
-      payload.metadataUpdates.map(({ userId, udiscId, pdgaNumber }) => api.users.update(userId, { udiscId, pdgaNumber })),
-    )
   }
 
   function updateEvent(): void {
@@ -339,7 +337,7 @@
         v-model:is-open="showingUDiscModal"
         :players="players"
         :event-players="eventPlayers"
-        @import="applyUDiscImport"
+        @import="applyScores"
       />
     </template>
   </p-form>

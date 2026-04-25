@@ -29,10 +29,6 @@
   --contrast-foreground:   var(--brand-white);
 }
 
-.p-modal__footer {
-  display: none;
-}
-
 .p-loading-icon {
   left: calc(50% - 0.5rem);
 }
