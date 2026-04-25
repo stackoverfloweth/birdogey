@@ -56,6 +56,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
 
   const queryClient = useQueryClient()
 
+  const { isLoading: isRehydrating } = useQuery({
+    queryKey: ['authRehydrate'],
+    queryFn: async () => {
+      try {
+        await exchange()
+      } catch {
+        // no refresh token, expired, or revoked — stay logged out
+      }
+      return null
+    },
+    staleTime: Infinity,
+    retry: false,
+  })
+
   useQuery({
     queryKey: ['refreshLogin'],
     queryFn: () => refreshAccessToken()
@@ -107,8 +121,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   }, [queryClient])
 
   const isLoading = useMemo(() => {
-    return isAvailableBiometricsLoading || isBiometricsEnabledLoading
-  }, [isAvailableBiometricsLoading, isBiometricsEnabledLoading])
+    return isRehydrating || isAvailableBiometricsLoading || isBiometricsEnabledLoading
+  }, [isRehydrating, isAvailableBiometricsLoading, isBiometricsEnabledLoading])
 
   const value = useMemo<AuthState>(() => ({
     user,
