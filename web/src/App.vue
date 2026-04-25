@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import AppHeader from '@/components/AppHeader.vue'
-  import { auth, refreshAuthToken } from '@/services'
+  import { auth, refreshAccessToken } from '@/services'
   import { useRoute, useRouter } from 'vue-router'
   import { useQuery } from '@tanstack/vue-query'
   import { useApi } from '@/composables'
@@ -14,7 +14,7 @@
 
   const { error } = useQuery({
     queryKey: ['refreshLogin'],
-    queryFn: () => refreshAuthToken(api),
+    queryFn: () => refreshAccessToken(api),
     enabled: () => auth.isAuthorized,
     refetchInterval: MINUTE * 5,
     staleTime: MINUTE * 1,

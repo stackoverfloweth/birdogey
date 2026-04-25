@@ -1,7 +1,8 @@
 import { Season } from './season'
 
 export type User = {
-  token?: string,
+  accessToken?: string,
+  refreshToken?: string,
   id: string,
   name: string,
   phoneNumber?: string,

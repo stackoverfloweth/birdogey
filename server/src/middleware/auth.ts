@@ -2,19 +2,33 @@ import { Context, MiddlewareHandler } from 'hono'
 import jwt from 'jsonwebtoken'
 import { UserAuthResponse } from '@birdogey/shared/api'
 import { env } from '../env.js'
-import { HttpError, JwtPayload } from '../types.js'
+import { HttpError, JwtPayload, RefreshTokenPayload } from '../types.js'
 
-const TOKEN_EXPIRY = '2h'
+const ACCESS_TOKEN_EXPIRY = '2h'
+const REFRESH_TOKEN_EXPIRY = '30d'
 
-export function generateToken(user: UserAuthResponse): string {
-  return jwt.sign(user, env().jwtSecret, { expiresIn: TOKEN_EXPIRY })
+export function generateAccessToken(user: UserAuthResponse): string {
+  return jwt.sign(user, env().jwtSecret, { expiresIn: ACCESS_TOKEN_EXPIRY })
 }
 
-function verifyToken(token: string): JwtPayload | null {
+export function generateRefreshToken(user: UserAuthResponse): string {
+  return jwt.sign(user, env().jwtRefreshSecret, { expiresIn: REFRESH_TOKEN_EXPIRY })
+}
+
+export function verifyRefreshToken(token: string): RefreshTokenPayload | null {
+  try {
+    return jwt.verify(token, env().jwtRefreshSecret) as RefreshTokenPayload
+  } catch (error) {
+    console.error('Refresh token verification failed:', error)
+    return null
+  }
+}
+
+function verifyAccessToken(token: string): JwtPayload | null {
   try {
     return jwt.verify(token, env().jwtSecret) as JwtPayload
   } catch (error) {
-    console.error('JWT verification failed:', error)
+    console.error('Access token verification failed:', error)
     return null
   }
 }
@@ -34,7 +48,7 @@ export const authMiddleware: MiddlewareHandler = async (context, next) => {
     throw new HttpError(401, 'Authentication required')
   }
 
-  const jwtPayload = verifyToken(token)
+  const jwtPayload = verifyAccessToken(token)
 
   if (!jwtPayload) {
     throw new HttpError(401, 'Invalid or expired token')

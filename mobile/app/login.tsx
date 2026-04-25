@@ -1,121 +1,148 @@
-import { useState, useRef } from 'react'
-import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native'
+import { useAuth } from '@/contexts/AuthContext'
+import { useCallback, useState } from 'react'
+import { Text, StyleSheet, Image, View, Pressable, Modal, Alert } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
-import { useAuth } from '../src/contexts/AuthContext'
+import splashImage from '../../assets/splash.png'
+import { SymbolView } from 'expo-symbols'
+import { colors } from '@/theme/colors'
+import { formStyles } from '@/theme/forms'
+import { modalsStyles } from '@/theme/modals'
+import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
+import * as LocalAuthentication from 'expo-local-authentication'
+import { authenticateWithBiometrics, setBiometricsEnabled } from '@/services/biometrics'
+import { LoginPhoneStep } from '@/components/LoginPhoneStep'
+import { LoginCodeStep } from '@/components/LoginCodeStep'
 
-type Step = 'phone' | 'code'
+export default function Login(): React.ReactNode {
+  const { sendCode, verifyCode, exchange, availableBiometrics, biometricsEnabled } = useAuth()
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null)
+  const [askEnableBiometrics, setAskEnableBiometrics] = useState(false)
+  const [exchangeFailed, setExchangeFailed] = useState(false)
 
-export default function LoginScreen(): React.ReactNode {
-  const { sendCode, verifyCode } = useAuth()
-  const [step, setStep] = useState<Step>('phone')
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [code, setCode] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const codeInputRef = useRef<TextInput>(null)
+  const isFaceIdAvailable = availableBiometrics.includes(
+    LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
+  )
+  const isTouchIDAvailable = availableBiometrics.includes(
+    LocalAuthentication.AuthenticationType.FINGERPRINT,
+  )
+  const showBiometrics = !exchangeFailed && !!biometricsEnabled && (isFaceIdAvailable || isTouchIDAvailable)
 
-  function formatPhoneDisplay(value: string): string {
-    const digits = value.replace(/\D/g, '')
-    if (digits.length <= 3) return digits
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
+  async function handleCodeSent(phoneNumber: string): Promise<void> {
+    await sendCode(phoneNumber)
+    setPhoneNumber(phoneNumber)
   }
 
-  function handlePhoneChange(value: string): void {
-    const digits = value.replace(/\D/g, '')
-    if (digits.length <= 10) {
-      setPhoneNumber(digits)
+  async function handleCodeVerified(code: string): Promise<void> {
+    if (phoneNumber === null) return
+    await verifyCode(phoneNumber, code)
+    if (biometricsEnabled === null && availableBiometrics.length > 0) {
+      setAskEnableBiometrics(true)
+    } else {
+      router.replace('/')
     }
   }
 
-  async function handleSendCode(): Promise<void> {
-    if (phoneNumber.length < 10) return
-    setError('')
-    setLoading(true)
+  const handleEnableBiometrics = useCallback(async () => {
+    await setBiometricsEnabled(true)
+    setAskEnableBiometrics(false)
+    router.replace('/')
+  }, [])
+
+  const handleDisableBiometrics = useCallback(async () => {
+    await setBiometricsEnabled(false)
+    setAskEnableBiometrics(false)
+    router.replace('/')
+  }, [])
+
+  const handleBiometricsLogin = useCallback(async () => {
     try {
-      await sendCode(phoneNumber)
-      setStep('code')
-      setTimeout(() => codeInputRef.current?.focus(), 100)
+      await authenticateWithBiometrics()
+      await exchange()
+      router.replace('/')
     } catch {
-      setError('Failed to send verification code')
-    } finally {
-      setLoading(false)
+      Alert.alert('Error', 'Failed to authenticate with biometrics')
+      setExchangeFailed(true)
     }
-  }
-
-  async function handleVerifyCode(): Promise<void> {
-    if (code.length < 6) return
-    setError('')
-    setLoading(true)
-    try {
-      await verifyCode(phoneNumber, code)
-      router.replace('/(protected)')
-    } catch {
-      setError('Invalid verification code')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  function handleBack(): void {
-    setStep('phone')
-    setCode('')
-    setError('')
-  }
+  }, [exchange])
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.logoWrapper}>
+        <Svg width={600} height={600} style={styles.logoGlow}>
+          <Defs>
+            <RadialGradient id="glow" cx="50%" cy="50%" r="50%">
+              <Stop offset="0" stopColor={colors.primary_200} stopOpacity="0.75" />
+              <Stop offset="1" stopColor={colors.primary_200} stopOpacity="0" />
+            </RadialGradient>
+          </Defs>
+          <Circle cx="300" cy="300" r="300" fill="url(#glow)" />
+        </Svg>
+        <View style={styles.logoContainer}>
+          <Image source={splashImage} style={styles.logo} />
+        </View>
+      </View>
       <Text style={styles.title}>Birdogey</Text>
 
-      {step === 'phone' ? (
-        <>
-          <Text style={styles.subtitle}>Enter your phone number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="(555) 555-5555"
-            keyboardType="phone-pad"
-            value={formatPhoneDisplay(phoneNumber)}
-            onChangeText={handlePhoneChange}
-            onSubmitEditing={() => void handleSendCode()}
-            autoFocus
-          />
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-          <Pressable
-            style={[styles.button, phoneNumber.length < 10 && styles.buttonDisabled]}
-            onPress={() => void handleSendCode()}
-            disabled={loading || phoneNumber.length < 10}
-          >
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Send Code</Text>}
-          </Pressable>
-        </>
-      ) : (
-        <>
-          <Text style={styles.subtitle}>Enter the code sent to{'\n'}{formatPhoneDisplay(phoneNumber)}</Text>
-          <TextInput
-            ref={codeInputRef}
-            style={styles.codeInput}
-            placeholder="000000"
-            keyboardType="number-pad"
-            value={code}
-            onChangeText={(value) => setCode(value.replace(/\D/g, '').slice(0, 6))}
-            onSubmitEditing={() => void handleVerifyCode()}
-            maxLength={6}
-            autoFocus
-          />
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-          <Pressable
-            style={[styles.button, code.length < 6 && styles.buttonDisabled]}
-            onPress={() => void handleVerifyCode()}
-            disabled={loading || code.length < 6}
-          >
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Verify</Text>}
-          </Pressable>
-          <Pressable style={styles.backButton} onPress={handleBack}>
-            <Text style={styles.backButtonText}>Use a different number</Text>
-          </Pressable>
-        </>
-      )}
-    </View>
+      <View style={formStyles.form}>
+        {phoneNumber === null && (
+          <LoginPhoneStep onSuccess={(data) => void handleCodeSent(data)} />
+        )}
+        {phoneNumber !== null && (
+          <LoginCodeStep onSuccess={(code) => void handleCodeVerified(code)} />
+        )}
+
+        {showBiometrics && (
+          <>
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.biometricsTitle}>Or</Text>
+              <View style={styles.dividerLine} />
+            </View>
+            {isFaceIdAvailable && (
+              <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
+                <SymbolView name="faceid" size={24} tintColor={colors.primary} />
+                <Text style={styles.faceIdText}>Sign in with Face ID</Text>
+              </Pressable>
+            )}
+            {isTouchIDAvailable && (
+              <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
+                <SymbolView name="touchid" size={24} tintColor={colors.primary} />
+                <Text style={styles.faceIdText}>Sign in with Touch ID</Text>
+              </Pressable>
+            )}
+          </>
+        )}
+      </View>
+
+      <Modal animationType="slide" transparent={true} visible={askEnableBiometrics}>
+        <View style={[styles.modalContent, modalsStyles.content]}>
+          <View style={[modalsStyles.header]}>
+            {isFaceIdAvailable && (
+              <>
+                <SymbolView name="faceid" size={28} tintColor={colors.on_surface} />
+                <Text style={modalsStyles.title}>Enable Face ID?</Text>
+              </>
+            )}
+            {isTouchIDAvailable && (
+              <>
+                <SymbolView name="touchid" size={28} tintColor={colors.on_surface} />
+                <Text style={modalsStyles.title}>Enable Touch ID?</Text>
+              </>
+            )}
+          </View>
+
+          <View style={modalsStyles.buttons}>
+            <Pressable style={formStyles.button} onPress={() => void handleEnableBiometrics()}>
+              <Text style={formStyles.buttonText}>Yes</Text>
+            </Pressable>
+            <Pressable style={formStyles.secondaryButton} onPress={() => void handleDisableBiometrics()}>
+              <Text style={formStyles.secondaryButtonText}>No</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   )
 }
 
@@ -123,67 +150,72 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
+  },
+  logoWrapper: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoGlow: {
+    position: 'absolute',
+  },
+  logoContainer: {
+    width: 160,
+    height: 160,
+    borderRadius: 9999,
+    borderWidth: 3,
+    borderColor: colors.primary_500,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.surface_container_lowest,
+  },
+  logo: {
+    width: 120,
+    height: 120,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
+    fontFamily: 'Ephesis',
+    fontSize: 64,
     textAlign: 'center',
     marginBottom: 24,
+    color: colors.on_surface,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 12,
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginVertical: 4,
+  },
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.on_surface_variant,
+  },
+  biometricsTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.on_surface_variant,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+  },
+  faceIdButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: colors.surface_container_lowest,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderRadius: 9999,
+  },
+  faceIdText: {
+    color: colors.primary,
+    fontWeight: 'bold',
     fontSize: 18,
-    marginBottom: 12,
-    textAlign: 'center',
-    letterSpacing: 1,
   },
-  codeInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 28,
-    marginBottom: 12,
-    textAlign: 'center',
-    letterSpacing: 12,
-    fontWeight: '600',
-  },
-  error: {
-    color: 'red',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#2563eb',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#93b4f5',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  backButton: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  backButtonText: {
-    color: '#2563eb',
-    fontSize: 14,
+  modalContent: {
+    height: 160,
+    padding: 24,
   },
 })

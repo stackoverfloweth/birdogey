@@ -1,70 +1,42 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { Text, StyleSheet, Pressable, View } from 'react-native'
+import { colors } from '@/theme/colors'
 import type { Event } from '@birdogey/shared'
+import { router } from 'expo-router'
 
-interface Props {
+type EventListItemProps = {
   event: Event,
-  onPress: () => void,
+  right?: React.ReactNode,
 }
 
-export function EventListItem({ event, onPress }: Props): React.ReactNode {
-  const dateStr = event.created.toLocaleDateString()
-  const isCompleted = !!event.completed
-
+export function EventListItem({ event, right }: EventListItemProps): React.ReactNode {
   return (
-    <Pressable style={styles.container} onPress={onPress}>
-      <View style={styles.row}>
-        <Text style={styles.name}>{event.name}</Text>
-        <View style={[styles.badge, isCompleted ? styles.completed : styles.active]}>
-          <Text style={styles.badgeText}>{isCompleted ? 'Completed' : 'Active'}</Text>
-        </View>
+    <Pressable style={styles.container} onPress={() => router.push(`/events/${event.id}`)}>
+      <View style={styles.primary}>
+        <Text style={styles.primaryText}>{event.name}</Text>
       </View>
-      <View style={styles.row}>
-        <Text style={styles.detail}>{dateStr}</Text>
-        <Text style={styles.detail}>
-          {event.players.length}
-          {' '}
-          players
-        </Text>
-      </View>
+      {right}
     </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: '#f9fafb',
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: '600',
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: 16,
+    backgroundColor: colors.surface_container_lowest,
+    borderRadius: 9999,
   },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
+  primary: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
   },
-  completed: {
-    backgroundColor: '#d1fae5',
-  },
-  active: {
-    backgroundColor: '#dbeafe',
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  detail: {
-    fontSize: 13,
-    color: '#6b7280',
-    marginTop: 4,
+  primaryText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 })

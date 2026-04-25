@@ -1,7 +1,7 @@
 import { EventPlayerRequest } from './eventPlayerRequest'
 import { EventResponse } from './eventResponse'
 
-export type EventRequest = Omit<EventResponse, '_id' | 'seasonId' | 'players' | 'created' | 'ctpStartingBalance' | 'aceStartingBalance' | 'ctpUserIds' | 'aceUserIds'> & {
+export type EventRequest = Omit<EventResponse, '_id' | 'seasonId' | 'players' | 'created' | 'ctpStartingBalance' | 'aceStartingBalance' | 'ctpPerPlayer' | 'acePerPlayer' | 'ctpUserIds' | 'aceUserIds'> & {
   seasonId: string,
   players?: EventPlayerRequest[],
   ctpStartingBalance?: number,

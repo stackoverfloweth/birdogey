@@ -1,79 +1,62 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native'
-import type { UserSeason } from '@birdogey/shared'
+import { Text, StyleSheet, View } from 'react-native'
+import type { User } from '@birdogey/shared'
+import { colors } from '@/theme/colors'
+import { UserImage } from './UserImage'
+import { useQuery } from '@tanstack/react-query'
+import { useApiClient } from '@/contexts/ApiClientContext'
 
-interface Props {
-  player: UserSeason,
-  onPress?: () => void,
+type PlayerListItemProps = {
+  player: User | string,
+  visible?: boolean,
+  right?: React.ReactNode,
+  subTitle?: React.ReactNode,
 }
 
-function EntryPaid({ player }: { player: UserSeason }): React.ReactNode {
-  return (
-    <Text style={[styles.paid, player.entryPaid ? styles.paidYes : styles.paidNo]}>
-      {player.entryPaid ? 'Paid' : 'Unpaid'}
-    </Text>
-  )
-}
+export function PlayerListItem({ player: playerOrPlayerId, visible = true, right, subTitle }: PlayerListItemProps): React.ReactNode {
+  const api = useApiClient()
+  const { data: player } = useQuery({
+    queryKey: ['players', playerOrPlayerId],
+    queryFn: () => {
+      if (typeof playerOrPlayerId === 'string') {
+        return api.user.getById(playerOrPlayerId)
+      }
 
-export function UserSeasonListItem({ player, onPress }: Props): React.ReactNode {
+      return playerOrPlayerId
+    },
+  })
+
   return (
-    <Pressable style={styles.container} onPress={onPress}>
-      <View style={styles.left}>
-        <View style={styles.tagBadge}>
-          <Text style={styles.tagText}>
-            #
-            {player.tagId}
-          </Text>
+    <View style={styles.container}>
+      <View style={styles.primary}>
+        <UserImage imageUrl={visible ? player?.imageUrl : undefined} width={40} height={40} />
+        <View style={{ gap: 2 }}>
+          <Text style={styles.primaryText}>{player?.name}</Text>
+          {subTitle}
         </View>
-        <Text style={styles.name}>{player.name}</Text>
       </View>
-      {player.entryPaid !== undefined
-      && <EntryPaid player={player} />}
-    </Pressable>
+      {right}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 14,
-    backgroundColor: '#f9fafb',
-    borderRadius: 8,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  left: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 16,
+    padding: 16,
+    backgroundColor: colors.surface_container_lowest,
+    borderRadius: 9999,
   },
-  tagBadge: {
-    backgroundColor: '#e5e7eb',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
+  primary: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
   },
-  tagText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  name: {
+  primaryText: {
     fontSize: 16,
-    fontWeight: '500',
-  },
-  paid: {
-    fontSize: 12,
-    fontWeight: '500',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
-  },
-  paidYes: {
-    backgroundColor: '#d1fae5',
-    color: '#065f46',
-  },
-  paidNo: {
-    backgroundColor: '#fee2e2',
-    color: '#991b1b',
+    fontWeight: 'bold',
   },
 })

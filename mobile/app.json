@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.stackoverfloweth.birdogey",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "Allow Birdogey to use Face ID for sign-in."
       }
     },
     "android": {
@@ -25,13 +26,13 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.stackoverfloweth.birdogey"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiBaseUrl": "https://birdogey.up.railway.app",
       "eas": {
         "projectId": "2b899818-73f2-481b-939f-348138487e68"
       }
