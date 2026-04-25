@@ -15,4 +15,5 @@ export type EventResponse = {
   acePerPlayer: number,
   ctpUserIds: ObjectId[],
   aceUserIds: ObjectId[],
+  ctpHole?: number,
 }

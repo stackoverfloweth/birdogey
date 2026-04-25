@@ -11,6 +11,7 @@ export type SeasonJson = {
     _id: string,
     name: string,
     udiscId?: string,
+    holeCount?: number,
   },
 }
 
@@ -68,6 +69,7 @@ export type EventJson = {
   acePerPlayer: number,
   ctpUserIds: string[],
   aceUserIds: string[],
+  ctpHole?: number,
 }
 
 export type ImageKitAuthJson = {

@@ -1,6 +1,7 @@
 export * from './httpClient'
 export * from './types'
 export * from './mappers'
+export * from './seasons'
 export * from './authApi'
 export * from './eventApi'
 export * from './eventBalance'

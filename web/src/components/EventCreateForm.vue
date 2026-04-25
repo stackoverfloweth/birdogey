@@ -2,7 +2,7 @@
   import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
   import { format } from 'date-fns'
   import { computed, ref } from 'vue'
-  import { Event, EventRequest } from '@birdogey/shared'
+  import { Event, EventRequest, getNextCtpHole } from '@birdogey/shared'
   import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners, auth } from '@/services'
 
   const props = defineProps<{
@@ -26,6 +26,8 @@
     aceStartingBalance: props.previousEvent ? calculateEventAcePotIfNoWinners(props.previousEvent) : 0,
   }))
 
+  const previousEventCtpHole = computed(() => props.previousEvent?.ctpHole)
+
   const today = format(new Date(), 'MMMM do')
   const name = ref(today)
   const notes = ref<string>()
@@ -33,6 +35,7 @@
   const aceStartingBalance = ref(previousEventBalance.value.aceStartingBalance / 100)
   const ctpPerPlayer = ref(previousEventBalance.value.ctpPerPlayer / 100)
   const acePerPlayer = ref(previousEventBalance.value.acePerPlayer / 100)
+  const ctpHole = ref(getNextCtpHole(previousEventCtpHole.value, season.value))
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: nameErrorMessage, state: nameState } = useValidation(name, 'Name', [isRequired])
@@ -52,6 +55,7 @@
       aceStartingBalance: Math.floor(aceStartingBalance.value * 100),
       ctpPerPlayer: Math.floor(ctpPerPlayer.value * 100),
       acePerPlayer: Math.floor(acePerPlayer.value * 100),
+      ctpHole: ctpHole.value,
     } as EventRequest
 
     emit('submit', request)
@@ -98,6 +102,12 @@
       <p-label label="Ace" description="starting balance">
         <template #default="{ id }">
           <p-number-input :id="id" v-model="aceStartingBalance" :disabled="disabled" prepend="$" :step="0.01" />
+        </template>
+      </p-label>
+
+      <p-label label="Ctp" description="hole">
+        <template #default="{ id }">
+          <p-number-input :id="id" v-model="ctpHole" :disabled="disabled" :min="1" :step="1" />
         </template>
       </p-label>
     </div>

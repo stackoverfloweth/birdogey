@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-  import { ref, watch } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import { useUDiscImport } from '@/composables/useUDiscImport'
   import { pluralize, UserRequest, type EventPlayerRequest, type UserSeason } from '@birdogey/shared'
   import { showToast } from '@prefecthq/prefect-design'
   import { useApi } from '@/composables/useApi'
+  import { auth } from '@/services'
+  import { useRouteParam } from '@prefecthq/vue-compositions'
 
   const props = defineProps<{
     players: UserSeason[],
@@ -20,6 +22,11 @@
 
   const processing = ref(false)
   const selectedFile = ref<File>()
+
+  const seasonId = useRouteParam('seasonId')
+  const course = computed(() => {
+    return auth.seasons.find(({ id }) => id === seasonId.value)?.course
+  })
 
   watch(isOpen, (value) => {
     if (!value) {
@@ -74,9 +81,9 @@
   >
     <template v-if="selectedFile === undefined">
       <div class="udisc-import-modal__pick">
-        <p class="udisc-import-modal__hint">
-          Upload the UDisc export file to apply scores.
-        </p>
+        <p-link v-if="course?.udiscId" :to="`https://udisc.com/leagues/${course.udiscId}`" target="_blank">
+          Open in UDisc
+        </p-link>
 
         <input
           type="file"
@@ -179,11 +186,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-}
-
-.udisc-import-modal__hint {
-  color: var(--p-color-text-subdued);
-  font-size: var(--p-font-size-sm);
 }
 
 .udisc-import-modal__error {

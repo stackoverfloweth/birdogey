@@ -36,6 +36,7 @@
   const aceStartingBalance = ref(props.event.aceStartingBalance / 100)
   const ctpPerPlayer = ref(props.event.ctpPerPlayer / 100)
   const acePerPlayer = ref(props.event.acePerPlayer / 100)
+  const ctpHole = ref(props.event.ctpHole)
   const eventPlayers = ref<EventPlayerRequest[]>(props.event.players)
 
   const { validate, pending } = useValidationObserver()
@@ -143,8 +144,6 @@
 
       return player
     })
-
-    updateEvent()
   }
 
   function updateEvent(): void {
@@ -157,6 +156,7 @@
       aceStartingBalance: aceStartingBalance.value * 100,
       ctpPerPlayer: ctpPerPlayer.value * 100,
       acePerPlayer: acePerPlayer.value * 100,
+      ctpHole: ctpHole.value,
     }
 
     emit('save', request)
@@ -176,6 +176,7 @@
       aceUserIds: aceUserIds.value,
       ctpStartingBalance: ctpStartingBalance.value * 100,
       aceStartingBalance: aceStartingBalance.value * 100,
+      ctpHole: ctpHole.value,
     }
 
     emit('complete', request)
@@ -188,6 +189,7 @@
     aceUserIds.value = event.aceUserIds
     ctpStartingBalance.value = event.ctpStartingBalance / 100
     aceStartingBalance.value = event.aceStartingBalance / 100
+    ctpHole.value = event.ctpHole
 
     if (event.completed) {
       eventPlayers.value = event.players
@@ -220,16 +222,12 @@
 
     <template v-else>
       <div v-if="!disabled" class="event-manage__actions">
-        <p-button icon="ArrowLeftIcon" @click="emit('cancel')">
-          Cancel
-        </p-button>
-
         <p-button icon="UserGroupIcon" @click="showPlayersModal">
           Players
         </p-button>
 
         <p-button icon="ArrowUpTrayIcon" @click="showUDiscModal">
-          Import UDisc Scores
+          Import Scores
         </p-button>
 
         <p-button icon="CloudArrowDownIcon" @click="updateEvent">
@@ -270,6 +268,12 @@
           <p-label label="Starting balance">
             <template #default="{ id }">
               <p-number-input :id="id" v-model="ctpStartingBalance" :disabled="disabled" prepend="$" step="0.01" />
+            </template>
+          </p-label>
+
+          <p-label label="Hole">
+            <template #default="{ id }">
+              <p-number-input :id="id" v-model="ctpHole" :disabled="disabled" :min="1" step="1" />
             </template>
           </p-label>
 
@@ -353,6 +357,7 @@
 .event-manage__actions {
   display: flex;
   gap: var(--space-sm);
+  overflow-x: auto;
 }
 
 .event-manage__players {

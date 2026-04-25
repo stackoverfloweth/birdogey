@@ -29,6 +29,7 @@ export function mapEvent(source: EventJson): Event {
     acePerPlayer: source.acePerPlayer,
     ctpUserIds: source.ctpUserIds,
     aceUserIds: source.aceUserIds,
+    ctpHole: source.ctpHole,
   }
 }
 
@@ -69,6 +70,7 @@ export function mapSeason(source: SeasonJson): Season {
       id: source.course._id,
       name: source.course.name,
       udiscId: source.course.udiscId,
+      holeCount: source.course.holeCount,
     },
   }
 }

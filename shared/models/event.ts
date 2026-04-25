@@ -14,4 +14,5 @@ export type Event = {
   acePerPlayer: number,
   ctpUserIds: string[],
   aceUserIds: string[],
+  ctpHole?: number,
 }

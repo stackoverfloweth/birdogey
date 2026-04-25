@@ -4,4 +4,5 @@ export type CourseResponse = {
   _id: ObjectId,
   name: string,
   udiscId?: string,
+  holeCount?: number,
 }

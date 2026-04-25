@@ -98,6 +98,7 @@ events.post('/', async (context) => {
     acePerPlayer: body.acePerPlayer ?? 0,
     ctpUserIds: [],
     aceUserIds: [],
+    ctpHole: body.ctpHole,
     players,
   })
 
@@ -133,6 +134,7 @@ events.put('/:id', async (context) => {
       aceStartingBalance: body.aceStartingBalance,
       ctpPerPlayer: body.ctpPerPlayer,
       acePerPlayer: body.acePerPlayer,
+      ctpHole: body.ctpHole,
       players,
       ctpUserIds,
       aceUserIds,
@@ -179,6 +181,7 @@ events.put('/:id/complete', async (context) => {
     $set: {
       completed: new Date(),
       notes: body.notes,
+      ctpHole: body.ctpHole,
       players,
       ctpUserIds,
       aceUserIds,
