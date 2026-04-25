@@ -4,6 +4,7 @@
   import { computed, ref, watch } from 'vue'
   import EventPlayerListItem from '@/components/EventPlayerListItem.vue'
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
+  import UDiscImportModal from '@/components/UDiscImportModal.vue'
   import { useApi } from '@/composables'
   import { Event, EventPlayerRequest, EventRequest, User, UserSeason, penniesToUSD } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
@@ -96,6 +97,7 @@
   })
 
   const { value: showingPlayersModal, setTrue: showPlayersModal } = useBoolean()
+  const { value: showingUDiscModal, setTrue: showUDiscModal } = useBoolean()
 
   const playersIn = computed(() => players.value.filter((player) => eventPlayers.value.some((eventPlayer) => eventPlayer.userId === player.id)))
   const playersInOptions = computed(() => sortByName(playersIn.value)
@@ -129,6 +131,20 @@
     return players.sort((aPlayer, bPlayer) => {
       return aPlayer.name > bPlayer.name ? 1 : -1
     })
+  }
+
+  async function applyScores(scores: Map<string, number>): Promise<void> {
+    eventPlayers.value = eventPlayers.value.map((player) => {
+      const score = scores.get(player.userId)
+
+      if (typeof score === 'number') {
+        return { ...player, score }
+      }
+
+      return player
+    })
+
+    updateEvent()
   }
 
   function updateEvent(): void {
@@ -210,6 +226,10 @@
 
         <p-button icon="UserGroupIcon" @click="showPlayersModal">
           Players
+        </p-button>
+
+        <p-button icon="ArrowUpTrayIcon" @click="showUDiscModal">
+          Import UDisc Scores
         </p-button>
 
         <p-button icon="CloudArrowDownIcon" @click="updateEvent">
@@ -310,6 +330,15 @@
 
     <template v-if="showingPlayersModal">
       <EventPlayersModal v-model:is-open="showingPlayersModal" v-model="eventPlayers" :players="players" />
+    </template>
+
+    <template v-if="showingUDiscModal">
+      <UDiscImportModal
+        v-model:is-open="showingUDiscModal"
+        :players="players"
+        :event-players="eventPlayers"
+        @import="applyScores"
+      />
     </template>
   </p-form>
 </template>

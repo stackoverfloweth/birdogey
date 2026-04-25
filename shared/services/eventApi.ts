@@ -5,8 +5,8 @@ import type { EventJson } from './types'
 import { mapEvent } from './mappers'
 
 export function createEventApi(client: HttpClient) {
-  function getList(seasonId?: string): Promise<Event[]>
   function getList(seasonIds?: string[]): Promise<Event[]>
+  function getList(seasonId?: string): Promise<Event[]>
   function getList(seasonIds?: string | string[]): Promise<Event[]> {
     if (typeof seasonIds === 'string') {
       return getList([seasonIds])
