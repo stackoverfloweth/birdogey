@@ -4,6 +4,7 @@ import { FlatList, RefreshControl, StyleSheet, Text, View, ViewToken } from 'rea
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { PlayerListItem } from '@/components/PlayerListItem'
+import { Score } from './Score'
 
 type EventPlayersListProps = {
   seasonId: string,
@@ -59,7 +60,7 @@ export function EventPlayersList({ seasonId, eventPlayers, isRefreshing, onRefre
 
   function renderRightState(player: PlayerInEvent): React.ReactNode {
     return (
-      <Text>{player.score}</Text>
+      <Score value={player.score} />
     )
   }
 
