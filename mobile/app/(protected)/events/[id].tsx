@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { colors } from '@/theme/colors'
-import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, EventRequest, penniesToUSD, isActiveEvent } from '@birdogey/shared'
+import { calculateEventAcePot, calculateEventCtpPot, EventPlayerRequest, EventRequest, penniesToUSD, isActiveEvent, calculatePayoutSplit } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { EventPlayersList } from '@/components/EventPlayersList'
 import { ActiveEventPlayersList } from '@/components/ActiveEventPlayersList'
@@ -79,21 +79,33 @@ export default function EventView(): React.ReactNode {
             <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
           </View>
         </View>
-        <View style={styles.header}>
+        <View style={[styles.header]}>
           <View style={styles.headerItem}>
             <Text style={styles.headerItemSecondaryText}>Ace Pot</Text>
             <Text style={styles.headerItemPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
-            <View style={{ gap: 2 }}>
+            <View style={{ gap: 2, paddingVertical: 8 }}>
               <StackedPlayerImages playerIds={aceWinnerUserIds} />
             </View>
+            {aceWinnerUserIds.length > 1 && (
+              <Text style={styles.headerItemSecondaryText}>
+                {penniesToUSD(calculatePayoutSplit(aceInPennies, aceWinnerUserIds.length))}
+                / each
+              </Text>
+            )}
           </View>
 
           <View style={styles.headerItem}>
             <Text style={styles.headerItemSecondaryText}>CTP Pool</Text>
             <Text style={styles.headerItemPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
-            <View style={{ gap: 2 }}>
+            <View style={{ gap: 2, paddingVertical: 8 }}>
               <StackedPlayerImages playerIds={ctpWinnerUserIds} />
             </View>
+            {ctpWinnerUserIds.length > 1 && (
+              <Text style={styles.headerItemSecondaryText}>
+                {penniesToUSD(calculatePayoutSplit(ctpInPennies, ctpWinnerUserIds.length))}
+                / each
+              </Text>
+            )}
           </View>
         </View>
       </>
@@ -134,7 +146,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     gap: 16,
-    alignItems: 'center',
+    alignItems: 'stretch',
     borderRadius: 42,
   },
   headerItem: {
@@ -146,7 +158,6 @@ const styles = StyleSheet.create({
   headerItemPrimaryText: {
     fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 8,
     color: colors.surface_container_lowest,
   },
   headerItemSecondaryText: {

@@ -6,7 +6,7 @@
   import EventsEditViewMenu from '@/components/EventsEditViewMenu.vue'
   import UDiscImportModal from '@/components/UDiscImportModal.vue'
   import { useApi } from '@/composables'
-  import { Event, EventPlayerRequest, EventRequest, User, UserSeason, penniesToUSD } from '@birdogey/shared'
+  import { Event, EventPlayerRequest, EventRequest, User, UserSeason, calculatePayoutSplit, penniesToUSD } from '@birdogey/shared'
   import { calculateEventAcePot, calculateEventCtpPot } from '@/services'
   import EventPlayersModal from './EventPlayersModal.vue'
 
@@ -65,13 +65,13 @@
     }
 
     const numberOfWinners = ctpUserIds.value.length
+    const split = calculatePayoutSplit(ctpInPennies.value, numberOfWinners)
 
     if (numberOfWinners === 1) {
-      return `Player gets ${penniesToUSD(ctpInPennies.value)}`
+      return `Player gets ${penniesToUSD(split)}`
     }
 
     if (numberOfWinners > 1) {
-      const split = Math.floor(ctpInPennies.value / numberOfWinners)
       return `Each player gets ${penniesToUSD(split)}`
     }
 
