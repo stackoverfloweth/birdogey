@@ -56,6 +56,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
   },
   text: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   textNegative: {
     color: colors.surface_container_lowest,

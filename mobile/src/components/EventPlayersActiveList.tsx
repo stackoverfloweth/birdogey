@@ -7,10 +7,12 @@ import { useCallback, useMemo, useState } from 'react'
 import { formStyles } from '@/theme/forms'
 import { PotBalances } from '@/components/PotBalances'
 import { TextInput } from '@/components/TextInput'
+import { PlayerListItem } from '@/components/PlayerListItem'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
-import { PlayerListItem } from './PlayerListItem'
 import { cardStyles } from '@/theme/card'
+import { Score } from '@/components/Score'
+import { ScoreModal } from '@/components/ScoreModal'
 
 type EventPlayersActiveListProps = {
   event: Event,
@@ -20,12 +22,13 @@ type EventPlayersActiveListProps = {
   onRefresh?: () => void,
 }
 
-type PlayerInEvent = EventPlayerRequest & UserSeason
+export type PlayerInEvent = EventPlayerRequest & UserSeason
 
 export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchFocused, setPlayerSearchFocused] = useState(false)
-  const [checkinActive, setCheckinActive] = useState(false)
+  const [checkinActive, setCheckinActive] = useState(true)
+  const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
   const api = useApiClient()
 
   const { data: players = [], isFetched } = useQuery({
@@ -138,16 +141,26 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   }
 
   function renderRightState(player: PlayerInEvent): React.ReactNode {
+    if (checkinActive) {
+      return (
+        <View style={{ gap: 2 }}>
+          <View style={styles.swipeActions}>
+            <SymbolView name={player.inForAce ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForAce ? colors.primary : colors.on_surface_variant} />
+            <Text style={player.inForAce ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>ACE</Text>
+          </View>
+          <View style={styles.swipeActions}>
+            <SymbolView name={player.inForCtp ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForCtp ? colors.primary : colors.on_surface_variant} />
+            <Text style={player.inForCtp ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>CTP</Text>
+          </View>
+        </View>
+      )
+    }
+
     return (
-      <View style={{ gap: 2 }}>
-        <View style={styles.swipeActions}>
-          <SymbolView name={player.inForAce ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForAce ? colors.primary : colors.on_surface_variant} />
-          <Text style={player.inForAce ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>ACE</Text>
-        </View>
-        <View style={styles.swipeActions}>
-          <SymbolView name={player.inForCtp ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForCtp ? colors.primary : colors.on_surface_variant} />
-          <Text style={player.inForCtp ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>CTP</Text>
-        </View>
+      <View style={{ flexDirection: 'row', gap: 16 }}>
+        <Pressable onPress={() => setScoreModalPlayer(player)}>
+          {player.score === undefined ? <SymbolView name="exclamationmark.triangle.fill" size={32} tintColor={colors.error} /> : <Score value={player.score} />}
+        </Pressable>
       </View>
     )
   }
@@ -202,15 +215,15 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 
             {checkinActive && (
               <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={() => setCheckinActive(false)}>
-                {/* back to checkin */}
-                <SymbolView name="person.fill" size={38} tintColor={colors.surface_container_lowest} />
+                {/* finalize checkin */}
+                <SymbolView name="pencil.and.ruler.fill" size={38} tintColor={colors.surface_container_lowest} />
               </Pressable>
             )}
 
             {!checkinActive && (
               <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={() => setCheckinActive(true)}>
-                {/* finalize checkin */}
-                <SymbolView name="pencil.and.ruler.fill" size={38} tintColor={colors.surface_container_lowest} />
+                {/* back to checkin */}
+                <SymbolView name="person.fill" size={38} tintColor={colors.surface_container_lowest} />
               </Pressable>
             )}
 
@@ -245,6 +258,11 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           />
         </>
       )}
+      <ScoreModal
+        player={scoreModalPlayer}
+        onDismiss={() => setScoreModalPlayer(undefined)}
+        onChange={handlePlayerChanged}
+      />
     </View>
   )
 }
