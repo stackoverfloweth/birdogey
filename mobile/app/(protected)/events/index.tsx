@@ -28,7 +28,7 @@ export default function Events(): React.ReactNode {
           <EventListItem event={item} />
         )}
         keyExtractor={(item) => item.id}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
         refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} />}
       />
     </View>

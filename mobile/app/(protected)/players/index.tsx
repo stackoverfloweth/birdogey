@@ -35,7 +35,7 @@ export default function Players(): React.ReactNode {
         )}
         keyExtractor={(item) => item.id}
         onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
         refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => void refetch()} />}
       />
     </View>

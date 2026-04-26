@@ -1,14 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { View, StyleSheet, ActivityIndicator } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { colors } from '@/theme/colors'
 import { EventPlayerRequest, EventRequest, isActiveEvent } from '@birdogey/shared'
-import { PotBalances } from '@/components/PotBalances'
-import { EventPlayersList } from '@/components/EventPlayersList'
-import { EventCheckinPlayersList } from '@/components/EventCheckinPlayersList'
-import { EventScoringPlayersList } from '@/components/EventScoringPlayersList'
+import { EventPlayersActiveList } from '@/components/EventPlayersActiveList'
+import { EventPlayersInactiveList } from '@/components/EventPlayersInactiveList'
 
 export default function EventView(): React.ReactNode {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -19,15 +17,6 @@ export default function EventView(): React.ReactNode {
     queryKey: ['event', id],
     queryFn: () => api.event.getById(id),
   })
-
-  const [activeEventState, setActiveEventState] = useState<'checkin' | 'scoring'>('checkin')
-  const eventState = useMemo(() => {
-    if (event && !isActiveEvent(event)) {
-      return 'past'
-    }
-
-    return activeEventState
-  }, [event, activeEventState])
   const eventPlayers = useMemo(() => event?.players ?? [], [event])
 
   const { mutate: updateEventPlayers } = useMutation({
@@ -47,32 +36,21 @@ export default function EventView(): React.ReactNode {
   return (
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="large" color={colors.primary} />}
-      {!isLoading && !!event && eventState === 'past' && (
-        <EventPlayersList
+      {!isLoading && !!event && !isActiveEvent(event) && (
+        <EventPlayersInactiveList
           event={event}
           eventPlayers={eventPlayers}
           isRefreshing={isRefetching}
           onRefresh={() => void refetch()}
         />
       )}
-      {!isLoading && !!event && eventState === 'checkin' && (
-        <EventCheckinPlayersList
+      {!isLoading && !!event && isActiveEvent(event) && (
+        <EventPlayersActiveList
           event={event}
           eventPlayers={eventPlayers}
           onPlayersChanged={updateEventPlayers}
           isRefreshing={isRefetching}
           onRefresh={() => void refetch()}
-          onConfirm={() => setActiveEventState('scoring')}
-        />
-      )}
-      {!isLoading && !!event && eventState === 'scoring' && (
-        <EventScoringPlayersList
-          event={event}
-          eventPlayers={eventPlayers}
-          onPlayersChanged={updateEventPlayers}
-          isRefreshing={isRefetching}
-          onRefresh={() => void refetch()}
-          onBack={() => setActiveEventState('checkin')}
         />
       )}
     </View>

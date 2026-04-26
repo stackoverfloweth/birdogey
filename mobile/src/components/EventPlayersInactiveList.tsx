@@ -1,6 +1,6 @@
 import { Event, EventPlayerRequest, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
-import { FlatList, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { PotBalances } from '@/components/PotBalances'
@@ -9,8 +9,9 @@ import { Score } from './Score'
 import { colors } from '@/theme/colors'
 import { cardStyles } from '@/theme/card'
 import { SymbolView } from 'expo-symbols'
+import { formStyles } from '@/theme/forms'
 
-type EventPlayersListProps = {
+type EventPlayersInactiveListProps = {
   event: Event,
   eventPlayers: EventPlayerRequest[],
   isRefreshing?: boolean,
@@ -19,7 +20,7 @@ type EventPlayersListProps = {
 
 type PlayerInEvent = EventPlayerRequest & UserSeason
 
-export function EventPlayersList({ event, eventPlayers, isRefreshing, onRefresh }: EventPlayersListProps): React.ReactNode {
+export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, onRefresh }: EventPlayersInactiveListProps): React.ReactNode {
   const api = useApiClient()
 
   const { data: players = [], isFetched } = useQuery({
@@ -63,7 +64,7 @@ export function EventPlayersList({ event, eventPlayers, isRefreshing, onRefresh 
 
   function renderHeader(): React.ReactElement {
     return (
-      <>
+      <View style={styles.header}>
         <View style={[cardStyles.card, { gap: 24 }]}>
           <View>
             <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
@@ -74,7 +75,7 @@ export function EventPlayersList({ event, eventPlayers, isRefreshing, onRefresh 
           </View>
         </View>
         <PotBalances event={event} eventPlayers={eventPlayers} />
-      </>
+      </View>
     )
   }
 
@@ -92,6 +93,11 @@ export function EventPlayersList({ event, eventPlayers, isRefreshing, onRefresh 
 
   return (
     <View style={styles.container}>
+      <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+        <SymbolView name="lock.open.fill" size={38} tintColor={colors.surface_container_lowest} />
+        <Text style={formStyles.buttonText}>Edit Event</Text>
+      </Pressable>
+
       <FlatList
         data={playersInEvent}
         contentContainerStyle={styles.list}
@@ -107,7 +113,7 @@ export function EventPlayersList({ event, eventPlayers, isRefreshing, onRefresh 
         keyExtractor={(item) => item.id}
         onViewableItemsChanged={onViewableItemsChanged}
         refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
       />
     </View>
   )
@@ -116,14 +122,14 @@ export function EventPlayersList({ event, eventPlayers, isRefreshing, onRefresh 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 16,
+    gap: 8,
+  },
+  header: {
+    gap: 8,
+    marginVertical: 8,
   },
   list: {
     gap: 8,
     paddingBottom: 16,
-  },
-  listHeader: {
-    gap: 16,
-    marginBottom: 16,
   },
 })

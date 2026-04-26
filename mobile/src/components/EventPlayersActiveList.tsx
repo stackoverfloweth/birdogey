@@ -5,29 +5,27 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { formStyles } from '@/theme/forms'
+import { PotBalances } from '@/components/PotBalances'
 import { TextInput } from '@/components/TextInput'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
-import { PotBalances } from '@/components/PotBalances'
-import { PlayerListItem } from '@/components/PlayerListItem'
+import { PlayerListItem } from './PlayerListItem'
 import { cardStyles } from '@/theme/card'
 
-type EventScoringPlayersListProps = {
+type EventPlayersActiveListProps = {
   event: Event,
   eventPlayers: EventPlayerRequest[],
   onPlayersChanged?: (players: EventPlayerRequest[]) => void,
   isRefreshing?: boolean,
   onRefresh?: () => void,
-  listHeader?: React.ReactNode,
-  onBack?: () => void,
-  onConfirm?: () => void,
 }
 
 type PlayerInEvent = EventPlayerRequest & UserSeason
 
-export function EventScoringPlayersList({ event, eventPlayers, onPlayersChanged, isRefreshing, onRefresh, listHeader }: EventScoringPlayersListProps): React.ReactNode {
+export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchFocused, setPlayerSearchFocused] = useState(false)
+  const [checkinActive, setCheckinActive] = useState(false)
   const api = useApiClient()
 
   const { data: players = [], isFetched } = useQuery({
@@ -108,7 +106,7 @@ export function EventScoringPlayersList({ event, eventPlayers, onPlayersChanged,
 
   function renderHeader(): React.ReactElement {
     return (
-      <>
+      <View style={styles.header}>
         <View style={[cardStyles.card, { gap: 24 }]}>
           <View>
             <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
@@ -117,12 +115,9 @@ export function EventScoringPlayersList({ event, eventPlayers, onPlayersChanged,
           <View style={{ position: 'absolute', right: 16, top: 16 }}>
             <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
           </View>
-          <View>
-            <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant, textAlign: 'center' }]}>Scoring</Text>
-          </View>
         </View>
         <PotBalances event={event} eventPlayers={eventPlayers} />
-      </>
+      </View>
     )
   }
 
@@ -178,11 +173,12 @@ export function EventScoringPlayersList({ event, eventPlayers, onPlayersChanged,
           icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
         />
         {playerSearchFocused && (
-          <Pressable style={[formStyles.button, { marginRight: -18, flexGrow: 0 }]} onPress={setDoneAddingPlayers}>
-            <SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />
+          <Pressable style={[formStyles.button, { marginRight: -18, paddingHorizontal: 12, paddingVertical: 12, flexGrow: 0 }]} onPress={setDoneAddingPlayers}>
+            <SymbolView name="checkmark" size={38} tintColor="#fff" weight="bold" />
           </Pressable>
         )}
       </View>
+
       {searchResults.length > 0 && playerSearchFocused && (
         <FlatList
           data={searchResults}
@@ -196,26 +192,58 @@ export function EventScoringPlayersList({ event, eventPlayers, onPlayersChanged,
         />
       )}
       {!playerSearchFocused && (
-        <FlatList
-          data={playersInEvent}
-          contentContainerStyle={styles.list}
-          ListHeaderComponent={renderHeader()}
-          ListHeaderComponentStyle={listHeader ? styles.listHeader : undefined}
-          renderItem={({ item }) => (
-            <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
-              <PlayerListItem
-                player={item}
-                visible={visibleIds.has(item.id)}
-                right={renderRightState(item)}
-                subTitle={renderSubTitle(item)}
-              />
-            </ReanimatedSwipeable>
-          )}
-          keyExtractor={(item) => item.id}
-          onViewableItemsChanged={onViewableItemsChanged}
-          refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
-          viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-        />
+        <>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+              {/* edit event */}
+              <SymbolView name="gearshape.fill" size={38} tintColor={colors.surface_container_lowest} />
+            </Pressable>
+
+            {checkinActive && (
+              <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={() => setCheckinActive(false)}>
+                {/* back to checkin */}
+                <SymbolView name="person.fill" size={38} tintColor={colors.surface_container_lowest} />
+              </Pressable>
+            )}
+
+            {!checkinActive && (
+              <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={() => setCheckinActive(true)}>
+                {/* finalize checkin */}
+                <SymbolView name="pencil.and.ruler.fill" size={38} tintColor={colors.surface_container_lowest} />
+              </Pressable>
+            )}
+
+            <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+              {/* import */}
+              <SymbolView name="arrow.up.document.fill" size={38} tintColor={colors.surface_container_lowest} />
+            </Pressable>
+
+            <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+              {/* complete event */}
+              <SymbolView name="lock.fill" size={38} tintColor={colors.surface_container_lowest} />
+            </Pressable>
+          </View>
+          <FlatList
+            data={playersInEvent}
+            contentContainerStyle={styles.list}
+            ListHeaderComponent={renderHeader()}
+            renderItem={({ item }) => (
+              <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
+                <PlayerListItem
+                  player={item}
+                  visible={visibleIds.has(item.id)}
+                  right={renderRightState(item)}
+                  subTitle={renderSubTitle(item)}
+                />
+              </ReanimatedSwipeable>
+            )}
+            keyExtractor={(item) => item.id}
+            onViewableItemsChanged={onViewableItemsChanged}
+            refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
+            viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
+          />
+        </>
       )}
     </View>
   )
@@ -224,7 +252,11 @@ export function EventScoringPlayersList({ event, eventPlayers, onPlayersChanged,
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 16,
+    gap: 8,
+  },
+  header: {
+    gap: 8,
+    marginVertical: 8,
   },
   emptyState: {
     alignItems: 'center',
@@ -237,10 +269,6 @@ const styles = StyleSheet.create({
   list: {
     gap: 8,
     paddingBottom: 16,
-  },
-  listHeader: {
-    gap: 16,
-    marginBottom: 16,
   },
   swipeActions: {
     flexDirection: 'row',
@@ -263,7 +291,7 @@ const styles = StyleSheet.create({
     color: colors.surface_container_lowest,
   },
   swipeActionActive: {
-    backgroundColor: colors.primary_500,
+    backgroundColor: colors.primary,
   },
   swipeActionRemove: {
     backgroundColor: colors.error,
