@@ -1,28 +1,31 @@
-import { EventPlayerRequest, UserSeason } from '@birdogey/shared'
+import { Event, EventPlayerRequest, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
 import { FlatList, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
+import { PotBalances } from '@/components/PotBalances'
 import { PlayerListItem } from '@/components/PlayerListItem'
 import { Score } from './Score'
+import { colors } from '@/theme/colors'
+import { cardStyles } from '@/theme/card'
+import { SymbolView } from 'expo-symbols'
 
 type EventPlayersListProps = {
-  seasonId: string,
+  event: Event,
   eventPlayers: EventPlayerRequest[],
   isRefreshing?: boolean,
   onRefresh?: () => void,
-  listHeader?: React.ReactNode,
 }
 
 type PlayerInEvent = EventPlayerRequest & UserSeason
 
-export function EventPlayersList({ seasonId, eventPlayers, isRefreshing, onRefresh, listHeader }: EventPlayersListProps): React.ReactNode {
+export function EventPlayersList({ event, eventPlayers, isRefreshing, onRefresh }: EventPlayersListProps): React.ReactNode {
   const api = useApiClient()
 
   const { data: players = [], isFetched } = useQuery({
-    queryKey: ['players', seasonId],
-    queryFn: () => api.user.getSeasonList(seasonId),
-    enabled: !!seasonId,
+    queryKey: ['players', event.seasonId],
+    queryFn: () => api.user.getSeasonList(event.seasonId),
+    enabled: !!event.seasonId,
   })
 
   const playersMap = useMemo(() => {
@@ -58,6 +61,23 @@ export function EventPlayersList({ seasonId, eventPlayers, isRefreshing, onRefre
     }))
   }, [getPlayer, eventPlayers, isFetched])
 
+  function renderHeader(): React.ReactElement {
+    return (
+      <>
+        <View style={[cardStyles.card, { gap: 24 }]}>
+          <View>
+            <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
+            <Text style={[cardStyles.cardPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
+          </View>
+          <View style={{ position: 'absolute', right: 16, top: 16 }}>
+            <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
+          </View>
+        </View>
+        <PotBalances event={event} eventPlayers={eventPlayers} />
+      </>
+    )
+  }
+
   function renderRightState(player: PlayerInEvent): React.ReactNode {
     return (
       <Score value={player.score} />
@@ -75,8 +95,7 @@ export function EventPlayersList({ seasonId, eventPlayers, isRefreshing, onRefre
       <FlatList
         data={playersInEvent}
         contentContainerStyle={styles.list}
-        ListHeaderComponent={listHeader ? <>{listHeader}</> : null}
-        ListHeaderComponentStyle={listHeader ? styles.listHeader : undefined}
+        ListHeaderComponent={renderHeader()}
         renderItem={({ item }) => (
           <PlayerListItem
             player={item}

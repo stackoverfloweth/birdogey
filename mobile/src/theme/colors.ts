@@ -6,6 +6,10 @@ export const colors = {
   secondary_container: '#ffc5a6',
   on_secondary_container: '#773400',
 
+  green: '#2d6a4f',
+  green_500: '#52b788',
+  green_200: '#d8f3dc',
+
   surface: '#f5f7f9',
   surface_container_lowest: '#ffffff',
   surface_container_low: '#eef1f3',
