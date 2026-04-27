@@ -49,6 +49,7 @@ export default function EventView(): React.ReactNode {
           event={event}
           eventPlayers={eventPlayers}
           onPlayersChanged={updateEventPlayers}
+          onEventChanged={updateEvent}
           isRefreshing={isRefetching}
           onRefresh={() => void refetch()}
         />

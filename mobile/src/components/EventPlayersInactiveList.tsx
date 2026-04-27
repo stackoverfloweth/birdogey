@@ -74,7 +74,7 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
             <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
           </View>
         </View>
-        <PotBalances event={event} eventPlayers={eventPlayers} />
+        <PotBalances event={event} eventPlayers={playersInEvent} />
       </View>
     )
   }

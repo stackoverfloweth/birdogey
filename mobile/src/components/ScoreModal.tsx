@@ -55,7 +55,7 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
   }
   return (
     <Modal animationType="slide" transparent={true} visible={!!player} onRequestClose={onDismiss}>
-      <Pressable style={styles.backdrop} onPress={onDismiss} />
+      <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
 
       <View style={[modalsStyles.content, styles.modalContent]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -87,9 +87,6 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-  },
   modalContent: {
     height: 680,
     padding: 24,

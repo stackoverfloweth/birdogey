@@ -2,6 +2,9 @@ import { StyleSheet } from 'react-native'
 import { colors } from './colors'
 
 export const modalsStyles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+  },
   content: {
     width: '100%',
     backgroundColor: colors.surface_container_lowest,

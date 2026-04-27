@@ -1,4 +1,4 @@
-import { Event, EventPlayerRequest, UserSeason } from '@birdogey/shared'
+import { Event, EventPlayerRequest, EventRequest, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
 import { FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
@@ -18,13 +18,14 @@ type EventPlayersActiveListProps = {
   event: Event,
   eventPlayers: EventPlayerRequest[],
   onPlayersChanged?: (players: EventPlayerRequest[]) => void,
+  onEventChanged?: (event: Partial<EventRequest>) => void,
   isRefreshing?: boolean,
   onRefresh?: () => void,
 }
 
 export type PlayerInEvent = EventPlayerRequest & UserSeason
 
-export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
+export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, onEventChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchFocused, setPlayerSearchFocused] = useState(false)
   const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
@@ -149,7 +150,8 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
             <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
           </View>
         </View>
-        <PotBalances event={event} eventPlayers={eventPlayers} />
+
+        <PotBalances event={event} eventPlayers={playersInEvent} onChange={onEventChanged} />
       </View>
     )
   }
@@ -301,5 +303,8 @@ const styles = StyleSheet.create({
   },
   swipeActionRemove: {
     backgroundColor: colors.error,
+  },
+  playersModalContent: {
+    height: '100%',
   },
 })

@@ -1,24 +1,30 @@
 import { cardStyles } from '@/theme/card'
 import { colors } from '@/theme/colors'
-import { calculatePayoutSplit, penniesToUSD, Event, calculateEventCtpPot, calculateEventAcePot, EventPlayerRequest } from '@birdogey/shared'
-import { View, Text } from 'react-native'
+import { calculatePayoutSplit, penniesToUSD, Event, calculateEventCtpPot, calculateEventAcePot, EventRequest } from '@birdogey/shared'
+import { View, Text, Pressable, StyleSheet } from 'react-native'
 import { StackedPlayerImages } from '@/components/StackedPlayerImages'
-import { useMemo } from 'react'
+import { PlayersModal } from '@/components/PlayersModal'
+import { useMemo, useState } from 'react'
+import type { PlayerInEvent } from '@/components/EventPlayersActiveList'
+import { PlayerListItem } from './PlayerListItem'
+import { SymbolView } from 'expo-symbols'
 
 type PotBalancesProps = {
   event?: Event,
-  eventPlayers: EventPlayerRequest[],
+  eventPlayers: PlayerInEvent[],
+  onChange?: (event: Partial<EventRequest>) => void,
+  onDismiss?: () => void,
 }
 
-export function PotBalances({ event, eventPlayers }: PotBalancesProps): React.ReactNode {
+type PotProperties = Pick<Event, 'aceUserIds' | 'ctpUserIds'>
+
+export function PotBalances({ event, eventPlayers, onChange }: PotBalancesProps): React.ReactNode {
+  const [modalVisible, setModalVisible] = useState<keyof PotProperties | null>(null)
+
   const ctpWinnerUserIds = useMemo(() => event?.ctpUserIds ?? [], [event])
   const aceWinnerUserIds = useMemo(() => event?.aceUserIds ?? [], [event])
-  const ctpUsers = useMemo(() => eventPlayers.filter((player) => player.inForCtp), [eventPlayers])
-  const aceUsers = useMemo(() => eventPlayers.filter((player) => player.inForAce), [eventPlayers])
-  const ctpStartingBalance = useMemo(() => event?.ctpStartingBalance ?? 0 / 100, [event])
-  const aceStartingBalance = useMemo(() => event?.aceStartingBalance ?? 0 / 100, [event])
-  const ctpPerPlayer = useMemo(() => event?.ctpPerPlayer ?? 0 / 100, [event])
-  const acePerPlayer = useMemo(() => event?.acePerPlayer ?? 0 / 100, [event])
+  const ctpUserIds = useMemo(() => eventPlayers.filter((player) => player.inForCtp).map(({ id }) => id), [eventPlayers])
+  const aceUserIds = useMemo(() => eventPlayers.filter((player) => player.inForAce).map(({ id }) => id), [eventPlayers])
 
   const ctpInPennies = useMemo(() => {
     if (!event) {
@@ -42,9 +48,63 @@ export function PotBalances({ event, eventPlayers }: PotBalancesProps): React.Re
     })
   }, [event, eventPlayers])
 
+  function handlePlayerSelect(player: PlayerInEvent): void {
+    setModalVisible(null)
+
+    if (modalVisible === null) {
+      return
+    }
+
+    const currentUserIds = event?.[modalVisible] ?? []
+
+    if (currentUserIds.includes(player.userId)) {
+      onChange?.({
+        ...event,
+        [modalVisible]: currentUserIds.filter((userId) => userId !== player.userId),
+      })
+      return
+    }
+
+    onChange?.({ ...event, [modalVisible]: [...currentUserIds, player.userId] })
+  }
+
+  function renderRightState(player: PlayerInEvent): React.ReactElement | undefined {
+    switch (modalVisible) {
+      case 'aceUserIds':
+        return aceWinnerUserIds.includes(player.id) ? <SymbolView name="checkmark.circle.fill" size={30} tintColor={colors.primary} /> : undefined
+      case 'ctpUserIds':
+        return ctpWinnerUserIds.includes(player.id) ? <SymbolView name="checkmark.circle.fill" size={30} tintColor={colors.primary} /> : undefined
+      case null:
+        return undefined
+      default:
+        return modalVisible satisfies never
+    }
+  }
+
+  function renderSubTitle(player: PlayerInEvent): React.ReactElement | undefined {
+    switch (modalVisible) {
+      case 'aceUserIds':
+        return aceUserIds.includes(player.id) ? undefined : <Text style={{ color: colors.error, fontWeight: 'bold' }}>NOT IN FOR ACE</Text>
+      case 'ctpUserIds':
+        return ctpUserIds.includes(player.id) ? undefined : <Text style={{ color: colors.error, fontWeight: 'bold' }}>NOT IN FOR CTP</Text>
+      case null:
+        return undefined
+      default:
+        return modalVisible satisfies never
+    }
+  }
+
+  function renderItem(player: PlayerInEvent, onSelect: (player: PlayerInEvent) => void): React.ReactElement {
+    return (
+      <Pressable onPress={() => onSelect(player)}>
+        <PlayerListItem player={player} right={renderRightState(player)} subTitle={renderSubTitle(player)} />
+      </Pressable>
+    )
+  }
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 16 }}>
-      <View style={[cardStyles.card, { backgroundColor: colors.primary }]}>
+      <Pressable style={[cardStyles.card, { backgroundColor: colors.primary }]} onPress={() => setModalVisible('aceUserIds')}>
         <Text style={cardStyles.cardSecondaryText}>Ace Pot</Text>
         <Text style={cardStyles.cardPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
         {aceWinnerUserIds.length > 0 && (
@@ -58,9 +118,9 @@ export function PotBalances({ event, eventPlayers }: PotBalancesProps): React.Re
             / each
           </Text>
         )}
-      </View>
+      </Pressable>
 
-      <View style={[cardStyles.card, { backgroundColor: colors.primary }]}>
+      <Pressable style={[cardStyles.card, { backgroundColor: colors.primary }]} onPress={() => setModalVisible('ctpUserIds')}>
         <Text style={cardStyles.cardSecondaryText}>CTP Pool</Text>
         <Text style={cardStyles.cardPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
         {ctpWinnerUserIds.length > 0 && (
@@ -74,7 +134,23 @@ export function PotBalances({ event, eventPlayers }: PotBalancesProps): React.Re
             / each
           </Text>
         )}
-      </View>
+      </Pressable>
+
+      <PlayersModal
+        players={eventPlayers}
+        visible={modalVisible !== null}
+        renderItem={renderItem}
+        onDismiss={() => setModalVisible(null)}
+        style={styles.modalContent}
+        keyExtractor={(item) => item.id}
+        onSelect={handlePlayerSelect}
+      />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  modalContent: {
+    height: 380,
+  },
+})
