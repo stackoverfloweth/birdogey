@@ -32,9 +32,21 @@ export function Score({ value }: ScoreProps): React.ReactNode {
     }
   }, [value])
 
+  const formattedValue = useMemo(() => {
+    if (value === 0) {
+      return 'E'
+    }
+
+    if (!!value && value > 0) {
+      return `+${value}`
+    }
+
+    return value?.toString()
+  }, [value])
+
   return (
     <View style={classes.container}>
-      <Text style={classes.text}>{value === 0 ? 'E' : value}</Text>
+      <Text style={classes.text}>{formattedValue}</Text>
     </View>
   )
 }

@@ -27,7 +27,6 @@ export type PlayerInEvent = EventPlayerRequest & UserSeason
 export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchFocused, setPlayerSearchFocused] = useState(false)
-  const [checkinActive, setCheckinActive] = useState(true)
   const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
   const api = useApiClient()
 
@@ -141,21 +140,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   }
 
   function renderRightState(player: PlayerInEvent): React.ReactNode {
-    if (checkinActive) {
-      return (
-        <View style={{ gap: 2 }}>
-          <View style={styles.swipeActions}>
-            <SymbolView name={player.inForAce ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForAce ? colors.primary : colors.on_surface_variant} />
-            <Text style={player.inForAce ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>ACE</Text>
-          </View>
-          <View style={styles.swipeActions}>
-            <SymbolView name={player.inForCtp ? 'circle.fill' : 'circle'} size={20} tintColor={player.inForCtp ? colors.primary : colors.on_surface_variant} />
-            <Text style={player.inForCtp ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.on_surface_variant }}>CTP</Text>
-          </View>
-        </View>
-      )
-    }
-
     return (
       <View style={{ flexDirection: 'row', gap: 16 }}>
         <Pressable onPress={() => setScoreModalPlayer(player)}>
@@ -167,8 +151,12 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 
   function renderSubTitle(player: PlayerInEvent): React.ReactNode {
     return (
-      <View style={{ gap: 2 }}>
+      <View style={{ flexDirection: 'row', gap: 12 }}>
         <Text>{player.incomingTagId ? `#${player.incomingTagId}` : 'No tag'}</Text>
+
+        <Text style={player.inForAce ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.outline_variant }}>ACE</Text>
+
+        <Text style={player.inForCtp ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.outline_variant }}>CTP</Text>
       </View>
     )
   }
@@ -207,34 +195,20 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
       {!playerSearchFocused && (
         <>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', gap: 12 }}>
+            <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
               {/* edit event */}
-              <SymbolView name="gearshape.fill" size={38} tintColor={colors.surface_container_lowest} />
+              <SymbolView name="gearshape.fill" size={30} tintColor={colors.surface_container_lowest} />
             </Pressable>
 
-            {checkinActive && (
-              <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={() => setCheckinActive(false)}>
-                {/* finalize checkin */}
-                <SymbolView name="pencil.and.ruler.fill" size={38} tintColor={colors.surface_container_lowest} />
-              </Pressable>
-            )}
-
-            {!checkinActive && (
-              <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={() => setCheckinActive(true)}>
-                {/* back to checkin */}
-                <SymbolView name="person.fill" size={38} tintColor={colors.surface_container_lowest} />
-              </Pressable>
-            )}
-
-            <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+            <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
               {/* import */}
-              <SymbolView name="arrow.up.document.fill" size={38} tintColor={colors.surface_container_lowest} />
+              <SymbolView name="arrow.up.document.fill" size={30} tintColor={colors.surface_container_lowest} />
             </Pressable>
 
-            <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+            <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
               {/* complete event */}
-              <SymbolView name="lock.fill" size={38} tintColor={colors.surface_container_lowest} />
+              <SymbolView name="lock.fill" size={30} tintColor={colors.surface_container_lowest} />
             </Pressable>
           </View>
           <FlatList
