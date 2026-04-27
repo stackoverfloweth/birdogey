@@ -8,14 +8,14 @@ import { UserImage } from './UserImage'
 import { useState } from 'react'
 
 type ScoreModalProps = {
-  player?: PlayerInEvent,
+  player: PlayerInEvent,
   onDismiss: () => void,
   onChange: (value: PlayerInEvent) => void,
 }
 
 export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): React.ReactNode {
   const count = 12
-  const [score, setScore] = useState<number | undefined>(player?.score)
+  const [score, setScore] = useState<number | undefined>(player.score)
 
   const negativeValues = new Array(count).fill(null)
     .map((_value, index) => -count + index)
@@ -23,9 +23,6 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
     .map((_value, index) => index + 1)
 
   function save(score: number | undefined): void {
-    if (!player) {
-      return
-    }
     onChange({ ...player, score })
     onDismiss()
   }
@@ -33,10 +30,10 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
   function renderRightState(): React.ReactNode {
     return (
       <Pressable
-        style={[{ paddingHorizontal: 8, paddingVertical: 8, borderRadius: 9999, backgroundColor: colors.outline_variant }]}
+        style={[{ paddingHorizontal: 8, paddingVertical: 8, borderRadius: 9999, backgroundColor: colors.primary }]}
         onPress={() => save(score)}
       >
-        <SymbolView name="checkmark" size={20} tintColor={colors.on_surface} weight="bold" />
+        <SymbolView name="checkmark" size={30} tintColor={colors.surface_container_lowest} weight="bold" />
       </Pressable>
     )
   }
@@ -61,8 +58,8 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
       <Pressable style={styles.backdrop} onPress={onDismiss} />
 
       <View style={[modalsStyles.content, styles.modalContent]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
-          <UserImage imageUrl={player?.imageUrl} width={40} height={40} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <UserImage imageUrl={player.imageUrl} width={40} height={40} />
           {renderSubTitle()}
           {renderRightState()}
         </View>
@@ -94,15 +91,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalContent: {
-    height: 640,
+    height: 680,
     padding: 24,
     gap: 16,
   },
   scoreGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    rowGap: 8,
-    justifyContent: 'space-around',
+    rowGap: 12,
+    justifyContent: 'space-between',
   },
   scoreButton: {
     alignItems: 'center',

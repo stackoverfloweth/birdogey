@@ -77,6 +77,10 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     return playersNotInEvent.filter((player) => player.name.toLowerCase().includes(playerSearch.toLowerCase()))
   }, [playersNotInEvent, playerSearch])
 
+  const playersWithoutScore = useMemo(() => {
+    return playersInEvent.filter((player) => player.score === undefined)
+  }, [playersInEvent])
+
   function setDoneAddingPlayers(): void {
     setPlayerSearch('')
     setPlayerSearchFocused(false)
@@ -109,10 +113,37 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   function renderHeader(): React.ReactElement {
     return (
       <View style={styles.header}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around', gap: 12 }}>
+          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
+            {/* edit event */}
+            <SymbolView name="gearshape.fill" size={30} tintColor={colors.surface_container_lowest} />
+          </Pressable>
+
+          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
+            {/* import */}
+            <SymbolView name="arrow.up.document.fill" size={30} tintColor={colors.surface_container_lowest} />
+          </Pressable>
+
+          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
+            {/* complete event */}
+            <SymbolView name="lock.fill" size={30} tintColor={colors.surface_container_lowest} />
+          </Pressable>
+        </View>
+
         <View style={[cardStyles.card, { gap: 24 }]}>
           <View>
             <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
             <Text style={[cardStyles.cardPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
+            {playersWithoutScore.length > 0 && (
+              <View style={{ flexDirection: 'row', gap: 4 }}>
+                <SymbolView name="exclamationmark.triangle.fill" size={16} tintColor={colors.error} />
+                <Text style={{ color: colors.error, fontWeight: 'bold' }}>
+                  {playersWithoutScore.length}
+                  {' '}
+                  missing score
+                </Text>
+              </View>
+            )}
           </View>
           <View style={{ position: 'absolute', right: 16, top: 16 }}>
             <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
@@ -174,8 +205,8 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
         />
         {playerSearchFocused && (
-          <Pressable style={[formStyles.button, { marginRight: -18, paddingHorizontal: 12, paddingVertical: 12, flexGrow: 0 }]} onPress={setDoneAddingPlayers}>
-            <SymbolView name="checkmark" size={38} tintColor="#fff" weight="bold" />
+          <Pressable style={[formStyles.iconButton, { marginRight: -18, backgroundColor: colors.primary }]} onPress={setDoneAddingPlayers}>
+            <SymbolView name="checkmark" size={30} tintColor="#fff" weight="bold" />
           </Pressable>
         )}
       </View>
@@ -193,50 +224,33 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         />
       )}
       {!playerSearchFocused && (
-        <>
-
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around', gap: 12 }}>
-            <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
-              {/* edit event */}
-              <SymbolView name="gearshape.fill" size={30} tintColor={colors.surface_container_lowest} />
-            </Pressable>
-
-            <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
-              {/* import */}
-              <SymbolView name="arrow.up.document.fill" size={30} tintColor={colors.surface_container_lowest} />
-            </Pressable>
-
-            <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
-              {/* complete event */}
-              <SymbolView name="lock.fill" size={30} tintColor={colors.surface_container_lowest} />
-            </Pressable>
-          </View>
-          <FlatList
-            data={playersInEvent}
-            contentContainerStyle={styles.list}
-            ListHeaderComponent={renderHeader()}
-            renderItem={({ item }) => (
-              <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
-                <PlayerListItem
-                  player={item}
-                  visible={visibleIds.has(item.id)}
-                  right={renderRightState(item)}
-                  subTitle={renderSubTitle(item)}
-                />
-              </ReanimatedSwipeable>
-            )}
-            keyExtractor={(item) => item.id}
-            onViewableItemsChanged={onViewableItemsChanged}
-            refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
-            viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
-          />
-        </>
+        <FlatList
+          data={playersInEvent}
+          contentContainerStyle={styles.list}
+          ListHeaderComponent={renderHeader()}
+          renderItem={({ item }) => (
+            <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
+              <PlayerListItem
+                player={item}
+                visible={visibleIds.has(item.id)}
+                right={renderRightState(item)}
+                subTitle={renderSubTitle(item)}
+              />
+            </ReanimatedSwipeable>
+          )}
+          keyExtractor={(item) => item.id}
+          onViewableItemsChanged={onViewableItemsChanged}
+          refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
+          viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
+        />
       )}
-      <ScoreModal
-        player={scoreModalPlayer}
-        onDismiss={() => setScoreModalPlayer(undefined)}
-        onChange={handlePlayerChanged}
-      />
+      {scoreModalPlayer && (
+        <ScoreModal
+          player={scoreModalPlayer}
+          onDismiss={() => setScoreModalPlayer(undefined)}
+          onChange={handlePlayerChanged}
+        />
+      )}
     </View>
   )
 }

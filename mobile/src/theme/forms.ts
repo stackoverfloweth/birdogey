@@ -57,4 +57,13 @@ export const formStyles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
   },
+  iconButton: {
+    aspectRatio: 1,
+    width: 60,
+    borderRadius: 9999,
+    gap: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 })
