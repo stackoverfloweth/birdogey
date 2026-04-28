@@ -5,6 +5,7 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { formStyles } from '@/theme/forms'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { PotBalances } from '@/components/PotBalances'
 import { TextInput } from '@/components/TextInput'
 import { PlayerListItem } from '@/components/PlayerListItem'
@@ -13,6 +14,7 @@ import { colors } from '@/theme/colors'
 import { cardStyles } from '@/theme/card'
 import { Score } from '@/components/Score'
 import { ScoreModal } from '@/components/ScoreModal'
+import { PlayersModal } from '@/components/PlayersModal'
 
 type EventPlayersActiveListProps = {
   event: Event,
@@ -27,9 +29,11 @@ export type PlayerInEvent = EventPlayerRequest & UserSeason
 
 export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, onEventChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
-  const [playerSearchFocused, setPlayerSearchFocused] = useState(false)
+  const [playerSearchModalVisible, setPlayerSearchModalVisible] = useState(false)
   const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
+
   const api = useApiClient()
+  const { top } = useSafeAreaInsets()
 
   const { data: players = [], isFetched } = useQuery({
     queryKey: ['players', event.seasonId],
@@ -84,7 +88,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 
   function setDoneAddingPlayers(): void {
     setPlayerSearch('')
-    setPlayerSearchFocused(false)
+    setPlayerSearchModalVisible(false)
     Keyboard.dismiss()
   }
 
@@ -194,58 +198,59 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     )
   }
 
-  return (
-    <View style={styles.container}>
+  function renderBeforeList(): React.ReactNode {
+    return (
       <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
         <TextInput
           style={[formStyles.input, { flexGrow: 1 }]}
           placeholder="Add players"
           value={playerSearch}
           onChangeText={setPlayerSearch}
-          onFocus={() => setPlayerSearchFocused(true)}
-          onBlur={setDoneAddingPlayers}
           icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
         />
-        {playerSearchFocused && (
-          <Pressable style={[formStyles.iconButton, { marginRight: -18, backgroundColor: colors.primary }]} onPress={setDoneAddingPlayers}>
-            <SymbolView name="checkmark" size={30} tintColor="#fff" weight="bold" />
-          </Pressable>
-        )}
+
+        <Pressable style={[formStyles.iconButton, { marginRight: -18, backgroundColor: colors.primary }]} onPress={setDoneAddingPlayers}>
+          <SymbolView name="checkmark" size={30} tintColor="#fff" weight="bold" />
+        </Pressable>
+      </View>
+    )
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
+        <Pressable style={{ marginRight: -18, width: '100%' }} onPress={() => setPlayerSearchModalVisible(true)}>
+          <View pointerEvents="none">
+            <TextInput
+              style={[formStyles.input, { flexGrow: 1 }]}
+              placeholder="Add players"
+              editable={false}
+              icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
+            />
+          </View>
+        </Pressable>
       </View>
 
-      {searchResults.length > 0 && playerSearchFocused && (
-        <FlatList
-          data={searchResults}
-          contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <Pressable onPress={() => handlePlayerAdd(item)}>
-              <PlayerListItem player={item} />
-            </Pressable>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      )}
-      {!playerSearchFocused && (
-        <FlatList
-          data={playersInEvent}
-          contentContainerStyle={styles.list}
-          ListHeaderComponent={renderHeader()}
-          renderItem={({ item }) => (
-            <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
-              <PlayerListItem
-                player={item}
-                visible={visibleIds.has(item.id)}
-                right={renderRightState(item)}
-                subTitle={renderSubTitle(item)}
-              />
-            </ReanimatedSwipeable>
-          )}
-          keyExtractor={(item) => item.id}
-          onViewableItemsChanged={onViewableItemsChanged}
-          refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
-          viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
-        />
-      )}
+      <FlatList
+        data={playersInEvent}
+        contentContainerStyle={styles.list}
+        ListHeaderComponent={renderHeader()}
+        renderItem={({ item }) => (
+          <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
+            <PlayerListItem
+              player={item}
+              visible={visibleIds.has(item.id)}
+              right={renderRightState(item)}
+              subTitle={renderSubTitle(item)}
+            />
+          </ReanimatedSwipeable>
+        )}
+        keyExtractor={(item) => item.id}
+        onViewableItemsChanged={onViewableItemsChanged}
+        refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
+      />
+
       {scoreModalPlayer && (
         <ScoreModal
           player={scoreModalPlayer}
@@ -253,6 +258,16 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           onChange={handlePlayerChanged}
         />
       )}
+
+      <PlayersModal
+        players={searchResults}
+        visible={playerSearchModalVisible}
+        beforeList={renderBeforeList}
+        onSelect={handlePlayerAdd}
+        onDismiss={setDoneAddingPlayers}
+        style={{ top }}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   )
 }
@@ -303,8 +318,5 @@ const styles = StyleSheet.create({
   },
   swipeActionRemove: {
     backgroundColor: colors.error,
-  },
-  playersModalContent: {
-    height: '100%',
   },
 })

@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { useCallback, useState } from 'react'
-import { Text, StyleSheet, Image, View, Pressable, Modal, Alert } from 'react-native'
+import { Text, StyleSheet, Image, View, Pressable, Modal, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import splashImage from '../../assets/splash.png'
@@ -68,52 +68,56 @@ export default function Login(): React.ReactNode {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.logoWrapper}>
-        <Svg width={600} height={600} style={styles.logoGlow}>
-          <Defs>
-            <RadialGradient id="glow" cx="50%" cy="50%" r="50%">
-              <Stop offset="0" stopColor={colors.primary_200} stopOpacity="0.75" />
-              <Stop offset="1" stopColor={colors.primary_200} stopOpacity="0" />
-            </RadialGradient>
-          </Defs>
-          <Circle cx="300" cy="300" r="300" fill="url(#glow)" />
-        </Svg>
-        <View style={styles.logoContainer}>
-          <Image source={splashImage} style={styles.logo} />
-        </View>
-      </View>
-      <Text style={styles.title}>Birdogey</Text>
-
-      <View style={formStyles.form}>
-        {phoneNumber === null && (
-          <LoginPhoneStep onSuccess={(data) => void handleCodeSent(data)} />
-        )}
-        {phoneNumber !== null && (
-          <LoginCodeStep onSuccess={(code) => void handleCodeVerified(code)} />
-        )}
-
-        {showBiometrics && (
-          <>
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.biometricsTitle}>Or</Text>
-              <View style={styles.dividerLine} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={styles.content}>
+          <View style={styles.logoWrapper}>
+            <Svg width={600} height={600} style={styles.logoGlow}>
+              <Defs>
+                <RadialGradient id="glow" cx="50%" cy="50%" r="50%">
+                  <Stop offset="0" stopColor={colors.primary_200} stopOpacity="0.75" />
+                  <Stop offset="1" stopColor={colors.primary_200} stopOpacity="0" />
+                </RadialGradient>
+              </Defs>
+              <Circle cx="300" cy="300" r="300" fill="url(#glow)" />
+            </Svg>
+            <View style={styles.logoContainer}>
+              <Image source={splashImage} style={styles.logo} />
             </View>
-            {isFaceIdAvailable && (
-              <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
-                <SymbolView name="faceid" size={24} tintColor={colors.primary} />
-                <Text style={styles.faceIdText}>Sign in with Face ID</Text>
-              </Pressable>
+          </View>
+          <Text style={styles.title}>Birdogey</Text>
+
+          <View style={formStyles.form}>
+            {phoneNumber === null && (
+              <LoginPhoneStep onSuccess={(data) => void handleCodeSent(data)} />
             )}
-            {isTouchIDAvailable && (
-              <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
-                <SymbolView name="touchid" size={24} tintColor={colors.primary} />
-                <Text style={styles.faceIdText}>Sign in with Touch ID</Text>
-              </Pressable>
+            {phoneNumber !== null && (
+              <LoginCodeStep onSuccess={(code) => void handleCodeVerified(code)} />
             )}
-          </>
-        )}
-      </View>
+
+            {showBiometrics && (
+              <>
+                <View style={styles.divider}>
+                  <View style={styles.dividerLine} />
+                  <Text style={styles.biometricsTitle}>Or</Text>
+                  <View style={styles.dividerLine} />
+                </View>
+                {isFaceIdAvailable && (
+                  <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
+                    <SymbolView name="faceid" size={24} tintColor={colors.primary} />
+                    <Text style={styles.faceIdText}>Sign in with Face ID</Text>
+                  </Pressable>
+                )}
+                {isTouchIDAvailable && (
+                  <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
+                    <SymbolView name="touchid" size={24} tintColor={colors.primary} />
+                    <Text style={styles.faceIdText}>Sign in with Touch ID</Text>
+                  </Pressable>
+                )}
+              </>
+            )}
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
 
       <Modal animationType="slide" transparent={true} visible={askEnableBiometrics}>
         <View style={[styles.modalContent, modalsStyles.content]}>
@@ -149,8 +153,11 @@ export default function Login(): React.ReactNode {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: colors.surface,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
   },
   logoWrapper: {
     alignSelf: 'center',
@@ -179,7 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 64,
     textAlign: 'center',
     marginBottom: 24,
-    color: colors.on_surface,
+    color: colors.primary_500,
   },
   divider: {
     flexDirection: 'row',

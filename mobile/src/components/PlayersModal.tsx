@@ -6,13 +6,14 @@ import { PlayerListItem } from './PlayerListItem'
 type PlayersModalProps<T extends User> = Omit<FlatListProps<T>, 'data' | 'renderItem'> & {
   players: T[],
   visible?: boolean,
+  beforeList?: () => React.ReactNode,
   renderItem?: (item: T, onSelect: (player: T) => void, onDismiss: () => void) => React.ReactElement,
   onSelect?: (player: T) => void,
   onDismiss?: () => void,
   style?: StyleProp<ViewStyle>,
 }
 
-export function PlayersModal<T extends User>({ players, visible, renderItem, onSelect = () => {}, onDismiss = () => {}, style, ...listProps }: PlayersModalProps<T>): React.ReactNode {
+export function PlayersModal<T extends User>({ players, visible, beforeList, renderItem, onSelect = () => {}, onDismiss = () => {}, style, ...listProps }: PlayersModalProps<T>): React.ReactNode {
   function defaultRenderItem({ item }: ListRenderItemInfo<T>): React.ReactElement {
     return (
       <Pressable onPress={() => onSelect(item)}>
@@ -26,6 +27,8 @@ export function PlayersModal<T extends User>({ players, visible, renderItem, onS
       <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
 
       <View style={[modalsStyles.content, styles.modalContent, style]}>
+        {beforeList?.()}
+
         <FlatList
           data={players}
           renderItem={renderItem ? ({ item }) => renderItem(item, onSelect, onDismiss) : defaultRenderItem}

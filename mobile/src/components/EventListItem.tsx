@@ -19,8 +19,6 @@ export function EventListItem({ event, right }: EventListItemProps): React.React
     }, new Map<string, Season>())
   }, [auth.user])
 
-  console.log(seasonsMap)
-
   return (
     <Pressable style={styles.container} onPress={() => router.push(`/events/${event.id}`)}>
       <View style={styles.primary}>

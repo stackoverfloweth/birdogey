@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useState, ReactNode } from 'react'
 import { StyleSheet, TextInput as RNTextInput, View, TextInputProps as RNTextInputProps } from 'react-native'
-import type { ReactNode } from 'react'
 import { colors } from '@/theme/colors'
 
 type TextInputProps = RNTextInputProps & {
