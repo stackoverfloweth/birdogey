@@ -1,16 +1,18 @@
 import { z } from 'zod'
+import { optionalNumber, requiredNumber } from './helpers'
 
 export const eventPlayerSchema = z.object({
   userId: z.string()
     .nonempty({ message: 'User is required' }),
   inForCtp: z.boolean().optional(),
   inForAce: z.boolean().optional(),
-  score: z.number().optional(),
-  incomingTagId: z.number({ message: 'Incoming tag is required' }),
-  outgoingTagId: z.number().optional(),
+  score: optionalNumber,
+  incomingTagId: requiredNumber('Incoming tag is required'),
+  outgoingTagId: optionalNumber,
 })
 
-export type EventPlayerSchema = z.infer<typeof eventPlayerSchema>
+export type EventPlayerSchemaInput = z.input<typeof eventPlayerSchema>
+export type EventPlayerSchema = z.output<typeof eventPlayerSchema>
 
 export const eventSchema = z.object({
   seasonId: z.string()
@@ -20,13 +22,14 @@ export const eventSchema = z.object({
   notes: z.string().optional(),
   completed: z.date().optional(),
   players: z.array(eventPlayerSchema).optional(),
-  ctpStartingBalance: z.number().optional(),
-  aceStartingBalance: z.number().optional(),
-  ctpPerPlayer: z.number().optional(),
-  acePerPlayer: z.number().optional(),
+  ctpStartingBalance: optionalNumber,
+  aceStartingBalance: optionalNumber,
+  ctpPerPlayer: optionalNumber,
+  acePerPlayer: optionalNumber,
   ctpUserIds: z.array(z.string()).optional(),
   aceUserIds: z.array(z.string()).optional(),
-  ctpHole: z.number().optional(),
+  ctpHole: optionalNumber,
 })
 
-export type EventSchema = z.infer<typeof eventSchema>
+export type EventSchemaInput = z.input<typeof eventSchema>
+export type EventSchema = z.output<typeof eventSchema>

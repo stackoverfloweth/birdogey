@@ -6,16 +6,18 @@ type TextInputProps = RNTextInputProps & {
   icon?: ReactNode,
 }
 
-export function TextInput({ icon, style, onFocus, onBlur, ...props }: TextInputProps): ReactNode {
+export function TextInput({ icon, style, onFocus, onBlur, multiline, numberOfLines = 4, ...props }: TextInputProps): ReactNode {
   const [focused, setFocused] = useState(false)
 
   return (
-    <View style={[styles.container, focused && styles.containerFocused, style]}>
+    <View style={[styles.container, multiline && styles.containerMultiline, focused && styles.containerFocused, style]}>
       {icon}
       <RNTextInput
         {...props}
+        multiline={multiline}
+        textAlignVertical={multiline ? 'top' : undefined}
         placeholderTextColor={colors.on_surface_variant}
-        style={styles.input}
+        style={[styles.input, multiline && { minHeight: numberOfLines * 22 }]}
         onFocus={(event) => {
           setFocused(true)
           onFocus?.(event)
@@ -39,6 +41,10 @@ const styles = StyleSheet.create({
     gap: 10,
     borderWidth: 2,
     borderColor: 'transparent',
+  },
+  containerMultiline: {
+    alignItems: 'flex-start',
+    borderRadius: 20,
   },
   containerFocused: {
     backgroundColor: colors.surface_container_lowest,
