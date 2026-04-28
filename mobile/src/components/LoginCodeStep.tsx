@@ -1,6 +1,6 @@
 import { Text, View, Pressable } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
-import { LoginCodeSchema, loginCodeSchema } from '@/schemas/loginSchema'
+import { LoginCodeSchema, loginCodeSchema } from '@birdogey/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TextInput } from '@/components/TextInput'
 import { SymbolView } from 'expo-symbols'
@@ -8,8 +8,7 @@ import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
 
 export function LoginCodeStep({ onSuccess }: { onSuccess: (code: string) => void }): React.ReactNode {
-  const { control, handleSubmit, formState: { errors, isValid, isLoading, isSubmitted } } = useForm<LoginCodeSchema>({
-    mode: 'onChange',
+  const { control, handleSubmit, formState: { errors, isLoading, isSubmitted } } = useForm<LoginCodeSchema>({
     resolver: zodResolver(loginCodeSchema),
   })
 
@@ -41,7 +40,7 @@ export function LoginCodeStep({ onSuccess }: { onSuccess: (code: string) => void
 
       <Pressable
         disabled={isLoading}
-        style={[formStyles.button, !isValid && formStyles.buttonDisabled]}
+        style={formStyles.button}
         onPress={() => void handleSubmit(onSubmit)()}
       >
         <Text style={formStyles.buttonText}>Send Code</Text>

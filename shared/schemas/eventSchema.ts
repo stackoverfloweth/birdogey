@@ -15,8 +15,6 @@ export type EventPlayerSchemaInput = z.input<typeof eventPlayerSchema>
 export type EventPlayerSchema = z.output<typeof eventPlayerSchema>
 
 export const eventSchema = z.object({
-  seasonId: z.string()
-    .nonempty({ message: 'Season is required' }),
   name: z.string()
     .nonempty({ message: 'Name is required' }),
   notes: z.string().optional(),
