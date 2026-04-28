@@ -6,9 +6,11 @@ shared/dist
 .claude/
 
 # local env files
+.env
+.env.*
 .env.local
-.env.*.local
-server/.env
+.env.production
+.env.staging
 
 # Log files
 npm-debug.log*
