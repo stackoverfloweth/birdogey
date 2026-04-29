@@ -16,6 +16,7 @@ import { Score } from '@/components/Score'
 import { ScoreModal } from '@/components/ScoreModal'
 import { PlayersModal } from '@/components/PlayersModal'
 import { EventFormModal } from '@/components/EventFormModal'
+import { ScoreImportModal } from '@/components/ScoreImportModal'
 
 type EventPlayersActiveListProps = {
   event: Event,
@@ -33,6 +34,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchModalVisible, setPlayerSearchModalVisible] = useState(false)
   const [eventModalVisible, setEventModalVisible] = useState(false)
+  const [scoreImportModalVisible, setScoreImportModalVisible] = useState(false)
   const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
 
   const api = useApiClient()
@@ -149,6 +151,18 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     setEventModalVisible(false)
   }
 
+  async function applyScores(scores: Map<string, number>): Promise<void> {
+    onPlayersChanged?.(eventPlayers.map((player) => {
+      const score = scores.get(player.userId)
+
+      if (typeof score === 'number') {
+        return { ...player, score }
+      }
+
+      return player
+    }))
+  }
+
   function renderHeader(): React.ReactElement {
     return (
       <View style={styles.header}>
@@ -161,7 +175,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
             <SymbolView name="gearshape.fill" size={30} tintColor={colors.surface_container_lowest} />
           </Pressable>
 
-          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
+          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]} onPress={() => setScoreImportModalVisible(true)}>
             {/* import */}
             <SymbolView name="arrow.up.document.fill" size={30} tintColor={colors.surface_container_lowest} />
           </Pressable>
@@ -298,6 +312,16 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         visible={eventModalVisible}
         onDismiss={() => setEventModalVisible(false)}
         onSubmit={handleEventModalSave}
+        style={{ top }}
+      />
+
+      <ScoreImportModal
+        seasonId={event.seasonId}
+        players={playersInEvent}
+        eventPlayers={eventPlayers}
+        visible={scoreImportModalVisible}
+        onSubmit={(scores) => void applyScores(scores)}
+        onDismiss={() => setScoreImportModalVisible(false)}
         style={{ top }}
       />
     </View>
