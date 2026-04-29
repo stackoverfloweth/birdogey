@@ -96,7 +96,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 
   function handlePlayerAdd(player: UserSeason): void {
     onPlayersChanged?.([...eventPlayers, { userId: player.id, incomingTagId: player.tagId }])
-    setDoneAddingPlayers()
+    setPlayerSearch('')
   }
 
   function handlePlayerRemove(userId: string): void {
