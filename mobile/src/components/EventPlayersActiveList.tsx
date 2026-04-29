@@ -1,6 +1,6 @@
 import { Event, EventPlayerRequest, EventRequest, EventSchema, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
-import { FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
+import { Alert, FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
@@ -22,13 +22,14 @@ type EventPlayersActiveListProps = {
   eventPlayers: EventPlayerRequest[],
   onPlayersChanged?: (players: EventPlayerRequest[]) => void,
   onEventChanged?: (event: Partial<EventRequest>) => void,
+  onCompleteEvent?: (event: Partial<EventRequest>) => void,
   isRefreshing?: boolean,
   onRefresh?: () => void,
 }
 
 export type PlayerInEvent = EventPlayerRequest & UserSeason
 
-export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, onEventChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
+export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, onEventChanged, onCompleteEvent, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchModalVisible, setPlayerSearchModalVisible] = useState(false)
   const [eventModalVisible, setEventModalVisible] = useState(false)
@@ -88,6 +89,18 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     return playersInEvent.filter((player) => player.score === undefined)
   }, [playersInEvent])
 
+  function confirmCompleteEvent(): void {
+    if (playersWithoutScore.length > 0) {
+      Alert.alert(`There are ${playersWithoutScore.length} players without a score.`, 'Please add scores for all players before completing the event.')
+      return
+    }
+
+    onCompleteEvent?.({
+      ...event,
+      players: eventPlayers,
+    })
+  };
+
   function setDoneAddingPlayers(): void {
     setPlayerSearch('')
     setPlayerSearchModalVisible(false)
@@ -141,7 +154,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
             <SymbolView name="arrow.up.document.fill" size={30} tintColor={colors.surface_container_lowest} />
           </Pressable>
 
-          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
+          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]} onPress={confirmCompleteEvent}>
             {/* complete event */}
             <SymbolView name="lock.fill" size={30} tintColor={colors.surface_container_lowest} />
           </Pressable>

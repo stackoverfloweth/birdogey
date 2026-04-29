@@ -55,6 +55,21 @@ export const formStyles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
   },
+  dangerButton: {
+    backgroundColor: colors.error,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderRadius: 9999,
+    gap: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dangerButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
   iconButton: {
     aspectRatio: 1,
     width: 60,
