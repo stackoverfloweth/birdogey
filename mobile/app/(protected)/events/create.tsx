@@ -8,18 +8,14 @@ import { useMemo, useState } from 'react'
 import { ScrollView } from 'react-native'
 import { queryClient } from '@/services/queryClient'
 import { router } from 'expo-router'
-import { useAuth } from '@/contexts/AuthContext'
 import { format } from 'date-fns'
 import { SymbolView } from 'expo-symbols'
+import { useSeason } from '@/hooks/useSeason'
 
 export default function EventView(): React.ReactNode {
   const [seasonId, setSeasonId] = useState('')
   const api = useApiClient()
-  const auth = useAuth()
-
-  const season = useMemo(() => {
-    return auth.user?.seasons.find((season) => season.id === seasonId)
-  }, [seasonId, auth.user?.seasons])
+  const season = useSeason(seasonId)
 
   const { data: events = [] } = useQuery({
     queryKey: ['events', seasonId],

@@ -5,15 +5,15 @@ import { SymbolView } from 'expo-symbols'
 import { formStyles } from '@/theme/forms'
 import { StyleSheet, View, Text, FlatList, Pressable, RefreshControl } from 'react-native'
 import { router } from 'expo-router'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuthSeasons } from '@/hooks/useAuthSeasons'
 
 export default function Events(): React.ReactNode {
   const api = useApiClient()
-  const auth = useAuth()
+  const seasons = useAuthSeasons()
 
   const { data: events = [], refetch, isRefetching } = useQuery({
     queryKey: ['events'],
-    queryFn: () => api.event.getList(auth.user?.seasons.map((season) => season.id) ?? []),
+    queryFn: () => api.event.getList(seasons.map((season) => season.id)),
   })
 
   return (

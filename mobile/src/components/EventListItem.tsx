@@ -2,10 +2,10 @@ import { Text, StyleSheet, Pressable, View } from 'react-native'
 import { colors } from '@/theme/colors'
 import { isActiveEvent, penniesToUSD, type Event, type Season } from '@birdogey/shared'
 import { router } from 'expo-router'
-import { useAuth } from '@/contexts/AuthContext'
 import { useMemo } from 'react'
 import { badgeStyles } from '@/theme/badge'
 import { SymbolView } from 'expo-symbols'
+import { useAuthSeasons } from '@/hooks/useAuthSeasons'
 
 type EventListItemProps = {
   event: Event,
@@ -13,13 +13,13 @@ type EventListItemProps = {
 }
 
 export function EventListItem({ event, right }: EventListItemProps): React.ReactNode {
-  const auth = useAuth()
+  const seasons = useAuthSeasons()
   const seasonsMap = useMemo(() => {
-    return auth.user?.seasons.reduce((map, season) => {
+    return seasons.reduce((map, season) => {
       map.set(season.id, season)
       return map
     }, new Map<string, Season>())
-  }, [auth.user])
+  }, [seasons])
 
   const bestScore = useMemo(() => {
     return event.players.reduce((best, player) => {
@@ -31,7 +31,7 @@ export function EventListItem({ event, right }: EventListItemProps): React.React
     <Pressable style={styles.container} onPress={() => router.push(`/events/${event.id}`)}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerText}>{seasonsMap?.get(event.seasonId)?.name}</Text>
+          <Text style={styles.headerText}>{seasonsMap.get(event.seasonId)?.name}</Text>
           <Text>{event.name}</Text>
         </View>
 

@@ -1,8 +1,8 @@
 import { formStyles } from '@/theme/forms'
 import { View, Text } from 'react-native'
-import { useAuth } from '@/contexts/AuthContext'
 import { useMemo } from 'react'
 import { SelectInput, SelectInputProps } from '@/components/SelectInput'
+import { useAuthSeasons } from '@/hooks/useAuthSeasons'
 
 type EventSeasonSelectProps = Omit<SelectInputProps<string>, 'options' | 'selectedValue' | 'onValueChange'> & {
   value: string,
@@ -10,12 +10,12 @@ type EventSeasonSelectProps = Omit<SelectInputProps<string>, 'options' | 'select
 }
 
 export function EventSeasonSelect({ value, onChange, ...props }: EventSeasonSelectProps): React.ReactNode {
-  const auth = useAuth()
+  const seasons = useAuthSeasons()
 
   const seasonOptions = useMemo(() => {
-    const seasons = auth.user?.seasons.map((season) => ({ label: `${season.course.name} - ${season.name}`, value: season.id })) ?? []
-    return [{ label: 'Select a season…', value: '' }, ...seasons]
-  }, [auth.user])
+    const options = seasons.map((season) => ({ label: `${season.course.name} - ${season.name}`, value: season.id }))
+    return [{ label: 'Select a season…', value: '' }, ...options]
+  }, [seasons])
 
   return (
     <View style={formStyles.formGroup}>
