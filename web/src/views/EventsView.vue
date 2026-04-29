@@ -9,6 +9,7 @@
   import { routes } from '@/router/routes'
   import { auth } from '@/services'
   import { useRouter } from 'vue-router'
+  import { showToast } from '@prefecthq/prefect-design'
 
   const api = useApi()
   const seasonId = useRouteParam('seasonId')
@@ -19,6 +20,14 @@
   const event = computed(() => eventSubscription.response ?? null)
 
   const { value: checkinModalVisible, setTrue: showCheckinModal } = useBoolean()
+
+  async function uncompleteEvent(): Promise<void> {
+    await api.events.uncomplete(eventId.value)
+
+    showToast('Event Uncompleted!', 'success')
+
+    eventSubscription.refresh()
+  }
 
   watch(event, (event) => {
     if (!event?.completed && !auth.isReadonly) {
@@ -43,6 +52,10 @@
         <template v-if="!auth.isReadonly">
           <p-button icon="PencilSquareIcon" :to="routes.eventEdit(eventId)">
             Edit
+          </p-button>
+
+          <p-button v-if="event.completed" icon="LockOpenIcon" @click="uncompleteEvent">
+            Uncomplete Event
           </p-button>
         </template>
       </div>

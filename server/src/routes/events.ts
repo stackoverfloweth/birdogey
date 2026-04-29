@@ -193,6 +193,30 @@ events.put('/:id/complete', async (context) => {
   return context.json(null, result.acknowledged ? 202 : 400)
 })
 
+events.put('/:id/uncomplete', async (context) => {
+  const id = context.req.param('id')
+
+  const db = getDb()
+  const collection = db.collection<EventResponse>('events')
+
+  const event = await collection.findOne({ _id: new ObjectId(id) })
+
+  if (!event) {
+    throw new HttpError(404, 'Event not found')
+  }
+
+  const players = event.players.map(({ outgoingTagId, ...player }) => player)
+
+  const result = await collection.updateOne({ _id: event._id }, {
+    $set: { players },
+    $unset: { completed: '' },
+  })
+
+  await revertUserTags(db, event.seasonId, event.players)
+
+  return context.json(null, result.acknowledged ? 202 : 400)
+})
+
 events.delete('/:id', async (context) => {
   const id = context.req.param('id')
 
@@ -216,6 +240,17 @@ function updateUserTags(db: Db, seasonId: ObjectId, players: EventPlayerResponse
     updateOne: {
       filter: { userId, seasonId },
       update: { $set: { tagId } },
+    },
+  })))
+}
+
+function revertUserTags(db: Db, seasonId: ObjectId, players: EventPlayerResponse[]): Promise<BulkWriteResult> {
+  const collection = db.collection<UserSeasonResponse>('userSeasons')
+
+  return collection.bulkWrite(players.map((player) => ({
+    updateOne: {
+      filter: { userId: new ObjectId(player.userId), seasonId },
+      update: { $set: { tagId: player.incomingTagId } },
     },
   })))
 }

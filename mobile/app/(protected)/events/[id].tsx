@@ -20,7 +20,7 @@ export default function EventView(): React.ReactNode {
   const eventPlayers = useMemo(() => event?.players ?? [], [event])
 
   const { mutate: updateEventPlayers } = useMutation({
-    mutationFn: (players: EventPlayerRequest[]) => api.event.update(id, { players }),
+    mutationFn: (players: EventPlayerRequest[]) => api.event.update(id, { ...event, players }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events', id] })
     },
@@ -40,6 +40,13 @@ export default function EventView(): React.ReactNode {
     },
   })
 
+  const { mutate: uncompleteEvent } = useMutation({
+    mutationFn: () => api.event.uncomplete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+    },
+  })
+
   return (
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="large" color={colors.primary} />}
@@ -49,6 +56,7 @@ export default function EventView(): React.ReactNode {
           eventPlayers={eventPlayers}
           isRefreshing={isRefetching}
           onRefresh={() => void refetch()}
+          onUncompleteEvent={uncompleteEvent}
         />
       )}
       {!isLoading && !!event && isActiveEvent(event) && (

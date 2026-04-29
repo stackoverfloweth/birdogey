@@ -15,12 +15,13 @@ type EventPlayersInactiveListProps = {
   event: Event,
   eventPlayers: EventPlayerRequest[],
   isRefreshing?: boolean,
+  onUncompleteEvent?: () => void,
   onRefresh?: () => void,
 }
 
 type PlayerInEvent = EventPlayerRequest & UserSeason
 
-export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, onRefresh }: EventPlayersInactiveListProps): React.ReactNode {
+export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, onUncompleteEvent, onRefresh }: EventPlayersInactiveListProps): React.ReactNode {
   const api = useApiClient()
 
   const { data: players = [], isFetched } = useQuery({
@@ -93,7 +94,7 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
 
   return (
     <View style={styles.container}>
-      <Pressable style={[formStyles.secondaryButton, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+      <Pressable style={[formStyles.secondaryButton, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={onUncompleteEvent}>
         <SymbolView name="lock.open.fill" size={30} tintColor={colors.on_surface_variant} />
         <Text style={formStyles.secondaryButtonText}>Edit Event</Text>
       </Pressable>

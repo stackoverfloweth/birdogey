@@ -1,4 +1,4 @@
-import { Event, EventPlayerRequest, EventRequest, EventSchema, UserSeason } from '@birdogey/shared'
+import { Event, EventPlayerRequest, EventRequest, EventSchema, pluralize, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
 import { Alert, FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
@@ -95,10 +95,22 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
       return
     }
 
-    onCompleteEvent?.({
-      ...event,
-      players: eventPlayers,
-    })
+    const ctpWinners = event.ctpUserIds.map((userId) => playersMap.get(userId))
+    const ctpMessage = ctpWinners.length > 0 ? `CTP ${pluralize(ctpWinners.length, 'winner')} ${ctpWinners.map((winner) => winner?.name).join(', ')}` : 'No CTP winners'
+    const aceWinners = event.aceUserIds.map((userId) => playersMap.get(userId))
+    const aceMessage = aceWinners.length > 0 ? `ACE ${pluralize(aceWinners.length, 'winner')} ${aceWinners.map((winner) => winner?.name).join(', ')}` : 'No ACE winners'
+
+    Alert.alert('Did you set CTP and ACE?', `${ctpMessage}\n${aceMessage}`, [
+      {
+        text: 'Yes, complete event',
+        style: 'default',
+        onPress: () => onCompleteEvent?.({
+          ...event,
+          players: eventPlayers,
+        }),
+      },
+      { text: 'No, go back', style: 'cancel' },
+    ])
   };
 
   function setDoneAddingPlayers(): void {

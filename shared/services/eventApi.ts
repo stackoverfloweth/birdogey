@@ -30,6 +30,9 @@ export function createEventApi(client: HttpClient) {
     complete(id: string, request: Partial<EventRequest>): Promise<string> {
       return client.put<string>(`/events/${id}/complete`, request)
     },
+    uncomplete(id: string): Promise<string> {
+      return client.put<string>(`/events/${id}/uncomplete`)
+    },
     remove(id: string): Promise<string> {
       return client.delete<string>(`/events/${id}`)
     },
