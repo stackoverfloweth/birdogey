@@ -1,13 +1,5 @@
-import { read, utils } from 'xlsx'
-import type { EventPlayerRequest, UserRequest, UserSeason } from '@birdogey/shared'
+import { EventPlayerRequest, UserRequest, UserSeason, udisc } from '@birdogey/shared'
 import { MaybeRefOrGetter, reactive, toValue } from 'vue'
-
-type UDiscRow = {
-  name: string | null,
-  username: string | null,
-  pdga_number: string | number | null,
-  event_relative_score: number,
-}
 
 export type UDiscMissingMetadata = Map<string, Partial<UserRequest>>
 
@@ -36,14 +28,14 @@ export function useUDiscImport(players: MaybeRefOrGetter<UserSeason[]>, eventPla
   async function parseFile(file: File): Promise<void> {
     const playersValue = toValue(players)
     const eventPlayersValue = toValue(eventPlayers)
-    const rows = await parseUDiscFile(file)
+    const rows = await udisc.parseFile(file)
     const matchedUserIds = new Set<string>()
 
     for (const row of rows) {
-      const rowPdgaNumber = toPdgaString(row.pdga_number)
+      const rowPdgaNumber = udisc.toPdgaString(row.pdga_number)
       const trimmedUsername = row.username?.trim()
       const rowUsername = trimmedUsername !== '' ? trimmedUsername : undefined
-      const rowNameNormalized = normalizeName(row.name ?? '')
+      const rowNameNormalized = udisc.normalizeName(row.name ?? '')
 
       let matched: UserSeason | undefined
 
@@ -56,7 +48,7 @@ export function useUDiscImport(players: MaybeRefOrGetter<UserSeason[]>, eventPla
       }
 
       if (!matched && rowNameNormalized) {
-        matched = playersValue.find((player) => normalizeName(player.name) === rowNameNormalized)
+        matched = playersValue.find((player) => udisc.normalizeName(player.name) === rowNameNormalized)
       }
 
       if (!matched) {
@@ -102,46 +94,4 @@ export function useUDiscImport(players: MaybeRefOrGetter<UserSeason[]>, eventPla
   }
 
   return { scores, notInBirdogey, unmatchedInEvent, missingMetadata, parseFile, reset }
-}
-
-function normalizeName(name: string): string {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, ' ')
-}
-
-function toPdgaString(value: string | number | null | undefined): string | undefined {
-  if (value === null || value === undefined || value === 0) {
-    return undefined
-  }
-  const str = String(value).trim()
-  return str !== '' ? str : undefined
-}
-
-function parseUDiscFile(file: File): Promise<UDiscRow[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-
-    reader.onload = (event) => {
-      try {
-        const data = event.target?.result
-        const workbook = read(data, { type: 'array' })
-
-        if (!workbook.SheetNames.includes('Event results')) {
-          reject(new Error('Sheet "Event results" not found in the uploaded file'))
-          return
-        }
-
-        const sheet = workbook.Sheets['Event results']
-        const rows = utils.sheet_to_json<UDiscRow>(sheet, { defval: null })
-        resolve(rows)
-      } catch (err) {
-        reject(err instanceof Error ? err : new Error(String(err)))
-      }
-    }
-
-    reader.onerror = () => reject(new Error(reader.error?.message ?? 'File read failed'))
-    reader.readAsArrayBuffer(file)
-  })
 }

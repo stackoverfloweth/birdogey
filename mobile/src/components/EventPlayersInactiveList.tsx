@@ -94,12 +94,8 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
 
   return (
     <View style={styles.container}>
-      <Pressable style={[formStyles.secondaryButton, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={onUncompleteEvent}>
-        <SymbolView name="lock.open.fill" size={30} tintColor={colors.on_surface_variant} />
-        <Text style={formStyles.secondaryButtonText}>Edit Event</Text>
-      </Pressable>
-
       <FlatList
+        style={styles.flatList}
         data={playersInEvent}
         contentContainerStyle={styles.list}
         ListHeaderComponent={renderHeader()}
@@ -116,6 +112,11 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
         refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
         viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
       />
+
+      <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]} onPress={onUncompleteEvent}>
+        <SymbolView name="lock.open.fill" size={30} tintColor={colors.surface_container_lowest} />
+        <Text style={formStyles.buttonText}>Edit Event</Text>
+      </Pressable>
     </View>
   )
 }
@@ -123,7 +124,11 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 8,
+    gap: 16,
+    paddingVertical: 16,
+  },
+  flatList: {
+    flex: 1,
   },
   header: {
     gap: 8,

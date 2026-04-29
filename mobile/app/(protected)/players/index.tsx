@@ -22,12 +22,8 @@ export default function Players(): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      <Pressable style={formStyles.button} onPress={() => router.push('players/create')}>
-        <SymbolView name="plus" size={24} tintColor="#fff" weight="bold" />
-        <Text style={formStyles.buttonText}>Add Player</Text>
-      </Pressable>
-
       <FlatList
+        style={styles.flatList}
         data={players}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
@@ -38,15 +34,24 @@ export default function Players(): React.ReactNode {
         viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
         refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => void refetch()} />}
       />
+
+      <Pressable style={formStyles.button} onPress={() => router.push('players/create')}>
+        <SymbolView name="plus" size={24} tintColor="#fff" weight="bold" />
+        <Text style={formStyles.buttonText}>Add Player</Text>
+      </Pressable>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'column',
     gap: 16,
     padding: 16,
+  },
+  flatList: {
+    flex: 1,
   },
   list: {
     gap: 16,
