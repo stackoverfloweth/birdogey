@@ -1,4 +1,4 @@
-import { Event, EventPlayerRequest, EventRequest, UserSeason } from '@birdogey/shared'
+import { Event, EventPlayerRequest, EventRequest, EventSchema, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
 import { FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
@@ -15,6 +15,7 @@ import { cardStyles } from '@/theme/card'
 import { Score } from '@/components/Score'
 import { ScoreModal } from '@/components/ScoreModal'
 import { PlayersModal } from '@/components/PlayersModal'
+import { EventFormModal } from '@/components/EventFormModal'
 
 type EventPlayersActiveListProps = {
   event: Event,
@@ -30,6 +31,7 @@ export type PlayerInEvent = EventPlayerRequest & UserSeason
 export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, onEventChanged, isRefreshing, onRefresh }: EventPlayersActiveListProps): React.ReactNode {
   const [playerSearch, setPlayerSearch] = useState('')
   const [playerSearchModalVisible, setPlayerSearchModalVisible] = useState(false)
+  const [eventModalVisible, setEventModalVisible] = useState(false)
   const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
 
   const api = useApiClient()
@@ -115,11 +117,22 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     handlePlayerChanged({ ...player, inForAce })
   }
 
+  function handleEventModalSave(event: EventSchema): void {
+    onEventChanged?.({
+      ...event,
+      players: eventPlayers,
+    })
+    setEventModalVisible(false)
+  }
+
   function renderHeader(): React.ReactElement {
     return (
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-around', gap: 12 }}>
-          <Pressable style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}>
+          <Pressable
+            style={[formStyles.button, { flex: 1, paddingVertical: 12 }]}
+            onPress={() => setEventModalVisible(true)}
+          >
             {/* edit event */}
             <SymbolView name="gearshape.fill" size={30} tintColor={colors.surface_container_lowest} />
           </Pressable>
@@ -267,6 +280,14 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         onDismiss={setDoneAddingPlayers}
         style={{ top }}
         keyExtractor={(item) => item.id}
+      />
+
+      <EventFormModal
+        event={event}
+        visible={eventModalVisible}
+        onDismiss={() => setEventModalVisible(false)}
+        onSubmit={handleEventModalSave}
+        style={{ top }}
       />
     </View>
   )

@@ -93,9 +93,9 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
 
   return (
     <View style={styles.container}>
-      <Pressable style={[formStyles.button, { paddingHorizontal: 12, paddingVertical: 12 }]}>
-        <SymbolView name="lock.open.fill" size={38} tintColor={colors.surface_container_lowest} />
-        <Text style={formStyles.buttonText}>Edit Event</Text>
+      <Pressable style={[formStyles.secondaryButton, { paddingHorizontal: 12, paddingVertical: 12 }]}>
+        <SymbolView name="lock.open.fill" size={30} tintColor={colors.on_surface_variant} />
+        <Text style={formStyles.secondaryButtonText}>Edit Event</Text>
       </Pressable>
 
       <FlatList

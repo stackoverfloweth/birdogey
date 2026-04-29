@@ -8,9 +8,9 @@ export function mapEventPlayer(source: EventPlayerJson): EventPlayer {
     userId: source.userId,
     inForCtp: source.inForCtp,
     inForAce: source.inForAce,
-    score: source.score,
+    score: source.score ?? undefined,
     incomingTagId: source.incomingTagId,
-    outgoingTagId: source.outgoingTagId,
+    outgoingTagId: source.outgoingTagId ?? undefined,
   }
 }
 
@@ -21,7 +21,7 @@ export function mapEvent(source: EventJson): Event {
     created: new Date(source.created),
     completed: source.completed ? new Date(source.completed) : undefined,
     name: source.name,
-    notes: source.notes,
+    notes: source.notes ?? undefined,
     players: source.players.map(mapEventPlayer),
     ctpStartingBalance: source.ctpStartingBalance,
     aceStartingBalance: source.aceStartingBalance,
@@ -29,7 +29,7 @@ export function mapEvent(source: EventJson): Event {
     acePerPlayer: source.acePerPlayer,
     ctpUserIds: source.ctpUserIds,
     aceUserIds: source.aceUserIds,
-    ctpHole: source.ctpHole,
+    ctpHole: source.ctpHole ?? undefined,
   }
 }
 

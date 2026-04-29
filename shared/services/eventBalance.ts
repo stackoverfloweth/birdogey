@@ -1,17 +1,6 @@
-type Event = {
-  ctpPerPlayer?: number,
-  acePerPlayer?: number,
-  ctpStartingBalance?: number,
-  aceStartingBalance?: number,
-  ctpUserIds?: string[],
-  aceUserIds?: string[],
-  players: {
-    inForCtp?: boolean,
-    inForAce?: boolean,
-  }[],
-}
+import { EventSchemaInput } from '../schemas/eventSchema'
 
-export function calculateEventCtpPotIfNoWinners(event: Event): number {
+export function calculateEventCtpPotIfNoWinners(event: EventSchemaInput): number {
   const someoneWonCtp = !!event.ctpUserIds?.length
   if (someoneWonCtp) {
     return 0
@@ -20,8 +9,10 @@ export function calculateEventCtpPotIfNoWinners(event: Event): number {
   return calculateEventCtpPot(event)
 }
 
-export function calculateEventCtpPot(event: Event): number {
-  return event.players.reduce((sum, { inForCtp }) => {
+export function calculateEventCtpPot(event: EventSchemaInput): number {
+  const players = event.players ?? []
+
+  return players.reduce((sum, { inForCtp }) => {
     if (!inForCtp) {
       return sum
     }
@@ -30,7 +21,7 @@ export function calculateEventCtpPot(event: Event): number {
   }, event.ctpStartingBalance ?? 0)
 }
 
-export function calculateEventAcePotIfNoWinners(event: Event): number {
+export function calculateEventAcePotIfNoWinners(event: EventSchemaInput): number {
   const someoneWonAce = !!event.aceUserIds?.length
   if (someoneWonAce) {
     return 0
@@ -39,8 +30,10 @@ export function calculateEventAcePotIfNoWinners(event: Event): number {
   return calculateEventAcePot(event)
 }
 
-export function calculateEventAcePot(event: Event): number {
-  return event.players.reduce((sum, { inForAce }) => {
+export function calculateEventAcePot(event: EventSchemaInput): number {
+  const players = event.players ?? []
+
+  return players.reduce((sum, { inForAce }) => {
     if (!inForAce) {
       return sum
     }

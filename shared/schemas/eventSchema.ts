@@ -1,14 +1,16 @@
 import { z } from 'zod'
-import { optionalNumber, requiredNumber } from './helpers'
+
+const dollarsToCents = z.number().optional()
+  .transform((value) => (value == null ? undefined : Math.round(value * 100)))
 
 export const eventPlayerSchema = z.object({
   userId: z.string()
     .nonempty({ message: 'User is required' }),
   inForCtp: z.boolean().optional(),
   inForAce: z.boolean().optional(),
-  score: optionalNumber,
-  incomingTagId: requiredNumber('Incoming tag is required'),
-  outgoingTagId: optionalNumber,
+  score: z.number().optional(),
+  incomingTagId: z.number({ message: 'Incoming tag is required' }),
+  outgoingTagId: z.number().optional(),
 })
 
 export type EventPlayerSchemaInput = z.input<typeof eventPlayerSchema>
@@ -20,13 +22,13 @@ export const eventSchema = z.object({
   notes: z.string().optional(),
   completed: z.date().optional(),
   players: z.array(eventPlayerSchema).optional(),
-  ctpStartingBalance: optionalNumber,
-  aceStartingBalance: optionalNumber,
-  ctpPerPlayer: optionalNumber,
-  acePerPlayer: optionalNumber,
+  ctpStartingBalance: dollarsToCents,
+  aceStartingBalance: dollarsToCents,
+  ctpPerPlayer: dollarsToCents,
+  acePerPlayer: dollarsToCents,
   ctpUserIds: z.array(z.string()).optional(),
   aceUserIds: z.array(z.string()).optional(),
-  ctpHole: optionalNumber,
+  ctpHole: z.number().optional(),
 })
 
 export type EventSchemaInput = z.input<typeof eventSchema>

@@ -7,6 +7,7 @@ let db: Db | null = null
 
 export async function connectDb(): Promise<void> {
   client = new MongoClient(env().mongodbUrl, {
+    ignoreUndefined: true,
     serverApi: {
       version: ServerApiVersion.v1,
       strict: true,

@@ -3,44 +3,24 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { View, Text, Pressable } from 'react-native'
 import { TextInput } from '@/components/TextInput'
+import { NumericInput } from '@/components/NumericInput'
 import { SymbolView } from 'expo-symbols'
-import { format } from 'date-fns'
-import { useMemo } from 'react'
-import { router } from 'expo-router'
-import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners, Event, eventSchema, EventSchema, EventSchemaInput } from '@birdogey/shared'
+import { eventSchema, EventSchema, EventSchemaInput } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
 
 export type EventFormProps = {
-  lastEvent: Event | undefined,
+  submitText?: string,
+  submitIcon?: React.ReactNode,
+  initialValues: EventSchemaInput | undefined,
   onSubmit: (data: EventSchema) => void,
+  onCancel?: () => void,
 }
 
-export function EventForm({ lastEvent, onSubmit }: EventFormProps): React.ReactNode {
-  const today = format(new Date(), 'MMMM do')
-
-  const previousEventBalance = useMemo(() => {
-    return {
-      ctpPerPlayer: lastEvent?.ctpPerPlayer ? lastEvent.ctpPerPlayer / 100 : undefined,
-      acePerPlayer: lastEvent?.acePerPlayer ? lastEvent.acePerPlayer / 100 : undefined,
-      ctpStartingBalance: lastEvent ? calculateEventCtpPotIfNoWinners(lastEvent) / 100 : undefined,
-      aceStartingBalance: lastEvent ? calculateEventAcePotIfNoWinners(lastEvent) / 100 : undefined,
-      ctpHole: lastEvent?.ctpHole,
-    }
-  }, [lastEvent])
-
+export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onCancel }: EventFormProps): React.ReactNode {
   const { control, handleSubmit, formState: { errors, isLoading, isSubmitted } } = useForm<EventSchemaInput, any, EventSchema>({
     resolver: zodResolver(eventSchema),
-    defaultValues: {
-      name: today,
-      ctpStartingBalance: previousEventBalance.ctpStartingBalance?.toString(),
-      aceStartingBalance: previousEventBalance.aceStartingBalance?.toString(),
-      ctpPerPlayer: previousEventBalance.ctpPerPlayer?.toString(),
-      acePerPlayer: previousEventBalance.acePerPlayer?.toString(),
-      ctpHole: previousEventBalance.ctpHole?.toString(),
-    },
+    defaultValues: initialValues,
   })
-
-  console.log({ errors })
 
   return (
     <>
@@ -85,7 +65,7 @@ export function EventForm({ lastEvent, onSubmit }: EventFormProps): React.ReactN
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <NumericInput
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
@@ -104,7 +84,7 @@ export function EventForm({ lastEvent, onSubmit }: EventFormProps): React.ReactN
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <NumericInput
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
@@ -123,7 +103,7 @@ export function EventForm({ lastEvent, onSubmit }: EventFormProps): React.ReactN
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <NumericInput
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
@@ -141,7 +121,7 @@ export function EventForm({ lastEvent, onSubmit }: EventFormProps): React.ReactN
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <NumericInput
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
@@ -160,7 +140,7 @@ export function EventForm({ lastEvent, onSubmit }: EventFormProps): React.ReactN
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <NumericInput
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
@@ -179,16 +159,18 @@ export function EventForm({ lastEvent, onSubmit }: EventFormProps): React.ReactN
         style={formStyles.button}
         onPress={() => void handleSubmit(onSubmit)()}
       >
-        <Text style={formStyles.buttonText}>Create Event</Text>
-        <SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />
+        <Text style={formStyles.buttonText}>{submitText}</Text>
+        {submitIcon}
       </Pressable>
 
-      <Pressable
-        style={formStyles.secondaryButton}
-        onPress={() => router.back()}
-      >
-        <Text style={formStyles.secondaryButtonText}>Cancel</Text>
-      </Pressable>
+      {onCancel && (
+        <Pressable
+          style={formStyles.secondaryButton}
+          onPress={onCancel}
+        >
+          <Text style={formStyles.secondaryButtonText}>Cancel</Text>
+        </Pressable>
+      )}
     </>
   )
 }

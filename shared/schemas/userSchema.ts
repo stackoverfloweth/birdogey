@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { optionalNumber } from './helpers'
 
 export const userSchema = z.object({
   name: z.string()
@@ -8,7 +7,7 @@ export const userSchema = z.object({
   pdgaNumber: z.string().optional(),
   imageUrl: z.string().optional(),
   seasonId: z.string().optional(),
-  tagId: optionalNumber,
+  tagId: z.number().optional(),
   entryPaid: z.boolean().optional(),
 })
 
