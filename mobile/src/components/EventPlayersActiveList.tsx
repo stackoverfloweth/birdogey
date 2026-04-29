@@ -96,7 +96,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 
   function handlePlayerAdd(player: UserSeason): void {
     onPlayersChanged?.([...eventPlayers, { userId: player.id, incomingTagId: player.tagId }])
-    setPlayerSearch('')
   }
 
   function handlePlayerRemove(userId: string): void {
@@ -148,7 +147,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           </Pressable>
         </View>
 
-        <View style={[cardStyles.card, { gap: 24 }]}>
+        <Pressable style={[cardStyles.card, { gap: 24 }]} onPress={() => setPlayerSearchModalVisible(true)}>
           <View>
             <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
             <Text style={[cardStyles.cardPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
@@ -166,7 +165,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           <View style={{ position: 'absolute', right: 16, top: 16 }}>
             <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
           </View>
-        </View>
+        </Pressable>
 
         <PotBalances event={event} eventPlayers={playersInEvent} onChange={onEventChanged} />
       </View>
@@ -231,19 +230,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 
   return (
     <View style={styles.container}>
-      <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
-        <Pressable style={{ marginRight: -18, width: '100%' }} onPress={() => setPlayerSearchModalVisible(true)}>
-          <View pointerEvents="none">
-            <TextInput
-              style={[formStyles.input, { flexGrow: 1 }]}
-              placeholder="Add players"
-              editable={false}
-              icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
-            />
-          </View>
-        </Pressable>
-      </View>
-
       <FlatList
         data={playersInEvent}
         contentContainerStyle={styles.list}

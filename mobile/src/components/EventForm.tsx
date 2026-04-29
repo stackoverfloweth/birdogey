@@ -1,6 +1,6 @@
 import { formStyles } from '@/theme/forms'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FormState, useForm } from 'react-hook-form'
 import { View, Text, Pressable } from 'react-native'
 import { TextInput } from '@/components/TextInput'
 import { NumericInput } from '@/components/NumericInput'
@@ -12,15 +12,33 @@ export type EventFormProps = {
   submitText?: string,
   submitIcon?: React.ReactNode,
   initialValues: EventSchemaInput | undefined,
+  renderActions?: (formState: FormState<EventSchemaInput>, handleSubmit: () => Promise<void>) => React.ReactNode,
   onSubmit: (data: EventSchema) => void,
   onCancel?: () => void,
 }
 
-export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onCancel }: EventFormProps): React.ReactNode {
-  const { control, handleSubmit, formState: { errors, isLoading, isSubmitted } } = useForm<EventSchemaInput, any, EventSchema>({
+export function EventForm({ submitText, submitIcon, initialValues, renderActions, onSubmit, onCancel }: EventFormProps): React.ReactNode {
+  const { control, handleSubmit, formState } = useForm<EventSchemaInput, any, EventSchema>({
     resolver: zodResolver(eventSchema),
     defaultValues: initialValues,
   })
+
+  function actions(): React.ReactNode {
+    if (renderActions) {
+      return renderActions(formState, () => handleSubmit(onSubmit)())
+    }
+
+    return (
+      <Pressable
+        disabled={formState.isLoading}
+        style={formStyles.button}
+        onPress={() => void handleSubmit(onSubmit)()}
+      >
+        <Text style={formStyles.buttonText}>{submitText}</Text>
+        {submitIcon}
+      </Pressable>
+    )
+  }
 
   return (
     <>
@@ -38,7 +56,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
           )}
           name="name"
         />
-        {isSubmitted && errors.name && <Text style={formStyles.errorText}>{errors.name.message}</Text>}
+        {formState.errors.name && <Text style={formStyles.errorText}>{formState.errors.name.message}</Text>}
       </View>
 
       <View style={formStyles.formGroup}>
@@ -57,7 +75,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
           )}
           name="notes"
         />
-        {isSubmitted && errors.notes && <Text style={formStyles.errorText}>{errors.notes.message}</Text>}
+        {formState.errors.notes && <Text style={formStyles.errorText}>{formState.errors.notes.message}</Text>}
       </View>
 
       <View style={formStyles.formGroup}>
@@ -76,7 +94,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
           )}
           name="ctpPerPlayer"
         />
-        {isSubmitted && errors.ctpPerPlayer && <Text style={formStyles.errorText}>{errors.ctpPerPlayer.message}</Text>}
+        {formState.errors.ctpPerPlayer && <Text style={formStyles.errorText}>{formState.errors.ctpPerPlayer.message}</Text>}
       </View>
 
       <View style={formStyles.formGroup}>
@@ -95,7 +113,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
           )}
           name="ctpStartingBalance"
         />
-        {isSubmitted && errors.ctpStartingBalance && <Text style={formStyles.errorText}>{errors.ctpStartingBalance.message}</Text>}
+        {formState.errors.ctpStartingBalance && <Text style={formStyles.errorText}>{formState.errors.ctpStartingBalance.message}</Text>}
       </View>
 
       <View style={formStyles.formGroup}>
@@ -113,7 +131,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
           )}
           name="ctpHole"
         />
-        {isSubmitted && errors.ctpHole && <Text style={formStyles.errorText}>{errors.ctpHole.message}</Text>}
+        {formState.errors.ctpHole && <Text style={formStyles.errorText}>{formState.errors.ctpHole.message}</Text>}
       </View>
 
       <View style={formStyles.formGroup}>
@@ -132,7 +150,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
           )}
           name="acePerPlayer"
         />
-        {isSubmitted && errors.acePerPlayer && <Text style={formStyles.errorText}>{errors.acePerPlayer.message}</Text>}
+        {formState.errors.acePerPlayer && <Text style={formStyles.errorText}>{formState.errors.acePerPlayer.message}</Text>}
       </View>
 
       <View style={formStyles.formGroup}>
@@ -151,17 +169,10 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
           )}
           name="aceStartingBalance"
         />
-        {isSubmitted && errors.aceStartingBalance && <Text style={formStyles.errorText}>{errors.aceStartingBalance.message}</Text>}
+        {formState.errors.aceStartingBalance && <Text style={formStyles.errorText}>{formState.errors.aceStartingBalance.message}</Text>}
       </View>
 
-      <Pressable
-        disabled={isLoading}
-        style={formStyles.button}
-        onPress={() => void handleSubmit(onSubmit)()}
-      >
-        <Text style={formStyles.buttonText}>{submitText}</Text>
-        {submitIcon}
-      </Pressable>
+      {actions()}
 
       {onCancel && (
         <Pressable
