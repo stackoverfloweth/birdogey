@@ -88,31 +88,38 @@ export default function Login(): React.ReactNode {
 
           <View style={formStyles.form}>
             {phoneNumber === null && (
-              <LoginPhoneStep onSuccess={(data) => void handleCodeSent(data)} />
+              <>
+                <LoginPhoneStep onSuccess={(data) => void handleCodeSent(data)} />
+                {showBiometrics && (
+                  <>
+                    <View style={styles.divider}>
+                      <View style={styles.dividerLine} />
+                      <Text style={styles.biometricsTitle}>Or</Text>
+                      <View style={styles.dividerLine} />
+                    </View>
+                    {isFaceIdAvailable && (
+                      <Pressable style={formStyles.secondaryButton} onPress={() => void handleBiometricsLogin()}>
+                        <SymbolView name="faceid" size={24} tintColor={colors.primary} />
+                        <Text style={formStyles.secondaryButtonText}>Sign in with Face ID</Text>
+                      </Pressable>
+                    )}
+                    {isTouchIDAvailable && (
+                      <Pressable style={formStyles.secondaryButton} onPress={() => void handleBiometricsLogin()}>
+                        <SymbolView name="touchid" size={24} tintColor={colors.primary} />
+                        <Text style={formStyles.secondaryButtonText}>Sign in with Touch ID</Text>
+                      </Pressable>
+                    )}
+                  </>
+                )}
+              </>
             )}
             {phoneNumber !== null && (
-              <LoginCodeStep onSuccess={(code) => void handleCodeVerified(code)} />
-            )}
-
-            {showBiometrics && (
               <>
-                <View style={styles.divider}>
-                  <View style={styles.dividerLine} />
-                  <Text style={styles.biometricsTitle}>Or</Text>
-                  <View style={styles.dividerLine} />
-                </View>
-                {isFaceIdAvailable && (
-                  <Pressable style={formStyles.secondaryButton} onPress={() => void handleBiometricsLogin()}>
-                    <SymbolView name="faceid" size={24} tintColor={colors.primary} />
-                    <Text style={formStyles.secondaryButtonText}>Sign in with Face ID</Text>
-                  </Pressable>
-                )}
-                {isTouchIDAvailable && (
-                  <Pressable style={formStyles.secondaryButton} onPress={() => void handleBiometricsLogin()}>
-                    <SymbolView name="touchid" size={24} tintColor={colors.primary} />
-                    <Text style={formStyles.secondaryButtonText}>Sign in with Touch ID</Text>
-                  </Pressable>
-                )}
+                <LoginCodeStep onSuccess={(code) => void handleCodeVerified(code)} />
+                <Pressable style={formStyles.secondaryButton} onPress={() => setPhoneNumber(null)}>
+                  <SymbolView name="arrow.left" size={20} tintColor={colors.on_surface_variant} />
+                  <Text style={formStyles.secondaryButtonText}>Use a different number</Text>
+                </Pressable>
               </>
             )}
           </View>
