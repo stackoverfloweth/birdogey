@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { SymbolView } from 'expo-symbols'
 import { formStyles } from '@/theme/forms'
 import { StyleSheet, View, Text, FlatList, Pressable, RefreshControl, ViewToken } from 'react-native'
-import { router } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { useCallback, useState } from 'react'
 
 export default function Players(): React.ReactNode {
@@ -27,7 +27,9 @@ export default function Players(): React.ReactNode {
         data={players}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <PlayerListItem player={item} visible={visibleIds.has(item.id)} />
+          <Link href={`/players/${item.id}`}>
+            <PlayerListItem player={item} visible={visibleIds.has(item.id)} />
+          </Link>
         )}
         keyExtractor={(item) => item.id}
         onViewableItemsChanged={onViewableItemsChanged}
@@ -54,6 +56,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    gap: 16,
+    gap: 12,
   },
 })

@@ -141,7 +141,7 @@ users.post('/', authMiddleware, async (context) => {
     userId: result.insertedId,
     seasonId,
     tagId,
-    entryPaid: body.entryPaid ?? false,
+    entryPaid: body.entryPaid ?? true,
   })
 
   return context.json(result.insertedId, 201)
