@@ -17,6 +17,7 @@ import { ScoreModal } from '@/components/ScoreModal'
 import { PlayersModal } from '@/components/PlayersModal'
 import { EventFormModal } from '@/components/EventFormModal'
 import { ScoreImportModal } from '@/components/ScoreImportModal'
+import { EventPlayerModal } from '@/components/EventPlayerModal'
 
 type EventPlayersActiveListProps = {
   event: Event,
@@ -35,6 +36,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   const [playerSearchModalVisible, setPlayerSearchModalVisible] = useState(false)
   const [eventModalVisible, setEventModalVisible] = useState(false)
   const [scoreImportModalVisible, setScoreImportModalVisible] = useState(false)
+  const [editModalPlayer, setEditModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
   const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
 
   const api = useApiClient()
@@ -280,6 +282,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
               visible={visibleIds.has(item.id)}
               right={renderRightState(item)}
               subTitle={renderSubTitle(item)}
+              onPress={() => setEditModalPlayer(item)}
             />
           </ReanimatedSwipeable>
         )}
@@ -289,11 +292,21 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
       />
 
+      <Text>{editModalPlayer?.name}</Text>
+
       {scoreModalPlayer && (
         <ScoreModal
           player={scoreModalPlayer}
           onDismiss={() => setScoreModalPlayer(undefined)}
           onChange={handlePlayerChanged}
+        />
+      )}
+
+      {editModalPlayer && (
+        <EventPlayerModal
+          player={editModalPlayer}
+          onSubmit={handlePlayerChanged}
+          onDismiss={() => setEditModalPlayer(undefined)}
         />
       )}
 

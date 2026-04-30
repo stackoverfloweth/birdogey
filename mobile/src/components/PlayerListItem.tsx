@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View, Pressable } from 'react-native'
 import type { User } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
 import { UserImage } from './UserImage'
@@ -10,9 +10,10 @@ type PlayerListItemProps = {
   visible?: boolean,
   right?: React.ReactNode,
   subTitle?: React.ReactNode,
+  onPress?: () => void,
 }
 
-export function PlayerListItem({ player: playerOrPlayerId, visible = true, right, subTitle }: PlayerListItemProps): React.ReactNode {
+export function PlayerListItem({ player: playerOrPlayerId, visible = true, right, subTitle, onPress }: PlayerListItemProps): React.ReactNode {
   const api = useApiClient()
   const { data: player } = useQuery({
     queryKey: ['players', playerOrPlayerId],
@@ -26,7 +27,7 @@ export function PlayerListItem({ player: playerOrPlayerId, visible = true, right
   })
 
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.primary}>
         <UserImage imageUrl={visible ? player?.imageUrl : undefined} width={40} height={40} />
         <View style={{ gap: 2 }}>
@@ -35,7 +36,7 @@ export function PlayerListItem({ player: playerOrPlayerId, visible = true, right
         </View>
       </View>
       {right}
-    </View>
+    </Pressable>
   )
 }
 

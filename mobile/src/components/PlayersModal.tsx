@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, FlatList, FlatListProps, ListRenderItemInfo } from 'react-native'
 import { User } from '@birdogey/shared'
 import { modalsStyles } from '@/theme/modals'
-import { PlayerListItem } from './PlayerListItem'
+import { PlayerListItem } from '@/components/PlayerListItem'
 
 type PlayersModalProps<T extends User> = Omit<FlatListProps<T>, 'data' | 'renderItem'> & {
   players: T[],
