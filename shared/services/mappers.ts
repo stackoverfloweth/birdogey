@@ -44,7 +44,6 @@ export function mapUser(source: UserJson): User {
     isAuthorized: false,
     isReadonly: false,
     seasons: [],
-    deletedAt: source.deletedAt ? new Date(source.deletedAt) : undefined,
   }
 }
 

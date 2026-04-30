@@ -81,6 +81,7 @@ users.get('/season/:seasonId', authMiddleware, async (context) => {
       { $match: { seasonId: new ObjectId(seasonId) } },
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
+      { $match: { 'user.deletedAt': { $exists: false } } },
       {
         $project: {
           _id: { $toString: '$user._id' },
@@ -88,7 +89,6 @@ users.get('/season/:seasonId', authMiddleware, async (context) => {
           udiscId: '$user.udiscId',
           pdgaNumber: '$user.pdgaNumber',
           imageUrl: '$user.imageUrl',
-          deletedAt: '$user.deletedAt',
           seasonId: { $toString: '$seasonId' },
           tagId: 1,
           entryPaid: 1,

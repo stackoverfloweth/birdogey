@@ -17,7 +17,7 @@
   const router = useRouter()
 
   const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
-  const players = computed(() => playerSubscription.response?.filter((player) => !player.deletedAt) ?? [])
+  const players = computed(() => playerSubscription.response ?? [])
 
   const crumbs = computed<Crumb[]>(() => [{ text: 'Players' }])
 

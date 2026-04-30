@@ -28,7 +28,6 @@
 
   const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
-  const activePlayers = computed(() => players.value.filter((player) => !player.deletedAt))
 
   const notes = ref(props.event.notes)
   const ctpUserIds = ref(props.event.ctpUserIds)
@@ -334,13 +333,13 @@
     </p-list-item>
 
     <template v-if="showingPlayersModal">
-      <EventPlayersModal v-model:is-open="showingPlayersModal" v-model="eventPlayers" :players="activePlayers" />
+      <EventPlayersModal v-model:is-open="showingPlayersModal" v-model="eventPlayers" :players="players" />
     </template>
 
     <template v-if="showingUDiscModal">
       <UDiscImportModal
         v-model:is-open="showingUDiscModal"
-        :players="activePlayers"
+        :players="players"
         :event-players="eventPlayers"
         @import="applyScores"
       />

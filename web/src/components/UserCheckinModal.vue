@@ -29,7 +29,7 @@
 
   const api = useApi()
   const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
-  const players = computed(() => playerSubscription.response?.filter((player) => !player.deletedAt) ?? [])
+  const players = computed(() => playerSubscription.response ?? [])
   const playersOptions = computed(() => players.value.map<SelectOption>((player) => ({
     label: player.name,
     value: player.id,
