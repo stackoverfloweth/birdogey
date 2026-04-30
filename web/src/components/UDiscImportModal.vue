@@ -45,7 +45,8 @@
     processing.value = true
 
     try {
-      await parseFile(file)
+      const data = await file.arrayBuffer()
+      await parseFile(data)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to parse file'
       showToast(message, 'error')

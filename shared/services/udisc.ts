@@ -8,7 +8,7 @@ export type UseUDiscImport = {
   notInBirdogey: { name: string, username: string }[],
   unmatchedInEvent: { userId: string, userName: string }[],
   missingMetadata: UDiscMissingMetadata,
-  parseFile: (file: File) => Promise<void>,
+  parseFile: (data: ArrayBuffer) => Promise<void>,
   reset: () => void,
 }
 
@@ -34,31 +34,15 @@ function toPdgaString(value: string | number | null | undefined): string | undef
   return str !== '' ? str : undefined
 }
 
-function parseFile(file: File): Promise<UDiscRow[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
+function parseFile(data: ArrayBuffer): UDiscRow[] {
+  const workbook = read(data, { type: 'array' })
 
-    reader.onload = (event) => {
-      try {
-        const data = event.target?.result
-        const workbook = read(data, { type: 'array' })
+  if (!workbook.SheetNames.includes('Event results')) {
+    throw new Error('Sheet "Event results" not found in the uploaded file')
+  }
 
-        if (!workbook.SheetNames.includes('Event results')) {
-          reject(new Error('Sheet "Event results" not found in the uploaded file'))
-          return
-        }
-
-        const sheet = workbook.Sheets['Event results']
-        const rows = utils.sheet_to_json<UDiscRow>(sheet, { defval: null })
-        resolve(rows)
-      } catch (err) {
-        reject(err instanceof Error ? err : new Error(String(err)))
-      }
-    }
-
-    reader.onerror = () => reject(new Error(reader.error?.message ?? 'File read failed'))
-    reader.readAsArrayBuffer(file)
-  })
+  const sheet = workbook.Sheets['Event results']
+  return utils.sheet_to_json<UDiscRow>(sheet, { defval: null })
 }
 
 export const udisc = {

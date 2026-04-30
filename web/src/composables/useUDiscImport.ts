@@ -14,10 +14,10 @@ export function useUDiscImport(players: MaybeRefOrGetter<UserSeason[]>, eventPla
     missingMetadata.clear()
   }
 
-  async function parseFile(file: File): Promise<void> {
+  async function parseFile(data: ArrayBuffer): Promise<void> {
     const playersValue = toValue(players)
     const eventPlayersValue = toValue(eventPlayers)
-    const rows = await udisc.parseFile(file)
+    const rows = udisc.parseFile(data)
     const matchedUserIds = new Set<string>()
 
     for (const row of rows) {

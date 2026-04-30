@@ -307,23 +307,27 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         keyExtractor={(item) => item.id}
       />
 
-      <EventFormModal
-        event={event}
-        visible={eventModalVisible}
-        onDismiss={() => setEventModalVisible(false)}
-        onSubmit={handleEventModalSave}
-        style={{ top }}
-      />
+      {eventModalVisible && (
+        <EventFormModal
+          event={event}
+          visible={eventModalVisible}
+          onDismiss={() => setEventModalVisible(false)}
+          onSubmit={handleEventModalSave}
+          style={{ top }}
+        />
+      )}
 
-      <ScoreImportModal
-        seasonId={event.seasonId}
-        players={playersInEvent}
-        eventPlayers={eventPlayers}
-        visible={scoreImportModalVisible}
-        onSubmit={(scores) => void applyScores(scores)}
-        onDismiss={() => setScoreImportModalVisible(false)}
-        style={{ top }}
-      />
+      {scoreImportModalVisible && (
+        <ScoreImportModal
+          seasonId={event.seasonId}
+          players={playersInEvent}
+          eventPlayers={eventPlayers}
+          visible={scoreImportModalVisible}
+          onSubmit={(scores) => void applyScores(scores)}
+          onDismiss={() => setScoreImportModalVisible(false)}
+          style={{ top }}
+        />
+      )}
     </View>
   )
 }
