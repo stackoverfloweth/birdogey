@@ -81,3 +81,12 @@ export type ImageKitAuthJson = {
   expire: number,
   signature: string,
 }
+
+export type NoteJson = {
+  _id: string,
+  userId: string,
+  authorId: string,
+  content: string,
+  createdAt: string,
+  updatedAt: string,
+}
