@@ -6,17 +6,13 @@ import { NoteRequest } from '../models/api/index.js'
 
 export function createNoteApi(client: HttpClient) {
   return {
-    listForUser(userId: string): Promise<Note[]> {
-      return client.get<NoteJson[]>(`/notes/user/${userId}`).then((data) => data.map(mapNote))
+    getForUser(userId: string): Promise<Note | null> {
+      return client.get<NoteJson | null>(`/notes/user/${userId}`).then((data) => {
+        return data ? mapNote(data) : null
+      })
     },
-    create(userId: string, request: NoteRequest): Promise<string> {
-      return client.post<string>(`/notes/user/${userId}`, request)
-    },
-    update(id: string, request: NoteRequest): Promise<string> {
-      return client.put<string>(`/notes/${id}`, request)
-    },
-    remove(id: string): Promise<string> {
-      return client.delete<string>(`/notes/${id}`)
+    upsertForUser(userId: string, request: NoteRequest): Promise<string> {
+      return client.put<string>(`/notes/user/${userId}`, request)
     },
   }
 }

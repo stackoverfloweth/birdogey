@@ -22,18 +22,15 @@ notes.get('/user/:userId', authMiddleware, async (context) => {
   const db = getDb()
   const collection = db.collection<NoteResponse>('notes')
 
-  const result = await collection
-    .find({
-      userId: new ObjectId(userId),
-      authorId: new ObjectId(token._id.toString()),
-    })
-    .sort({ createdAt: -1 })
-    .toArray()
+  const note = await collection.findOne({
+    userId: new ObjectId(userId),
+    authorId: new ObjectId(token._id.toString()),
+  })
 
-  return context.json(result)
+  return context.json(note)
 })
 
-notes.post('/user/:userId', authMiddleware, async (context) => {
+notes.put('/user/:userId', authMiddleware, async (context) => {
   const token = getJwtPayload(context)
   checkAdmin(token)
 
@@ -52,69 +49,17 @@ notes.post('/user/:userId', authMiddleware, async (context) => {
   const collection = db.collection<NoteResponse>('notes')
   const now = new Date()
 
-  const result = await collection.insertOne({
-    _id: new ObjectId(),
-    userId: new ObjectId(userId),
-    authorId: new ObjectId(token._id.toString()),
-    content: body.content,
-    createdAt: now,
-    updatedAt: now,
-  })
-
-  return context.json(result.insertedId, 201)
-})
-
-notes.put('/:id', authMiddleware, async (context) => {
-  const token = getJwtPayload(context)
-  checkAdmin(token)
-
-  const id = context.req.param('id')
-  const body = await context.req.json()
-
-  if (!isValidRequest<NoteRequest>(body, [['content', 'string']])) {
-    throw new HttpError(400, 'Invalid request')
-  }
-
-  const db = getDb()
-  const collection = db.collection<NoteResponse>('notes')
-
-  const result = await collection.updateOne(
+  await collection.updateOne(
     {
-      _id: new ObjectId(id),
+      userId: new ObjectId(userId),
       authorId: new ObjectId(token._id.toString()),
     },
     {
-      $set: {
-        content: body.content,
-        updatedAt: new Date(),
-      },
+      $set: { content: body.content, updatedAt: now },
+      $setOnInsert: { _id: new ObjectId(), createdAt: now },
     },
+    { upsert: true },
   )
-
-  if (result.matchedCount === 0) {
-    throw new HttpError(404, 'Note not found')
-  }
-
-  return context.json(null, 202)
-})
-
-notes.delete('/:id', authMiddleware, async (context) => {
-  const token = getJwtPayload(context)
-  checkAdmin(token)
-
-  const id = context.req.param('id')
-
-  const db = getDb()
-  const collection = db.collection<NoteResponse>('notes')
-
-  const result = await collection.deleteOne({
-    _id: new ObjectId(id),
-    authorId: new ObjectId(token._id.toString()),
-  })
-
-  if (result.deletedCount === 0) {
-    throw new HttpError(404, 'Note not found')
-  }
 
   return context.json(null, 202)
 })
