@@ -104,7 +104,7 @@ export function PotBalances({ event, eventPlayers, onChange }: PotBalancesProps)
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 16 }}>
-      <Pressable style={[cardStyles.card, { backgroundColor: colors.primary }]} onPress={() => setModalVisible('aceUserIds')}>
+      <Pressable style={[cardStyles.card, { flex: 1, backgroundColor: colors.primary }]} onPress={() => setModalVisible('aceUserIds')}>
         <Text style={cardStyles.cardSecondaryText}>Ace Pot</Text>
         <Text style={cardStyles.cardPrimaryText}>{penniesToUSD(aceInPennies)}</Text>
         {aceWinnerUserIds.length > 0 && (
@@ -120,7 +120,7 @@ export function PotBalances({ event, eventPlayers, onChange }: PotBalancesProps)
         )}
       </Pressable>
 
-      <Pressable style={[cardStyles.card, { backgroundColor: colors.primary }]} onPress={() => setModalVisible('ctpUserIds')}>
+      <Pressable style={[cardStyles.card, { flex: 1, backgroundColor: colors.primary }]} onPress={() => setModalVisible('ctpUserIds')}>
         <Text style={cardStyles.cardSecondaryText}>CTP Pool</Text>
         <Text style={cardStyles.cardPrimaryText}>{penniesToUSD(ctpInPennies)}</Text>
         {ctpWinnerUserIds.length > 0 && (

@@ -6,7 +6,6 @@ export const cardStyles = StyleSheet.create({
     position: 'relative',
     columnGap: 16,
     alignItems: 'stretch',
-    flex: 1,
     borderRadius: 42,
     padding: 24,
     backgroundColor: colors.surface,
