@@ -5,10 +5,13 @@ import { SymbolView } from 'expo-symbols'
 import { formStyles } from '@/theme/forms'
 import { StyleSheet, View, Text, FlatList, Pressable, RefreshControl, ViewToken } from 'react-native'
 import { Link, router } from 'expo-router'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { colors } from '@/theme/colors'
+import { TextInput } from '@/components/TextInput'
 
 export default function Players(): React.ReactNode {
   const api = useApiClient()
+  const [playerSearch, setPlayerSearch] = useState('')
 
   const { data: players = [], refetch, isFetching } = useQuery({
     queryKey: ['players'],
@@ -20,11 +23,25 @@ export default function Players(): React.ReactNode {
     setVisibleIds(new Set(viewableItems.map((item) => item.item.id)))
   }, [])
 
+  const filteredPlayers = useMemo(() => {
+    return players.filter((player) => player.name.toLowerCase().includes(playerSearch.toLowerCase()))
+  }, [players, playerSearch])
+
   return (
     <View style={styles.container}>
+      <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
+        <TextInput
+          style={[formStyles.input, { flexGrow: 1 }]}
+          placeholder="Search players"
+          value={playerSearch}
+          onChangeText={setPlayerSearch}
+          icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
+        />
+      </View>
+
       <FlatList
         style={styles.flatList}
-        data={players}
+        data={filteredPlayers}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Link href={`/players/${item.id}`}>
