@@ -152,7 +152,7 @@ async function fetchUser(match: Record<string, unknown>): Promise<UserAuthRespon
   const db = getDb()
   const collection = db.collection<UserResponse>('users')
   const users = await collection.aggregate<UserAuthResponse>([
-    { $match: match },
+    { $match: { ...match, deletedAt: { $exists: false } } },
     {
       $lookup: {
         from: 'userSeasons',

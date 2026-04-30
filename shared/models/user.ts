@@ -13,4 +13,5 @@ export type User = {
   isAuthorized: boolean,
   isReadonly: boolean,
   seasons: Season[],
+  deletedAt?: Date,
 }
