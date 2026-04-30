@@ -102,15 +102,15 @@ export default function Login(): React.ReactNode {
                   <View style={styles.dividerLine} />
                 </View>
                 {isFaceIdAvailable && (
-                  <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
+                  <Pressable style={formStyles.secondaryButton} onPress={() => void handleBiometricsLogin()}>
                     <SymbolView name="faceid" size={24} tintColor={colors.primary} />
-                    <Text style={styles.faceIdText}>Sign in with Face ID</Text>
+                    <Text style={formStyles.secondaryButtonText}>Sign in with Face ID</Text>
                   </Pressable>
                 )}
                 {isTouchIDAvailable && (
-                  <Pressable style={styles.faceIdButton} onPress={() => void handleBiometricsLogin()}>
+                  <Pressable style={formStyles.secondaryButton} onPress={() => void handleBiometricsLogin()}>
                     <SymbolView name="touchid" size={24} tintColor={colors.primary} />
-                    <Text style={styles.faceIdText}>Sign in with Touch ID</Text>
+                    <Text style={formStyles.secondaryButtonText}>Sign in with Touch ID</Text>
                   </Pressable>
                 )}
               </>
@@ -205,21 +205,6 @@ const styles = StyleSheet.create({
     color: colors.on_surface_variant,
     textTransform: 'uppercase',
     letterSpacing: 1.5,
-  },
-  faceIdButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: colors.surface_container_lowest,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 9999,
-  },
-  faceIdText: {
-    color: colors.primary,
-    fontWeight: 'bold',
-    fontSize: 18,
   },
   modalContent: {
     height: 160,

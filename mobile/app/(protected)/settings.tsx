@@ -19,7 +19,11 @@ export default function Settings(): React.ReactNode {
   return (
     <SafeAreaView style={styles.container}>
       <ProfileForm />
-      <Pressable style={formStyles.secondaryButton} onPress={handleLogout}>
+
+      <Pressable
+        style={[formStyles.secondaryButton, { backgroundColor: colors.surface_container_lowest }]}
+        onPress={handleLogout}
+      >
         <Text style={formStyles.secondaryButtonText}>Logout</Text>
         <SymbolView name="escape" size={20} tintColor={colors.on_surface_variant} weight="bold" />
       </Pressable>
@@ -30,7 +34,6 @@ export default function Settings(): React.ReactNode {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 18,
   },
 })

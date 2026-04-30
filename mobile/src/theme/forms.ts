@@ -41,7 +41,7 @@ export const formStyles = StyleSheet.create({
     fontSize: 18,
   },
   secondaryButton: {
-    backgroundColor: colors.surface_container_lowest,
+    backgroundColor: colors.surface_container_low,
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderRadius: 9999,
