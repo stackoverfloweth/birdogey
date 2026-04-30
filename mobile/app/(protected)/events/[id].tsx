@@ -7,12 +7,12 @@ import { colors } from '@/theme/colors'
 import { EventPlayerRequest, EventRequest, isActiveEvent } from '@birdogey/shared'
 import { EventPlayersActiveList } from '@/components/EventPlayersActiveList'
 import { EventPlayersInactiveList } from '@/components/EventPlayersInactiveList'
+import { queryClient } from '@/services/queryClient'
 
 export default function EventView(): React.ReactNode {
   const { id } = useLocalSearchParams<{ id: string }>()
 
   const api = useApiClient()
-  const queryClient = useQueryClient()
   const { data: event, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ['events', id],
     queryFn: () => api.event.getById(id),
@@ -47,10 +47,17 @@ export default function EventView(): React.ReactNode {
     },
   })
 
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
-      {isLoading && <ActivityIndicator size="large" color={colors.primary} />}
-      {!isLoading && !!event && !isActiveEvent(event) && (
+      {!!event && !isActiveEvent(event) && (
         <EventPlayersInactiveList
           event={event}
           eventPlayers={eventPlayers}
@@ -59,7 +66,7 @@ export default function EventView(): React.ReactNode {
           onUncompleteEvent={uncompleteEvent}
         />
       )}
-      {!isLoading && !!event && isActiveEvent(event) && (
+      {!!event && isActiveEvent(event) && (
         <EventPlayersActiveList
           event={event}
           eventPlayers={eventPlayers}

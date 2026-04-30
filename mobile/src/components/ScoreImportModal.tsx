@@ -76,6 +76,14 @@ export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, playe
     resetImport()
   }
 
+  if (processing) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onDismiss}>
       <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
@@ -86,8 +94,6 @@ export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, playe
             <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />
           </Pressable>
         </View>
-
-        {processing && <ActivityIndicator size="large" color={colors.primary} />}
 
         {selectedAsset === undefined && (
           <>

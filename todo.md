@@ -2,7 +2,7 @@
 
 ## Soon
 
-[] import from udisc
+[x] import from udisc
 [] build player form
 [] use player form in "my profile" form on settings
 [] use player form in player list
