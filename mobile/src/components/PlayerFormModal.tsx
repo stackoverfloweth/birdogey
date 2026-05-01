@@ -1,55 +1,29 @@
 import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, ScrollView, Alert, Text } from 'react-native'
 import { modalsStyles } from '@/theme/modals'
-import { EventForm } from '@/components/EventForm'
-import { Event, EventSchema, EventSchemaInput, toEventSchemaInput } from '@birdogey/shared'
+import { PlayerForm } from '@/components/PlayerForm'
+import { User, UserSchema, UserSchemaInput } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { useMemo } from 'react'
+import { formStyles } from '@/theme/forms'
 import { colors } from '@/theme/colors'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useMutation } from '@tanstack/react-query'
 import { router } from 'expo-router'
 import { queryClient } from '@/services/queryClient'
 
-type EventFormModalProps = {
-  event: Event,
+type PlayerFormModalProps = {
+  player: User,
   visible?: boolean,
   onDismiss?: () => void,
-  onSubmit?: (event: EventSchema) => void,
+  onSubmit?: (user: UserSchema) => void,
   style?: StyleProp<ViewStyle>,
 }
 
-export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: EventFormModalProps): React.ReactNode {
-  const apiClient = useApiClient()
-
-  const initialValues = useMemo<EventSchemaInput | undefined>(() => {
-    return toEventSchemaInput(event)
-  }, [event])
-
-  const { mutate: removeEvent } = useMutation({
-    mutationFn: () => apiClient.event.remove(event.id),
-    onSuccess: () => {
-      onDismiss?.()
-      router.replace('/events')
-      queryClient.invalidateQueries({ queryKey: ['events'] })
-    },
-  })
-
-  function handleDelete(): void {
-    Alert.alert(
-      'Are you sure?',
-      'This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete Event',
-          style: 'destructive',
-          onPress: () => {
-            removeEvent()
-          },
-        },
-      ],
-    )
-  }
+export function PlayerFormModal({ player, visible, onDismiss, onSubmit, style }: PlayerFormModalProps): React.ReactNode {
+  const initialValues = useMemo<UserSchemaInput | undefined>(() => {
+    // return toUserSchemaInput(user)
+    return undefined
+  }, [player])
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={() => {}}>
@@ -57,13 +31,12 @@ export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: E
 
       <View style={[modalsStyles.content, style]}>
         <ScrollView contentContainerStyle={styles.modalContent}>
-          <EventForm
+          <PlayerForm
             submitText="Save"
             submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
             initialValues={initialValues}
             onSubmit={(data) => onSubmit?.(data)}
             onCancel={onDismiss}
-            onDelete={handleDelete}
           />
         </ScrollView>
       </View>

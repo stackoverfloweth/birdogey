@@ -31,7 +31,7 @@ export function EventPlayerModal({ player, onSubmit = () => {}, onDismiss = () =
       <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
 
       <View style={[modalsStyles.content, styles.modalContent, style]}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={styles.modalHeader}>
           <View>
             <Text style={styles.modalTitle}>{player.name}</Text>
             <Pressable
@@ -60,8 +60,14 @@ export function EventPlayerModal({ player, onSubmit = () => {}, onDismiss = () =
 
 const styles = StyleSheet.create({
   modalContent: {
-    padding: 24,
+    paddingVertical: 24,
     gap: 16,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
   },
   modalTitle: {
     fontSize: 18,
