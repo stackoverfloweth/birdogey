@@ -1,10 +1,11 @@
 import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, ScrollView } from 'react-native'
-import { modalsStyles } from '@/theme/modals'
+import { modalStyles } from '@/theme/modals'
 import { PlayerForm } from '@/components/PlayerForm'
 import { User, UserSchema, UserSchemaInput } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { useMemo } from 'react'
 import { colors } from '@/theme/colors'
+import { formStyles } from '@/theme/forms'
 
 type PlayerFormModalProps = {
   player: User,
@@ -26,9 +27,15 @@ export function PlayerFormModal({ player, visible, onDismiss, onSubmit, style }:
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={() => {}}>
-      <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
+      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
 
-      <View style={[modalsStyles.content, style]}>
+      <View style={[modalStyles.content, style]}>
+        <View style={modalStyles.header}>
+          <Pressable style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]} onPress={onDismiss}>
+            <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />
+          </Pressable>
+        </View>
+
         <ScrollView contentContainerStyle={styles.modalContent}>
           <PlayerForm
             submitText="Save"
@@ -45,7 +52,7 @@ export function PlayerFormModal({ player, visible, onDismiss, onSubmit, style }:
 
 const styles = StyleSheet.create({
   modalContent: {
-    paddingVertical: 24,
+    paddingBottom: 24,
     gap: 78,
     position: 'relative',
   },

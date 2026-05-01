@@ -1,4 +1,4 @@
-import { modalsStyles } from '@/theme/modals'
+import { modalStyles } from '@/theme/modals'
 import { Pressable, StyleSheet, Modal, View } from 'react-native'
 import { Score } from '@/components/Score'
 import { colors } from '@/theme/colors'
@@ -55,9 +55,9 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
   }
   return (
     <Modal animationType="slide" transparent={true} visible={!!player} onRequestClose={onDismiss}>
-      <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
+      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
 
-      <View style={[modalsStyles.content, styles.modalContent]}>
+      <View style={[modalStyles.content, styles.modalContent]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <UserImage imageUrl={player.imageUrl} width={40} height={40} />
           {renderSubTitle()}

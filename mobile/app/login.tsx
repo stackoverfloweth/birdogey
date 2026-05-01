@@ -7,7 +7,7 @@ import splashImage from '../../assets/splash.png'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
-import { modalsStyles } from '@/theme/modals'
+import { modalStyles } from '@/theme/modals'
 import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { authenticateWithBiometrics, setBiometricsEnabled } from '@/services/biometrics'
@@ -127,23 +127,23 @@ export default function Login(): React.ReactNode {
       </TouchableWithoutFeedback>
 
       <Modal animationType="slide" transparent={true} visible={askEnableBiometrics}>
-        <View style={[styles.modalContent, modalsStyles.content]}>
-          <View style={[modalsStyles.header]}>
+        <View style={[styles.modalContent, modalStyles.content]}>
+          <View style={modalStyles.header}>
             {isFaceIdAvailable && (
               <>
                 <SymbolView name="faceid" size={28} tintColor={colors.on_surface} />
-                <Text style={modalsStyles.title}>Enable Face ID?</Text>
+                <Text style={modalStyles.title}>Enable Face ID?</Text>
               </>
             )}
             {isTouchIDAvailable && (
               <>
                 <SymbolView name="touchid" size={28} tintColor={colors.on_surface} />
-                <Text style={modalsStyles.title}>Enable Touch ID?</Text>
+                <Text style={modalStyles.title}>Enable Touch ID?</Text>
               </>
             )}
           </View>
 
-          <View style={modalsStyles.buttons}>
+          <View style={modalStyles.buttons}>
             <Pressable style={formStyles.button} onPress={() => void handleEnableBiometrics()}>
               <Text style={formStyles.buttonText}>Yes</Text>
             </Pressable>
@@ -214,7 +214,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
   },
   modalContent: {
-    height: 160,
     padding: 24,
   },
 })

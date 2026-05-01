@@ -3,7 +3,7 @@ import { colors } from './colors'
 
 export const formStyles = StyleSheet.create({
   form: {
-    padding: 24,
+    paddingHorizontal: 24,
     gap: 16,
   },
   formGroup: {

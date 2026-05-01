@@ -5,7 +5,6 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { formStyles } from '@/theme/forms'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { PotBalances } from '@/components/PotBalances'
 import { TextInput } from '@/components/TextInput'
 import { PlayerListItem } from '@/components/PlayerListItem'
@@ -40,7 +39,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
 
   const api = useApiClient()
-  const { top } = useSafeAreaInsets()
 
   const { data: players = [], isFetched } = useQuery({
     queryKey: ['players', event.seasonId],
@@ -262,8 +260,8 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
         />
 
-        <Pressable style={[formStyles.iconButton, { marginRight: -18, backgroundColor: colors.primary }]} onPress={setDoneAddingPlayers}>
-          <SymbolView name="checkmark" size={30} tintColor="#fff" weight="bold" />
+        <Pressable style={[formStyles.iconButton, { marginRight: -18, backgroundColor: colors.outline_variant }]} onPress={setDoneAddingPlayers}>
+          <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />
         </Pressable>
       </View>
     )
@@ -316,7 +314,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         beforeList={renderBeforeList}
         onSelect={handlePlayerAdd}
         onDismiss={setDoneAddingPlayers}
-        style={{ top }}
+        style={{ height: '93%' }}
         keyExtractor={(item) => item.id}
       />
 
@@ -326,7 +324,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           visible={eventModalVisible}
           onDismiss={() => setEventModalVisible(false)}
           onSubmit={handleEventModalSave}
-          style={{ top }}
+          style={{ height: '93%' }}
         />
       )}
 
@@ -338,7 +336,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           visible={scoreImportModalVisible}
           onSubmit={(scores) => void applyScores(scores)}
           onDismiss={() => setScoreImportModalVisible(false)}
-          style={{ top }}
+          style={{ height: '93%' }}
         />
       )}
     </View>

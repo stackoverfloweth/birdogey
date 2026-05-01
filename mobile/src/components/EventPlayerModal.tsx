@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, Text } from 'react-native'
-import { modalsStyles } from '@/theme/modals'
+import { modalStyles } from '@/theme/modals'
 import { EventPlayerForm } from '@/components/EventPlayerForm'
 import { PlayerInEvent } from '@/components/EventPlayersActiveList'
 import { EventPlayerSchemaInput } from '@birdogey/shared'
@@ -28,9 +28,9 @@ export function EventPlayerModal({ player, onSubmit = () => {}, onDismiss = () =
 
   return (
     <Modal animationType="slide" transparent={true} visible={!!player} onRequestClose={onDismiss}>
-      <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
+      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
 
-      <View style={[modalsStyles.content, styles.modalContent, style]}>
+      <View style={[modalStyles.content, styles.modalContent, style]}>
         <View style={styles.modalHeader}>
           <View>
             <Text style={styles.modalTitle}>{player.name}</Text>

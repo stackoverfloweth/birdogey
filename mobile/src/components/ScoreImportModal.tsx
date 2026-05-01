@@ -1,6 +1,6 @@
 import { ActivityIndicator, Alert, Modal, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import * as DocumentPicker from 'expo-document-picker'
-import { modalsStyles } from '@/theme/modals'
+import { modalStyles } from '@/theme/modals'
 import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
 import { SymbolView } from 'expo-symbols'
@@ -86,9 +86,9 @@ export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, playe
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onDismiss}>
-      <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
+      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
 
-      <View style={[modalsStyles.content, styles.modalContent, !!selectedAsset ? style : {}]}>
+      <View style={[modalStyles.content, styles.modalContent, !!selectedAsset ? style : {}]}>
         <View style={{ alignItems: 'flex-end' }}>
           <Pressable onPress={onDismiss} style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]}>
             <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />

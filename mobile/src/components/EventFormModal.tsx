@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, ScrollView, Alert, Text } from 'react-native'
-import { modalsStyles } from '@/theme/modals'
+import { modalStyles } from '@/theme/modals'
 import { EventForm } from '@/components/EventForm'
 import { Event, EventSchema, EventSchemaInput, toEventSchemaInput } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
@@ -9,6 +9,7 @@ import { useApiClient } from '@/contexts/ApiClientContext'
 import { useMutation } from '@tanstack/react-query'
 import { router } from 'expo-router'
 import { queryClient } from '@/services/queryClient'
+import { formStyles } from '@/theme/forms'
 
 type EventFormModalProps = {
   event: Event,
@@ -53,9 +54,15 @@ export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: E
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={() => {}}>
-      <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
+      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
 
-      <View style={[modalsStyles.content, style]}>
+      <View style={[modalStyles.content, style]}>
+        <View style={modalStyles.header}>
+          <Pressable style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]} onPress={onDismiss}>
+            <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />
+          </Pressable>
+        </View>
+
         <ScrollView contentContainerStyle={styles.modalContent}>
           <EventForm
             submitText="Save"
@@ -73,7 +80,6 @@ export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: E
 
 const styles = StyleSheet.create({
   modalContent: {
-    paddingVertical: 24,
     gap: 78,
     position: 'relative',
   },

@@ -74,6 +74,7 @@ export default function EventView(): React.ReactNode {
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'space-between',
-    padding: 0,
+    paddingHorizontal: 0,
+    gap: 16,
   },
 })

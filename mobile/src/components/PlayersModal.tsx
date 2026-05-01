@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, FlatList, FlatListProps, ListRenderItemInfo } from 'react-native'
 import { User } from '@birdogey/shared'
-import { modalsStyles } from '@/theme/modals'
+import { modalStyles } from '@/theme/modals'
 import { PlayerListItem } from '@/components/PlayerListItem'
 
 type PlayersModalProps<T extends User> = Omit<FlatListProps<T>, 'data' | 'renderItem'> & {
@@ -24,9 +24,9 @@ export function PlayersModal<T extends User>({ players, visible, beforeList, ren
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={() => {}}>
-      <Pressable style={modalsStyles.backdrop} onPress={onDismiss} />
+      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
 
-      <View style={[modalsStyles.content, styles.modalContent, style]}>
+      <View style={[modalStyles.content, styles.modalContent, style]}>
         {beforeList?.()}
 
         <FlatList

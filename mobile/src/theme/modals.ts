@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native'
 import { colors } from './colors'
 
-export const modalsStyles = StyleSheet.create({
+export const modalStyles = StyleSheet.create({
   backdrop: {
     flex: 1,
   },
@@ -21,10 +21,11 @@ export const modalsStyles = StyleSheet.create({
     elevation: 8,
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     gap: 12,
+    padding: 18,
   },
   title: {
     fontSize: 18,
