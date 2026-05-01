@@ -3,16 +3,20 @@
 ## Soon
 
 [x] import from udisc
-[] build player form
+[x] build player form
 [] use player form in "my profile" form on settings
-[] use player form in player list
-[] use player form in event players list
+[x] use player form in player list
+[x] build event player form
+[x] use event player form in event players list
 [] build out a home view
+[] add mechanism for users to join seasons (creates UserSeason record)
 
 ## Later
 
 [] add swipe actions to event list, "edit" and "delete"
 [] look into errors, on logout
+[] implement soft delete for players
+[] implement private notes
 
 ## Eventually
 
