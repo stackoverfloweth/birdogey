@@ -45,7 +45,9 @@ export default function PlayerView(): React.ReactNode {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: 0,
     margin: 16,
   },
 })

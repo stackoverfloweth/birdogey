@@ -8,7 +8,7 @@ export const cardStyles = StyleSheet.create({
     alignItems: 'stretch',
     borderRadius: 42,
     padding: 24,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surface_container_lowest,
   },
   cardPrimaryText: {
     fontSize: 26,

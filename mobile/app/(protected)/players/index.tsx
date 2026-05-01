@@ -44,9 +44,11 @@ export default function Players(): React.ReactNode {
         data={filteredPlayers}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <Link href={`/players/${item.id}`}>
-            <PlayerListItem player={item} visible={visibleIds.has(item.id)} />
-          </Link>
+          <PlayerListItem
+            player={item}
+            visible={visibleIds.has(item.id)}
+            onPress={() => router.push(`/players/${item.id}`)}
+          />
         )}
         keyExtractor={(item) => item.id}
         onViewableItemsChanged={onViewableItemsChanged}

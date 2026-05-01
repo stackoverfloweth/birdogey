@@ -5,12 +5,13 @@ import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners, Event
 import { formStyles } from '@/theme/forms'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { ScrollView } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { queryClient } from '@/services/queryClient'
 import { router } from 'expo-router'
 import { format } from 'date-fns'
 import { SymbolView } from 'expo-symbols'
 import { useSeason } from '@/hooks/useSeason'
+import { cardStyles } from '@/theme/card'
 
 export default function EventView(): React.ReactNode {
   const [seasonId, setSeasonId] = useState('')
@@ -52,8 +53,10 @@ export default function EventView(): React.ReactNode {
   }, [season, latestEvent, today])
 
   return (
-    <ScrollView contentContainerStyle={formStyles.form}>
-      <EventSeasonSelect value={seasonId} onChange={setSeasonId} />
+    <ScrollView style={{ margin: 16 }} contentContainerStyle={[cardStyles.card, styles.container]}>
+      <View style={formStyles.form}>
+        <EventSeasonSelect value={seasonId} onChange={setSeasonId} />
+      </View>
       {latestEvent && (
         <EventForm
           key={seasonId}
@@ -67,3 +70,10 @@ export default function EventView(): React.ReactNode {
     </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'space-between',
+    padding: 0,
+  },
+})

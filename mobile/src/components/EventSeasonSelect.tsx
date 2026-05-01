@@ -22,7 +22,9 @@ export function EventSeasonSelect({ value, onChange, ...props }: EventSeasonSele
       <Text style={formStyles.label}>Season</Text>
       <SelectInput
         {...props}
+        style={formStyles.input}
         options={seasonOptions}
+        focused={value === ''}
         onValueChange={(itemValue) => onChange(itemValue)}
         selectedValue={value}
       />
