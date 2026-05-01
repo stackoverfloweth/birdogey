@@ -4,7 +4,7 @@
 
 [x] import from udisc
 [x] build player form
-[] use player form in "my profile" form on settings
+[x] use player form in "my profile" form on settings
 [x] use player form in player list
 [x] build event player form
 [x] use event player form in event players list

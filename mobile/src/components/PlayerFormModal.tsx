@@ -1,15 +1,10 @@
-import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, ScrollView, Alert, Text } from 'react-native'
+import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, ScrollView } from 'react-native'
 import { modalsStyles } from '@/theme/modals'
 import { PlayerForm } from '@/components/PlayerForm'
 import { User, UserSchema, UserSchemaInput } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { useMemo } from 'react'
-import { formStyles } from '@/theme/forms'
 import { colors } from '@/theme/colors'
-import { useApiClient } from '@/contexts/ApiClientContext'
-import { useMutation } from '@tanstack/react-query'
-import { router } from 'expo-router'
-import { queryClient } from '@/services/queryClient'
 
 type PlayerFormModalProps = {
   player: User,
@@ -21,9 +16,13 @@ type PlayerFormModalProps = {
 
 export function PlayerFormModal({ player, visible, onDismiss, onSubmit, style }: PlayerFormModalProps): React.ReactNode {
   const initialValues = useMemo<UserSchemaInput | undefined>(() => {
-    // return toUserSchemaInput(user)
-    return undefined
+    return player
   }, [player])
+
+  function handleSubmit(data: UserSchema): void {
+    onSubmit?.(data)
+    onDismiss?.()
+  }
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={() => {}}>
@@ -35,7 +34,7 @@ export function PlayerFormModal({ player, visible, onDismiss, onSubmit, style }:
             submitText="Save"
             submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
             initialValues={initialValues}
-            onSubmit={(data) => onSubmit?.(data)}
+            onSubmit={handleSubmit}
             onCancel={onDismiss}
           />
         </ScrollView>

@@ -1,5 +1,6 @@
 import { PlayerFormModal } from '@/components/PlayerFormModal'
 import { useAuth } from '@/contexts/AuthContext'
+import { queryClient } from '@/services/queryClient'
 import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
 import { router } from 'expo-router'
@@ -7,13 +8,42 @@ import { SymbolView } from 'expo-symbols'
 import { useCallback, useState } from 'react'
 import { StyleSheet, Text, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { UserRequest } from '@birdogey/shared'
+import { useApiClient } from '@/contexts/ApiClientContext'
 
 export default function Settings(): React.ReactNode {
   const { logout } = useAuth()
 
   const [playerModalVisible, setPlayerModalVisible] = useState(false)
 
-  const player = useAuth().user
+  const userId = useAuth().user?.id
+  const api = useApiClient()
+
+  const { data: player } = useQuery({
+    queryKey: ['players', userId],
+    queryFn: () => {
+      if (!userId) {
+        return Promise.reject(new Error('User not found'))
+      }
+
+      return api.user.getById(userId)
+    },
+    enabled: !!userId,
+  })
+
+  const { mutate: updatePlayer } = useMutation({
+    mutationFn: (data: UserRequest) => {
+      if (!userId) {
+        return Promise.reject(new Error('Player not found'))
+      }
+
+      return api.user.update(userId, data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['players', userId] })
+    },
+  })
 
   const handleLogout = useCallback(() => {
     logout()
@@ -43,8 +73,7 @@ export default function Settings(): React.ReactNode {
           player={player}
           visible={playerModalVisible}
           onDismiss={() => setPlayerModalVisible(false)}
-          // onSubmit={handleEventModalSave}
-          // style={{ top }}
+          onSubmit={updatePlayer}
         />
       )}
     </SafeAreaView>
