@@ -23,7 +23,7 @@ export function EventPlayerModal({ player, onSubmit = () => {}, onDismiss = () =
 
   function handleEditLinkPress(): void {
     onDismiss()
-    router.push(`/players/${player.userId}`)
+    router.navigate(`/players/${player.userId}`)
   }
 
   return (
