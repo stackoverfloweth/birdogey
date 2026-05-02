@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { View, Text, Pressable, ActivityIndicator } from 'react-native'
 import { TextInput } from '@/components/TextInput'
+import { UserImageUpload } from '@/components/UserImageUpload'
 import { userSchema, UserSchema, UserSchemaInput } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
 
@@ -23,6 +24,14 @@ export function PlayerForm({ submitText, submitIcon, initialValues, isLoading, o
 
   return (
     <>
+      <Controller
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <UserImageUpload imageUrl={value} onImageUrlChange={onChange} />
+        )}
+        name="imageUrl"
+      />
+
       <View style={formStyles.formGroup}>
         <View style={formStyles.formGroup}>
           <Text style={formStyles.label}>Player Name</Text>
