@@ -32,6 +32,7 @@ users.get('/', authMiddleware, async (context) => {
       ...(seasonIds !== undefined ? [{ $match: { seasonId: { $in: seasonIds } } }] : []),
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
+      { $match: { 'user.deletedAt': { $exists: false } } },
       {
         $group: {
           _id: '$user._id',
@@ -67,6 +68,7 @@ users.get('/season/:seasonId', authMiddleware, async (context) => {
       { $match: { seasonId: new ObjectId(seasonId) } },
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
+      { $match: { 'user.deletedAt': { $exists: false } } },
       {
         $project: {
           _id: { $toString: '$user._id' },
@@ -172,9 +174,12 @@ users.delete('/:id', authMiddleware, async (context) => {
   const db = getDb()
   const collection = db.collection<UserResponse>('users')
 
-  const result = await collection.deleteOne({ _id: new ObjectId(id) })
+  const result = await collection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { deletedAt: new Date() } },
+  )
 
-  return context.json(null, result.deletedCount === 1 ? 202 : 400)
+  return context.json(null, result.matchedCount === 1 ? 202 : 400)
 })
 
 users.put('/:id/checkin', authMiddleware, async (context) => {
