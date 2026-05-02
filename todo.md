@@ -16,7 +16,7 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] build out a home view
 [x] use new events endpoint for next
 [x] add new events endpoint for last, update events/create.tsx
-[] active now
+[x] active now
 [] current tag(s)
 [] your winnings
 [] courses near you

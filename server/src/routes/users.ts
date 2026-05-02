@@ -49,7 +49,18 @@ users.get('/', authMiddleware, async (context) => {
   return context.json(result)
 })
 
-users.get('/season/:seasonId', authMiddleware, async (context) => {
+users.get('/seasons', authMiddleware, async (context) => {
+  const token = getJwtPayload(context)
+  const userId = ObjectId.createFromHexString(token._id.toString())
+  const db = getDb()
+  const collection = db.collection<UserSeasonResponse>('userSeasons')
+
+  const result = await collection.find({ userId }).toArray()
+
+  return context.json(result)
+})
+
+users.get('/seasons/:seasonId', authMiddleware, async (context) => {
   const seasonId = context.req.param('seasonId')
 
   const token = getJwtPayload(context)
@@ -109,16 +120,8 @@ users.post('/', authMiddleware, async (context) => {
     throw new HttpError(400, 'Invalid request')
   }
 
-  if (body.seasonId) {
-    checkSeasonAccess(body.seasonId, token)
-  }
-
   const db = getDb()
   const usersCollection = db.collection<UserResponse>('users')
-  const userSeasons = db.collection<UserSeasonResponse>('userSeasons')
-  const seasonId = new ObjectId(body.seasonId)
-
-  const tagId = body.tagId ?? await getNextAvailableTag(seasonId, userSeasons)
 
   const result = await usersCollection.insertOne({
     _id: new ObjectId(),
@@ -128,13 +131,20 @@ users.post('/', authMiddleware, async (context) => {
     imageUrl: body.imageUrl,
   })
 
-  await userSeasons.insertOne({
-    _id: new ObjectId(),
-    userId: result.insertedId,
-    seasonId,
-    tagId,
-    entryPaid: body.entryPaid ?? true,
-  })
+  if (body.seasonId) {
+    checkSeasonAccess(body.seasonId, token)
+    const userSeasons = db.collection<UserSeasonResponse>('userSeasons')
+    const seasonId = new ObjectId(body.seasonId)
+    const tagId = body.tagId ?? await getNextAvailableTag(seasonId, userSeasons)
+
+    await userSeasons.insertOne({
+      _id: new ObjectId(),
+      userId: result.insertedId,
+      seasonId,
+      tagId,
+      entryPaid: body.entryPaid ?? true,
+    })
+  }
 
   return context.json(result.insertedId, 201)
 })
@@ -145,17 +155,15 @@ users.put('/:id', authMiddleware, async (context) => {
   const { seasonId, tagId, entryPaid, ...$set } = body
   const token = getJwtPayload(context)
 
-  if (seasonId) {
-    checkSeasonAccess(seasonId, token)
-  }
-
   const db = getDb()
   const usersCollection = db.collection<UserResponse>('users')
-  const userSeasons = db.collection<UserSeasonResponse>('userSeasons')
 
   const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, { $set })
 
   if (seasonId && typeof seasonId === 'string') {
+    checkSeasonAccess(seasonId, token)
+    const userSeasons = db.collection<UserSeasonResponse>('userSeasons')
+
     const resolvedTagId = body.tagId ?? await getNextAvailableTag(seasonId, userSeasons)
 
     await userSeasons.updateOne(

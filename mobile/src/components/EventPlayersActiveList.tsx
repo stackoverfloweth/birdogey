@@ -42,7 +42,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 
   const { data: players = [], isFetched } = useQuery({
     queryKey: ['players', event.seasonId],
-    queryFn: () => api.user.getSeasonList(event.seasonId),
+    queryFn: () => api.user.getUsersInSeason(event.seasonId),
     enabled: !!event.seasonId,
   })
 

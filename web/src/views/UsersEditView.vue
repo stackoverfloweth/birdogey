@@ -16,7 +16,7 @@
   const router = useRouter()
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
-  const playerSubscription = useSubscription(api.users.getSeasonList, [seasonId])
+  const playerSubscription = useSubscription(api.users.getUsersInSeason, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const user = computed(() => players.value.find(({ id }) => id === userId.value))
   const userName = computed(() => user.value?.name ?? '...')

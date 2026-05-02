@@ -14,8 +14,11 @@ export function createUserApi(client: HttpClient) {
       const params = seasonIds?.length ? { seasonIds: seasonIds.join(',') } : undefined
       return client.get<UserJson[]>('/users', params).then((data) => data.map(mapUser))
     },
-    getSeasonList(seasonId: string): Promise<UserSeason[]> {
-      return client.get<UserSeasonJson[]>(`/users/season/${seasonId}`).then((data) => data.map(mapUserSeason))
+    getSeasonsForUser(): Promise<UserSeason[]> {
+      return client.get<UserSeasonJson[]>('/users/seasons').then((data) => data.map(mapUserSeason))
+    },
+    getUsersInSeason(seasonId: string): Promise<UserSeason[]> {
+      return client.get<UserSeasonJson[]>(`/users/seasons/${seasonId}`).then((data) => data.map(mapUserSeason))
     },
     create(request: UserRequest): Promise<string> {
       return client.post<string>('/users', request)
