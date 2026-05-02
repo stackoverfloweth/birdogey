@@ -1,5 +1,7 @@
 # Todo
 
+please add an endpoint to server/src/routes/events.ts that will return the nearest `Event` that the user is a part of based on `start` date
+
 ## Soon
 
 [x] import from udisc
@@ -8,12 +10,22 @@
 [x] use player form in player list
 [x] build event player form
 [x] use event player form in event players list
-[] player image upload
-[] build out a home view
+[x] player image upload
+[] player image upload should offer photos, not just files
+
+[x] build out a home view
+[x] use new events endpoint for next
+[x] add new events endpoint for last, update events/create.tsx
+[] active now
+[] current tag(s)
+[] your winnings
+[] courses near you
+
 [] add mechanism for users to join seasons (creates UserSeason record)
 
 ## Later
 
+[] media for splash screen, app icon, etc
 [] add swipe actions to event list, "edit" and "delete"
 [] look into errors, on logout
 [] implement soft delete for players

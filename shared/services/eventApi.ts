@@ -20,6 +20,14 @@ export function createEventApi(client: HttpClient) {
     getById(id: string): Promise<Event> {
       return client.get<EventJson>(`/events/${id}`).then(mapEvent)
     },
+    getNext(seasonIds?: string[]): Promise<Event | null> {
+      const params = seasonIds?.length ? { seasonIds: seasonIds.join(',') } : undefined
+      return client.get<EventJson>('/events/next', params).then(mapEvent)
+    },
+    getLast(seasonIds?: string[]): Promise<Event | null> {
+      const params = seasonIds?.length ? { seasonIds: seasonIds.join(',') } : undefined
+      return client.get<EventJson>('/events/last', params).then(mapEvent)
+    },
     getList,
     create(request: EventRequest): Promise<string> {
       return client.post<string>('/events', request)

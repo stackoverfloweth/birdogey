@@ -1,8 +1,8 @@
-import { Hono } from 'hono'
+import { Context, Hono } from 'hono'
 import { BulkWriteResult, Db, ObjectId } from 'mongodb'
 import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, UserSeasonResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
-import { HttpError } from '../types.js'
+import { HttpError, JwtPayload } from '../types.js'
 import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
 import { checkSeasonAccess } from '../utilities/seasonAccess.js'
 import { isValidRequest } from '../utilities/requestValidation.js'
@@ -11,26 +11,23 @@ const events = new Hono()
 
 events.use(authMiddleware)
 
-events.get('/', async (context) => {
-  const token = getJwtPayload(context)
-  const db = getDb()
-  const eventsCollection = db.collection<EventResponse>('events')
+async function getAllUserSeasonIds(userId: ObjectId, db: Db): Promise<ObjectId[]> {
   const userSeasonsCollection = db.collection<UserSeasonResponse>('userSeasons')
 
-  async function getAllUserSeasonIds(): Promise<ObjectId[]> {
-    const userId = ObjectId.createFromHexString(token._id.toString())
+  const distinctSeasonIds = await userSeasonsCollection
+    .aggregate<{ _id: ObjectId }>([
+      { $match: { userId } },
+      { $group: { _id: '$seasonId' } },
+    ])
+    .toArray()
 
-    const distinctSeasonIds = await userSeasonsCollection
-      .aggregate<{ _id: ObjectId }>([
-        { $match: { userId } },
-        { $group: { _id: '$seasonId' } },
-      ])
-      .toArray()
+  return distinctSeasonIds.map(({ _id }) => _id)
+}
 
-    return distinctSeasonIds.map(({ _id }) => _id)
-  }
+async function getSeasonIdsFromQueryOrAllUserSeasonIds(context: Context, token: JwtPayload, db: Db): Promise<ObjectId[]> {
+  const userId = ObjectId.createFromHexString(token._id.toString())
 
-  const seasonIds = context.req.query('seasonIds')?.split(',')
+  return context.req.query('seasonIds')?.split(',')
     .filter((season) => {
       if (!season) {
         return false
@@ -40,12 +37,53 @@ events.get('/', async (context) => {
 
       return true
     })
-    .map((season) => new ObjectId(season)) ?? await getAllUserSeasonIds()
+    .map((season) => new ObjectId(season)) ?? await getAllUserSeasonIds(userId, db)
+}
+
+events.get('/', async (context) => {
+  const token = getJwtPayload(context)
+  const db = getDb()
+  const eventsCollection = db.collection<EventResponse>('events')
+  const seasonIds = await getSeasonIdsFromQueryOrAllUserSeasonIds(context, token, db)
 
   const result = await eventsCollection.find({
     seasonId: { $in: seasonIds },
   })
     .sort({ created: -1 })
+    .toArray()
+
+  return context.json(result)
+})
+
+events.get('/next', async (context) => {
+  const token = getJwtPayload(context)
+  const db = getDb()
+  const eventsCollection = db.collection<EventResponse>('events')
+  const seasonIds = await getSeasonIdsFromQueryOrAllUserSeasonIds(context, token, db)
+
+  const [result] = await eventsCollection.find({
+    seasonId: { $in: seasonIds },
+    created: { $lte: new Date() },
+  })
+    .sort({ created: 1 })
+    .limit(1)
+    .toArray()
+
+  return context.json(result)
+})
+
+events.get('/last', async (context) => {
+  const token = getJwtPayload(context)
+  const db = getDb()
+  const eventsCollection = db.collection<EventResponse>('events')
+  const seasonIds = await getSeasonIdsFromQueryOrAllUserSeasonIds(context, token, db)
+
+  const [result] = await eventsCollection.find({
+    seasonId: { $in: seasonIds },
+    completed: { $exists: true },
+  })
+    .sort({ completed: -1 })
+    .limit(1)
     .toArray()
 
   return context.json(result)

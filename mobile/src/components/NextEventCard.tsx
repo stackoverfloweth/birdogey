@@ -19,8 +19,12 @@ export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
 
   return (
     <View style={[cardStyles.card, styles.container]}>
-      <View style={badgeStyles.badge}>
-        <Text style={badgeStyles.badgeText}>Next Event</Text>
+      <View style={styles.backgroundImage}>
+        <SymbolView name="calendar" size={120} tintColor="#fff" />
+      </View>
+
+      <View style={[badgeStyles.badge, { backgroundColor: colors.secondary }]}>
+        <Text style={badgeStyles.badgeText}>Upcoming</Text>
       </View>
 
       <View>
@@ -49,6 +53,14 @@ const styles = StyleSheet.create({
     borderRadius: 42,
     gap: 16,
     alignItems: 'flex-start',
+    position: 'relative',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    opacity: 0.1,
+    borderRadius: 42,
   },
   headerText: {
     fontSize: 42,

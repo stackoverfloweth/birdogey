@@ -34,7 +34,7 @@ export function UserImageUpload({ imageUrl, onImageUrlChange, disabled }: UserIm
     const [asset] = result.assets
 
     if (asset.size !== undefined && asset.size > MAX_FILE_SIZE) {
-      Alert.alert('Image must be smaller than 5MB')
+      Alert.alert(`Image must be smaller than ${MAX_FILE_SIZE / 1024 / 1024}MB`)
       return
     }
 

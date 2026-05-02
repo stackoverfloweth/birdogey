@@ -8,16 +8,17 @@ export const formStyles = StyleSheet.create({
   },
   formGroup: {
     gap: 8,
-    paddingHorizontal: 18,
+  },
+  actions: {
+    gap: 8,
+    marginTop: 24,
   },
   label: {
     fontSize: 14,
     fontWeight: '500',
     textTransform: 'uppercase',
     color: colors.on_surface_variant,
-  },
-  input: {
-    marginHorizontal: -18,
+    marginLeft: 18,
   },
   errorText: {
     color: colors.error,

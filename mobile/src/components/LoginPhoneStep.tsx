@@ -27,7 +27,6 @@ export function LoginPhoneStep({ onSuccess }: { onSuccess: (phoneNumber: string)
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
-              style={formStyles.input}
               placeholder="(555) 555-5555"
               keyboardType="numeric"
               maxLength={10}

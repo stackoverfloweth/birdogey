@@ -27,7 +27,6 @@ export function LoginCodeStep({ onSuccess }: { onSuccess: (code: string) => void
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
-              style={formStyles.input}
               placeholder="XXXXXX"
               keyboardType="numeric"
               icon={<SymbolView name="number" size={20} tintColor={colors.primary} />}

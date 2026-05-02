@@ -253,7 +253,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     return (
       <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
         <TextInput
-          style={[formStyles.input, { flexGrow: 1 }]}
+          style={{ flexGrow: 1 }}
           placeholder="Add players"
           value={playerSearch}
           onChangeText={setPlayerSearch}

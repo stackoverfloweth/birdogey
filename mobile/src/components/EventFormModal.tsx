@@ -80,7 +80,6 @@ export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: E
 
 const styles = StyleSheet.create({
   modalContent: {
-    gap: 78,
     position: 'relative',
     paddingBottom: 24,
   },

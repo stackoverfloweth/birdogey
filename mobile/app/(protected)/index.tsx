@@ -6,15 +6,14 @@ import { ScrollView, StyleSheet } from 'react-native'
 export default function ProtectedIndex(): React.ReactNode {
   const api = useApiClient()
 
-  const nextEvent = useQuery({
-    queryKey: ['nextEvent'],
-    queryFn: () => api.event.getList(),
-    select: (events) => events.at(0),
+  const { data: nextEvent } = useQuery({
+    queryKey: ['events', 'next'],
+    queryFn: () => api.event.getNext(),
   })
 
   return (
     <ScrollView style={styles.container}>
-      {!!nextEvent.data && <NextEventCard event={nextEvent.data} />}
+      {!!nextEvent && <NextEventCard event={nextEvent} />}
     </ScrollView>
   )
 }

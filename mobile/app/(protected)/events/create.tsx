@@ -18,9 +18,10 @@ export default function EventCreate(): React.ReactNode {
   const api = useApiClient()
   const season = useSeason(seasonId)
 
-  const { data: events = [] } = useQuery({
-    queryKey: ['events', seasonId],
-    queryFn: () => api.event.getList(seasonId),
+  const { data: latestEvent = null } = useQuery({
+    queryKey: ['events', 'last', seasonId],
+    queryFn: () => api.event.getLast([seasonId]),
+    enabled: !!seasonId,
   })
 
   const { mutate: createEvent } = useMutation({
@@ -33,18 +34,13 @@ export default function EventCreate(): React.ReactNode {
 
   const today = format(new Date(), 'MMMM do')
 
-  const latestEvent = useMemo(() => {
-    const [first] = events.length === 0 ? [undefined] : events
-
-    return first
-  }, [events])
-
   const initialValues = useMemo<EventSchemaInput | undefined>(() => {
     if (!latestEvent) return undefined
 
     return {
       ...toEventSchemaInput(latestEvent),
       players: [],
+      notes: undefined,
       name: today,
       ctpStartingBalance: calculateEventCtpPotIfNoWinners(latestEvent) / 100,
       aceStartingBalance: calculateEventAcePotIfNoWinners(latestEvent) / 100,
@@ -75,6 +71,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'space-between',
     paddingHorizontal: 0,
-    gap: 78,
+    gap: 16,
   },
 })

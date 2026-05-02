@@ -17,147 +17,138 @@ export type EventFormProps = {
   onDelete?: () => void,
 }
 
-export function EventForm({ submitText, submitIcon, initialValues, renderBefore, onSubmit, onCancel, onDelete }: EventFormProps): React.ReactNode {
+export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onCancel, onDelete }: EventFormProps): React.ReactNode {
   const { control, handleSubmit, formState: { errors, isLoading } } = useForm<EventSchemaInput, any, EventSchema>({
     resolver: zodResolver(eventSchema),
     defaultValues: initialValues,
   })
 
   return (
-    <>
-      <View style={formStyles.form}>
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>Event Name</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-              />
-            )}
-            name="name"
-          />
-          {errors.name && <Text style={formStyles.errorText}>{errors.name.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>Notes</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-                multiline
-                numberOfLines={4}
-              />
-            )}
-            name="notes"
-          />
-          {errors.notes && <Text style={formStyles.errorText}>{errors.notes.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>CTP Per Player</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <NumericInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-                keyboardType="number-pad"
-                icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
-              />
-            )}
-            name="ctpPerPlayer"
-          />
-          {errors.ctpPerPlayer && <Text style={formStyles.errorText}>{errors.ctpPerPlayer.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>CTP Starting Balance</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <NumericInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-                keyboardType="number-pad"
-                icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
-              />
-            )}
-            name="ctpStartingBalance"
-          />
-          {errors.ctpStartingBalance && <Text style={formStyles.errorText}>{errors.ctpStartingBalance.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>CTP Hole</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <NumericInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-                keyboardType="number-pad"
-              />
-            )}
-            name="ctpHole"
-          />
-          {errors.ctpHole && <Text style={formStyles.errorText}>{errors.ctpHole.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>ACE Per Player</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <NumericInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-                keyboardType="number-pad"
-                icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
-              />
-            )}
-            name="acePerPlayer"
-          />
-          {errors.acePerPlayer && <Text style={formStyles.errorText}>{errors.acePerPlayer.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>ACE Starting Balance</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <NumericInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-                keyboardType="number-pad"
-                icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
-              />
-            )}
-            name="aceStartingBalance"
-          />
-          {errors.aceStartingBalance && <Text style={formStyles.errorText}>{errors.aceStartingBalance.message}</Text>}
-        </View>
+    <View style={formStyles.form}>
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>Event Name</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
+          name="name"
+        />
+        {errors.name && <Text style={formStyles.errorText}>{errors.name.message}</Text>}
       </View>
 
       <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>Notes</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              multiline
+              numberOfLines={4}
+            />
+          )}
+          name="notes"
+        />
+        {errors.notes && <Text style={formStyles.errorText}>{errors.notes.message}</Text>}
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>CTP Per Player</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <NumericInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              keyboardType="number-pad"
+              icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
+            />
+          )}
+          name="ctpPerPlayer"
+        />
+        {errors.ctpPerPlayer && <Text style={formStyles.errorText}>{errors.ctpPerPlayer.message}</Text>}
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>CTP Starting Balance</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <NumericInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              keyboardType="number-pad"
+              icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
+            />
+          )}
+          name="ctpStartingBalance"
+        />
+        {errors.ctpStartingBalance && <Text style={formStyles.errorText}>{errors.ctpStartingBalance.message}</Text>}
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>CTP Hole</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <NumericInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              keyboardType="number-pad"
+            />
+          )}
+          name="ctpHole"
+        />
+        {errors.ctpHole && <Text style={formStyles.errorText}>{errors.ctpHole.message}</Text>}
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>ACE Per Player</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <NumericInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              keyboardType="number-pad"
+              icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
+            />
+          )}
+          name="acePerPlayer"
+        />
+        {errors.acePerPlayer && <Text style={formStyles.errorText}>{errors.acePerPlayer.message}</Text>}
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>ACE Starting Balance</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <NumericInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              keyboardType="number-pad"
+              icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
+            />
+          )}
+          name="aceStartingBalance"
+        />
+        {errors.aceStartingBalance && <Text style={formStyles.errorText}>{errors.aceStartingBalance.message}</Text>}
+      </View>
+
+      <View style={formStyles.actions}>
         <Pressable
           disabled={isLoading}
           style={formStyles.button}
@@ -186,6 +177,6 @@ export function EventForm({ submitText, submitIcon, initialValues, renderBefore,
           </Pressable>
         )}
       </View>
-    </>
+    </View>
   )
 }

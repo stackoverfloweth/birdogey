@@ -1,7 +1,7 @@
 import { formStyles } from '@/theme/forms'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
-import { View, Text, Pressable, ActivityIndicator } from 'react-native'
+import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native'
 import { TextInput } from '@/components/TextInput'
 import { UserImageUpload } from '@/components/UserImageUpload'
 import { userSchema, UserSchema, UserSchemaInput } from '@birdogey/shared'
@@ -23,70 +23,67 @@ export function PlayerForm({ submitText, submitIcon, initialValues, isLoading, o
   })
 
   return (
-    <>
-      <Controller
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <UserImageUpload imageUrl={value} onImageUrlChange={onChange} />
-        )}
-        name="imageUrl"
-      />
-
-      <View style={formStyles.formGroup}>
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>Player Name</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-              />
-            )}
-            name="name"
-          />
-          {errors.name && <Text style={formStyles.errorText}>{errors.name.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>PDGA Number</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-                keyboardType="number-pad"
-              />
-            )}
-            name="pdgaNumber"
-          />
-          {errors.pdgaNumber && <Text style={formStyles.errorText}>{errors.pdgaNumber.message}</Text>}
-        </View>
-
-        <View style={formStyles.formGroup}>
-          <Text style={formStyles.label}>UDisc ID</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                style={formStyles.input}
-              />
-            )}
-            name="udiscId"
-          />
-          {errors.udiscId && <Text style={formStyles.errorText}>{errors.udiscId.message}</Text>}
-        </View>
+    <ScrollView contentContainerStyle={formStyles.form}>
+      <View style={[formStyles.formGroup, { marginBottom: 16 }]}>
+        <Controller
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <UserImageUpload imageUrl={value} onImageUrlChange={onChange} />
+          )}
+          name="imageUrl"
+        />
       </View>
 
       <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>Player Name</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
+          name="name"
+        />
+        {errors.name && <Text style={formStyles.errorText}>{errors.name.message}</Text>}
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>PDGA Number</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              keyboardType="number-pad"
+            />
+          )}
+          name="pdgaNumber"
+        />
+        {errors.pdgaNumber && <Text style={formStyles.errorText}>{errors.pdgaNumber.message}</Text>}
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>UDisc ID</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
+          name="udiscId"
+        />
+        {errors.udiscId && <Text style={formStyles.errorText}>{errors.udiscId.message}</Text>}
+      </View>
+
+      <View style={formStyles.actions}>
         <Pressable
           disabled={formIsLoading || isLoading}
           style={formStyles.button}
@@ -105,6 +102,6 @@ export function PlayerForm({ submitText, submitIcon, initialValues, isLoading, o
           </Pressable>
         )}
       </View>
-    </>
+    </ScrollView>
   )
 }

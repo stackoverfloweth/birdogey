@@ -31,7 +31,7 @@ export default function Players(): React.ReactNode {
     <View style={styles.container}>
       <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
         <TextInput
-          style={[formStyles.input, { flexGrow: 1 }]}
+          style={{ flexGrow: 1 }}
           placeholder="Search players"
           value={playerSearch}
           onChangeText={setPlayerSearch}
