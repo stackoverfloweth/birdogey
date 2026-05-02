@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-  import { ValidationRule, useValidation, useValidationObserver } from '@prefecthq/vue-compositions'
-  import { format } from 'date-fns'
+  import { useValidationObserver } from '@prefecthq/vue-compositions'
   import { computed, ref } from 'vue'
   import { Event, EventRequest, getNextCtpHole } from '@birdogey/shared'
   import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners, auth } from '@/services'
@@ -28,17 +27,12 @@
 
   const previousEventCtpHole = computed(() => props.previousEvent?.ctpHole)
 
-  const today = format(new Date(), 'MMMM do')
-  const name = ref(today)
   const notes = ref<string>()
   const ctpStartingBalance = ref(previousEventBalance.value.ctpStartingBalance / 100)
   const aceStartingBalance = ref(previousEventBalance.value.aceStartingBalance / 100)
   const ctpPerPlayer = ref(previousEventBalance.value.ctpPerPlayer / 100)
   const acePerPlayer = ref(previousEventBalance.value.acePerPlayer / 100)
   const ctpHole = ref(getNextCtpHole(previousEventCtpHole.value, season.value))
-
-  const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
-  const { error: nameErrorMessage, state: nameState } = useValidation(name, 'Name', [isRequired])
 
   async function submit(): Promise<void> {
     const valid = await validate()
@@ -48,7 +42,6 @@
     }
 
     const request = {
-      name: name.value,
       notes: notes.value,
       seasonId: props.seasonId,
       ctpStartingBalance: Math.floor(ctpStartingBalance.value * 100),
@@ -67,12 +60,6 @@
     <p-message v-if="disabled" warning>
       You must complete active event before creating another
     </p-message>
-
-    <p-label label="Name" :message="nameErrorMessage" :state="nameState">
-      <template #default="{ id }">
-        <p-text-input :id="id" v-model="name" :state="nameState" />
-      </template>
-    </p-label>
 
     <p-label label="Notes">
       <template #default="{ id }">

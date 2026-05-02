@@ -60,7 +60,6 @@ export type EventJson = {
   seasonId: string,
   created: string,
   completed?: string,
-  name: string,
   notes?: string,
   players: EventPlayerJson[],
   ctpStartingBalance: number,

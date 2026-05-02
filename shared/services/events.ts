@@ -11,7 +11,6 @@ export function calculatePayoutSplit(pennies: number, numberOfWinners: number): 
 
 export function toEventSchemaInput(event: Event): EventSchemaInput {
   return {
-    name: event.name,
     notes: event.notes ?? undefined,
     players: event.players,
     ctpUserIds: event.ctpUserIds,

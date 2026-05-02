@@ -6,7 +6,6 @@ export type EventResponse = {
   seasonId: ObjectId,
   created: Date,
   completed?: Date,
-  name: string,
   notes?: string,
   players: EventPlayerResponse[],
   ctpStartingBalance: number,

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { showToast } from '@prefecthq/prefect-design'
   import { useRouteParam, useSubscription } from '@prefecthq/vue-compositions'
+  import { format } from 'date-fns'
   import { computed } from 'vue'
   import { useRouter } from 'vue-router'
   import ContextBreadCrumbs from '@/components/ContextBreadCrumbs.vue'
@@ -16,6 +17,9 @@
 
   const eventSubscription = useSubscription(api.events.getById, [eventId])
   const event = computed(() => eventSubscription.response ?? null)
+  const eventLabel = computed(() => {
+    return event.value ? format(event.value.created, 'MMMM do') : '...'
+  })
 
   async function saveEvent(request: Partial<EventRequest>): Promise<void> {
     await api.events.update(eventId.value, request)
@@ -42,7 +46,7 @@
 
 <template>
   <div class="events-edit-view">
-    <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: routes.events(seasonId) }, { text: event?.name ?? '...' }]" />
+    <ContextBreadCrumbs :crumbs="[{ text: 'Events', to: routes.events(seasonId) }, { text: eventLabel }]" />
 
     <template v-if="event">
       <EventManage :event="event" @save="saveEvent" @complete="completeEvent" @cancel="cancel" />

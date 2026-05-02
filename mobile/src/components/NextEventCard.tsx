@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View, Text } from 'react-native'
 import { Event } from '@birdogey/shared'
 import { badgeStyles } from '@/theme/badge'
 import { useSeason } from '@/hooks/useSeason'
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow, format } from 'date-fns'
 import { router } from 'expo-router'
 import { SymbolView } from 'expo-symbols'
 import { formStyles } from '@/theme/forms'
@@ -29,7 +29,7 @@ export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
 
       <View>
         {season && <Text style={styles.headerText}>{season.name}</Text>}
-        <Text style={styles.subheaderText}>{event.name}</Text>
+        <Text style={styles.subheaderText}>{format(event.created, 'MMMM do')}</Text>
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8, width: '100%', justifyContent: 'space-between' }}>

@@ -5,7 +5,6 @@ export type Event = {
   seasonId: string,
   created: Date,
   completed?: Date,
-  name: string,
   notes?: string,
   players: EventPlayer[],
   ctpStartingBalance: number,

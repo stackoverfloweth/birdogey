@@ -106,7 +106,6 @@ events.post('/', async (context) => {
 
   if (!isValidRequest<EventRequest>(body, [
     ['seasonId', 'string'],
-    ['name', 'string'],
   ])) {
     throw new HttpError(400, 'Invalid request')
   }
@@ -128,7 +127,6 @@ events.post('/', async (context) => {
     _id: new ObjectId(),
     seasonId: new ObjectId(body.seasonId),
     created: new Date(),
-    name: body.name,
     notes: body.notes,
     ctpStartingBalance: body.ctpStartingBalance ?? 0,
     aceStartingBalance: body.aceStartingBalance ?? 0,
