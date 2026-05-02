@@ -15,19 +15,6 @@ users.get('/', authMiddleware, async (context) => {
   const db = getDb()
   const collection = db.collection<UserSeasonResponse>('userSeasons')
 
-  async function getAllUserSeasonIds(): Promise<ObjectId[]> {
-    const userId = ObjectId.createFromHexString(token._id.toString())
-
-    const distinctSeasonIds = await collection
-      .aggregate<{ _id: ObjectId }>([
-        { $match: { userId } },
-        { $group: { _id: '$seasonId' } },
-      ])
-      .toArray()
-
-    return distinctSeasonIds.map(({ _id }) => _id)
-  }
-
   const seasonIds = context.req.query('seasonIds')?.split(',')
     .filter((season) => {
       if (!season) {
@@ -38,11 +25,11 @@ users.get('/', authMiddleware, async (context) => {
 
       return true
     })
-    .map((season) => new ObjectId(season)) ?? await getAllUserSeasonIds()
+    .map((season) => new ObjectId(season))
 
   const result = await collection
     .aggregate([
-      { $match: { seasonId: { $in: seasonIds } } },
+      ...(seasonIds !== undefined ? [{ $match: { seasonId: { $in: seasonIds } } }] : []),
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
       {
@@ -134,6 +121,9 @@ users.post('/', authMiddleware, async (context) => {
   const result = await usersCollection.insertOne({
     _id: new ObjectId(),
     name: body.name,
+    udiscId: body.udiscId,
+    pdgaNumber: body.pdgaNumber,
+    imageUrl: body.imageUrl,
   })
 
   await userSeasons.insertOne({

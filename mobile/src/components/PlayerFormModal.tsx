@@ -52,9 +52,9 @@ export function PlayerFormModal({ player, visible, onDismiss, onSubmit, style }:
 
 const styles = StyleSheet.create({
   modalContent: {
-    paddingBottom: 24,
     gap: 78,
     position: 'relative',
+    paddingBottom: 24,
   },
   submitButton: {
     position: 'absolute',

@@ -8,7 +8,7 @@ import { NumericInput } from './NumericInput'
 export type EventPlayerFormProps = {
   submitText?: string,
   submitIcon?: React.ReactNode,
-  initialValues: EventPlayerSchemaInput | undefined,
+  initialValues?: EventPlayerSchemaInput | undefined,
   onSubmit: (data: EventPlayerSchema) => void,
 }
 

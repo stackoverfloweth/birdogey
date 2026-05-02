@@ -8,6 +8,7 @@
 [x] use player form in player list
 [x] build event player form
 [x] use event player form in event players list
+[] player image upload
 [] build out a home view
 [] add mechanism for users to join seasons (creates UserSeason record)
 

@@ -9,7 +9,7 @@ export function StackedPlayerImages({ playerIds }: { playerIds: string[] }): Rea
 
   const userQueries = useQueries({
     queries: playerIds.map((userId) => ({
-      queryKey: ['user', userId],
+      queryKey: ['players', userId],
       queryFn: () => api.user.getById(userId),
       enabled: !!userId,
     })),

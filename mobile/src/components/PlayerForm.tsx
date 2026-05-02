@@ -9,7 +9,7 @@ import { colors } from '@/theme/colors'
 export type PlayerFormProps = {
   submitText?: string,
   submitIcon?: React.ReactNode,
-  initialValues: UserSchemaInput | undefined,
+  initialValues?: UserSchemaInput | undefined,
   isLoading?: boolean,
   onSubmit: (data: UserSchema) => void,
   onCancel?: () => void,

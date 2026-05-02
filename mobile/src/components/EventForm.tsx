@@ -11,13 +11,13 @@ import { colors } from '@/theme/colors'
 export type EventFormProps = {
   submitText?: string,
   submitIcon?: React.ReactNode,
-  initialValues: EventSchemaInput | undefined,
+  initialValues?: EventSchemaInput | undefined,
   onSubmit: (data: EventSchema) => void,
   onCancel?: () => void,
   onDelete?: () => void,
 }
 
-export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onCancel, onDelete }: EventFormProps): React.ReactNode {
+export function EventForm({ submitText, submitIcon, initialValues, renderBefore, onSubmit, onCancel, onDelete }: EventFormProps): React.ReactNode {
   const { control, handleSubmit, formState: { errors, isLoading } } = useForm<EventSchemaInput, any, EventSchema>({
     resolver: zodResolver(eventSchema),
     defaultValues: initialValues,
@@ -157,7 +157,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
         </View>
       </View>
 
-      <View style={formStyles.form}>
+      <View style={formStyles.formGroup}>
         <Pressable
           disabled={isLoading}
           style={formStyles.button}

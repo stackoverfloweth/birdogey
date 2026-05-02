@@ -13,7 +13,7 @@ import { SymbolView } from 'expo-symbols'
 import { useSeason } from '@/hooks/useSeason'
 import { cardStyles } from '@/theme/card'
 
-export default function EventView(): React.ReactNode {
+export default function EventCreate(): React.ReactNode {
   const [seasonId, setSeasonId] = useState('')
   const api = useApiClient()
   const season = useSeason(seasonId)
@@ -27,7 +27,7 @@ export default function EventView(): React.ReactNode {
     mutationFn: (data: EventSchema) => api.event.create({ seasonId, ...data }),
     onSuccess: (eventId) => {
       router.push(`/events/${eventId}`)
-      queryClient.invalidateQueries({ queryKey: ['events', seasonId] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
     },
   })
 
@@ -61,7 +61,7 @@ export default function EventView(): React.ReactNode {
         <EventForm
           key={seasonId}
           submitText="Create Event"
-          submitIcon={<SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />}
+          submitIcon={<SymbolView name="plus" size={20} tintColor="#fff" weight="bold" />}
           initialValues={initialValues}
           onSubmit={createEvent}
           onCancel={() => router.back()}
@@ -75,6 +75,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'space-between',
     paddingHorizontal: 0,
-    gap: 16,
+    gap: 78,
   },
 })

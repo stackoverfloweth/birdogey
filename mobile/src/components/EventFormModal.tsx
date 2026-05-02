@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
   modalContent: {
     gap: 78,
     position: 'relative',
+    paddingBottom: 24,
   },
   submitButton: {
     position: 'absolute',
