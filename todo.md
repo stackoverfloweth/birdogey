@@ -17,20 +17,23 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] use new events endpoint for next
 [x] add new events endpoint for last, update events/create.tsx
 [x] active now
-[] current tag(s)
-[] your winnings
-[] courses near you
+[x] current tag(s)
 
-[] add mechanism for users to join seasons (creates UserSeason record)
+[] media for splash screen, app icon, etc
+[] actually deploy to your iphone
 
 ## Later
 
-[] media for splash screen, app icon, etc
 [] add swipe actions to event list, "edit" and "delete"
+[] add swipe actions to players list, "delete"
+[] courses near you
+[] add mechanism for users to join seasons (creates UserSeason record)
+[] your winnings (on home screen)
 [] look into errors, on logout
-[] implement soft delete for players
+[x] implement soft delete for players
 [] implement private notes
 
 ## Eventually
 
 [] what needs to change to make this app work for individual players? not admins
+[] hide existing player images?

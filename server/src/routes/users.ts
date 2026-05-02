@@ -53,9 +53,34 @@ users.get('/seasons', authMiddleware, async (context) => {
   const token = getJwtPayload(context)
   const userId = ObjectId.createFromHexString(token._id.toString())
   const db = getDb()
+
   const collection = db.collection<UserSeasonResponse>('userSeasons')
 
-  const result = await collection.find({ userId }).toArray()
+  const result = await collection.aggregate([
+    { $match: { userId } },
+    {
+      $lookup: {
+        from: 'seasons',
+        let: { seasonId: '$seasonId' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$_id', '$$seasonId'] },
+                  { $or: [{ $eq: [{ $type: '$start' }, 'missing'] }, { $lte: ['$start', '$$NOW'] }] },
+                  { $or: [{ $eq: [{ $type: '$end' }, 'missing'] }, { $gte: ['$end', '$$NOW'] }] },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'season',
+      },
+    },
+    { $unwind: '$season' },
+    { $project: { _id: 1, seasonId: 1, tagId: 1, entryPaid: 1, season: { _id: 1, name: 1 } } },
+  ]).toArray()
 
   return context.json(result)
 })
