@@ -19,7 +19,8 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] active now
 [x] current tag(s)
 
-[] media for splash screen, app icon, etc
+[x] media for splash screen, app icon, etc
+[x] web favicon
 [] actually deploy to your iphone
 
 ## Later

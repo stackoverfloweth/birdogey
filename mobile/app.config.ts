@@ -6,6 +6,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: 'birdogey',
   plugins: [
     [
+      'expo-splash-screen',
+      {
+        image: './assets/splash.png',
+        resizeMode: 'contain',
+        backgroundColor: '#ffffff',
+        imageWidth: 200,
+      },
+    ],
+    [
       'expo-font',
       {
         fonts: ['./assets/fonts/Ephesis-Regular.ttf'],

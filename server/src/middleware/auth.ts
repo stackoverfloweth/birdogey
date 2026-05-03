@@ -1,8 +1,8 @@
 import { Context, MiddlewareHandler } from 'hono'
 import jwt from 'jsonwebtoken'
 import { UserAuthResponse } from '@birdogey/shared/api'
-import { env } from '../env.js'
-import { HttpError, JwtPayload, RefreshTokenPayload } from '../types.js'
+import { env } from '../env'
+import { HttpError, JwtPayload, RefreshTokenPayload } from '../types'
 
 const ACCESS_TOKEN_EXPIRY = '2h'
 const REFRESH_TOKEN_EXPIRY = '30d'

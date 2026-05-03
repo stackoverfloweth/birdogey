@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import { auth } from './auth.js'
-import { events } from './events.js'
-import { imagekit } from './imagekit.js'
-import { users } from './users.js'
-import { recaptcha } from './recaptcha.js'
+import { auth } from './auth'
+import { events } from './events'
+import { imagekit } from './imagekit'
+import { users } from './users'
+import { recaptcha } from './recaptcha'
 
 const routes = new Hono()
 

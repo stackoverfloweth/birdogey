@@ -1,6 +1,6 @@
 import { ErrorHandler } from 'hono'
 import { ContentfulStatusCode } from 'hono/utils/http-status'
-import { HttpError } from '../types.js'
+import { HttpError } from '../types'
 
 export const errorHandler: ErrorHandler = (error, context) => {
   if (error instanceof HttpError) {

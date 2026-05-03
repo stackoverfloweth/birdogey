@@ -1,11 +1,11 @@
 import { Context, Hono } from 'hono'
 import { BulkWriteResult, Db, ObjectId } from 'mongodb'
 import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, UserSeasonResponse } from '@birdogey/shared/api'
-import { getDb } from '../db.js'
-import { HttpError, JwtPayload } from '../types.js'
-import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
-import { checkSeasonAccess } from '../utilities/seasonAccess.js'
-import { isValidRequest } from '../utilities/requestValidation.js'
+import { getDb } from '../db'
+import { HttpError, JwtPayload } from '../types'
+import { authMiddleware, getJwtPayload } from '../middleware/auth'
+import { checkSeasonAccess } from '../utilities/seasonAccess'
+import { isValidRequest } from '../utilities/requestValidation'
 
 const events = new Hono()
 

@@ -1,10 +1,10 @@
 import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
 import { RecaptchaVerifyRequest, SignupKeyResponse } from '@birdogey/shared/api'
-import { getDb } from '../db.js'
-import { env } from '../env.js'
-import { HttpError } from '../types.js'
-import { isValidRequest } from '../utilities/requestValidation.js'
+import { getDb } from '../db'
+import { env } from '../env'
+import { HttpError } from '../types'
+import { isValidRequest } from '../utilities/requestValidation'
 
 const recaptcha = new Hono()
 

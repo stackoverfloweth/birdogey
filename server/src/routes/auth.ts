@@ -3,11 +3,11 @@ import { ObjectId } from 'mongodb'
 import twilio, { Twilio } from 'twilio'
 import { normalizePhoneNumber } from '@birdogey/shared'
 import { UserAuthResponse, UserResponse } from '@birdogey/shared/api'
-import { getDb, storeRefreshToken, findRefreshToken } from '../db.js'
-import { HttpError } from '../types.js'
-import { authMiddleware, generateAccessToken, generateRefreshToken, getJwtPayload, verifyRefreshToken } from '../middleware/auth.js'
-import { isValidRequest } from '../utilities/requestValidation.js'
-import { env } from '../env.js'
+import { getDb, storeRefreshToken, findRefreshToken } from '../db'
+import { HttpError } from '../types'
+import { authMiddleware, generateAccessToken, generateRefreshToken, getJwtPayload, verifyRefreshToken } from '../middleware/auth'
+import { isValidRequest } from '../utilities/requestValidation'
+import { env } from '../env'
 
 const auth = new Hono()
 

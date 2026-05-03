@@ -1,12 +1,12 @@
 import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
 import { EventResponse, UserRequest, UserResponse, UserSeasonResponse, SignupRequest, SignupKeyResponse } from '@birdogey/shared/api'
-import { getDb } from '../db.js'
-import { HttpError } from '../types.js'
-import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
-import { isValidRequest } from '../utilities/requestValidation.js'
-import { checkSeasonAccess } from '../utilities/seasonAccess.js'
-import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
+import { getDb } from '../db'
+import { HttpError } from '../types'
+import { authMiddleware, getJwtPayload } from '../middleware/auth'
+import { isValidRequest } from '../utilities/requestValidation'
+import { checkSeasonAccess } from '../utilities/seasonAccess'
+import { getNextAvailableTag } from '../utilities/getNextAvailableTag'
 
 const users = new Hono()
 
