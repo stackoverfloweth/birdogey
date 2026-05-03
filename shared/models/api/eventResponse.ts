@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { EventPlayerResponse } from './eventPlayerResponse'
+import { EventPlayerResponse } from './eventPlayerResponse.js'
 
 export type EventResponse = {
   _id: ObjectId,

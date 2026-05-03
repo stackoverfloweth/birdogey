@@ -1,5 +1,5 @@
-import { Event } from '../models'
-import { EventSchemaInput } from '../schemas/eventSchema'
+import { Event } from '../models/index.js'
+import { EventSchemaInput } from '../schemas/eventSchema.js'
 
 export function isActiveEvent(event: Event): boolean {
   return !event.completed

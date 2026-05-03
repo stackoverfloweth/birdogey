@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import ImageKit from 'imagekit'
-import { env } from '../env'
+import { env } from '../env.js'
 
 const imagekit = new Hono()
 

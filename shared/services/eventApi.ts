@@ -1,8 +1,8 @@
-import type { Event } from '../models'
-import type { EventRequest } from '../models/api'
-import type { HttpClient } from './httpClient'
-import type { EventJson } from './types'
-import { mapEvent } from './mappers'
+import type { Event } from '../models/index.js'
+import type { EventRequest } from '../models/api/index.js'
+import type { HttpClient } from './httpClient.js'
+import type { EventJson } from './types.js'
+import { mapEvent } from './mappers.js'
 
 export function createEventApi(client: HttpClient) {
   function getList(seasonIds?: string[]): Promise<Event[]>

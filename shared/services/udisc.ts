@@ -1,5 +1,5 @@
 import { read, utils } from 'xlsx'
-import { UserRequest } from '../models/api'
+import { UserRequest } from '../models/api/index.js'
 
 export type UDiscMissingMetadata = Map<string, Partial<UserRequest>>
 

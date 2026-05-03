@@ -4,21 +4,15 @@
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.ts",
+      "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./api": {
-      "types": "./models/api/index.ts",
+      "types": "./dist/models/api/index.d.ts",
       "default": "./dist/models/api/index.js"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "api": [
-        "./models/api/index.ts"
-      ]
     }
   },
   "scripts": {
@@ -33,6 +27,7 @@
   },
   "devDependencies": {
     "typescript": "^5.3.3",
-    "vite": "^5.1.4"
+    "vite": "^5.1.4",
+    "vite-plugin-dts": "^5.0.0"
   }
 }

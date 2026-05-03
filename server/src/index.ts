@@ -2,10 +2,10 @@ import 'dotenv/config'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { connectDb, disconnectDb } from './db'
-import { env } from './env'
-import { errorHandler } from './middleware/errorHandler'
-import { routes } from './routes/index'
+import { connectDb, disconnectDb } from './db.js'
+import { env } from './env.js'
+import { errorHandler } from './middleware/errorHandler.js'
+import { routes } from './routes/index.js'
 
 const app = new Hono()
 

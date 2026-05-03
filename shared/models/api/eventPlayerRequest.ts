@@ -1,4 +1,4 @@
-import { EventPlayerResponse } from './eventPlayerResponse'
+import { EventPlayerResponse } from './eventPlayerResponse.js'
 
 export type EventPlayerRequest = Omit<EventPlayerResponse, '_id' | 'userId' | 'inForCtp' | 'inForAce'> & {
   userId: string,

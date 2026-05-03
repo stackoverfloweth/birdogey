@@ -1,9 +1,9 @@
-import type { HttpClient } from './httpClient'
-import type { UserJson, UserSeasonJson } from './types'
-import { mapUser, mapUserSeason } from './mappers'
-import { User } from '../models'
-import { UserSeason } from '../models/userSeason'
-import { CheckInRequest, UserRequest, SignupRequest } from '../models/api'
+import type { HttpClient } from './httpClient.js'
+import type { UserJson, UserSeasonJson } from './types.js'
+import { mapUser, mapUserSeason } from './mappers.js'
+import { User } from '../models/index.js'
+import { UserSeason } from '../models/userSeason.js'
+import { CheckInRequest, UserRequest, SignupRequest } from '../models/api/index.js'
 
 export function createUserApi(client: HttpClient) {
   return {

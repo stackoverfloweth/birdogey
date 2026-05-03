@@ -1,4 +1,4 @@
-import { EventPlayer } from './eventPlayer'
+import { EventPlayer } from './eventPlayer.js'
 
 export type Event = {
   id: string,

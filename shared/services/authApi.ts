@@ -1,7 +1,7 @@
-import type { User } from '../models'
-import type { HttpClient } from './httpClient'
-import type { UserAuthJson } from './types'
-import { mapUserAuth } from './mappers'
+import type { User } from '../models/index.js'
+import type { HttpClient } from './httpClient.js'
+import type { UserAuthJson } from './types.js'
+import { mapUserAuth } from './mappers.js'
 
 export function createAuthApi(client: HttpClient) {
   return {

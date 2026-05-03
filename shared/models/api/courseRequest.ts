@@ -1,3 +1,3 @@
-import { CourseResponse } from './courseResponse'
+import { CourseResponse } from './courseResponse.js'
 
 export type CourseRequest = Omit<CourseResponse, '_id'>

@@ -1,4 +1,4 @@
-import { Season } from '../models/season'
+import { Season } from '../models/season.js'
 
 export function getNextCtpHole(previous?: number, season?: Season): number | undefined {
   if (!previous) {

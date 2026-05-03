@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { CourseResponse } from './courseResponse'
+import { CourseResponse } from './courseResponse.js'
 
 export type SeasonResponse = {
   _id: ObjectId,

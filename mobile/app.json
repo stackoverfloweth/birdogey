@@ -13,7 +13,8 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Allow Birdogey to use Face ID for sign-in."
-      }
+      },
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {

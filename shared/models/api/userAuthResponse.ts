@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { SeasonResponse } from './seasonResponse'
+import { SeasonResponse } from './seasonResponse.js'
 
 export type UserAuthResponse = {
   _id: ObjectId,

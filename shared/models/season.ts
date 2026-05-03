@@ -1,4 +1,4 @@
-import { Course } from './course'
+import { Course } from './course.js'
 
 export type Season = {
   id: string,

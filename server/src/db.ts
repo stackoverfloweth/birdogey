@@ -1,6 +1,6 @@
 import { Collection, Db, MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
-import { env } from './env'
-import { RefreshTokenDocument } from './types'
+import { env } from './env.js'
+import { RefreshTokenDocument } from './types.js'
 
 let client: MongoClient | null = null
 let db: Db | null = null

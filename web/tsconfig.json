@@ -15,7 +15,7 @@
     },
 
     /* Bundler mode */
-    "moduleResolution": "node10",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,

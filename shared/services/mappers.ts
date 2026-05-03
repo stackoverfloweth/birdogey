@@ -1,6 +1,6 @@
-import type { EventJson, EventPlayerJson, UserJson, UserSeasonJson, SeasonJson, UserAuthJson } from './types'
-import { EventPlayer, Event, Season, User } from '../models'
-import { UserSeason } from '../models/userSeason'
+import type { EventJson, EventPlayerJson, UserJson, UserSeasonJson, SeasonJson, UserAuthJson } from './types.js'
+import { EventPlayer, Event, Season, User } from '../models/index.js'
+import { UserSeason } from '../models/userSeason.js'
 
 export function mapEventPlayer(source: EventPlayerJson): EventPlayer {
   return {

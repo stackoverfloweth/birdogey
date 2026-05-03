@@ -1,5 +1,5 @@
-import type { HttpClient } from './httpClient'
-import type { ImageKitAuthJson } from './types'
+import type { HttpClient } from './httpClient.js'
+import type { ImageKitAuthJson } from './types.js'
 
 export function createImageKitApi(client: HttpClient) {
   return {

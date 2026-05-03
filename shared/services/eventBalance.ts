@@ -1,4 +1,4 @@
-import { EventSchemaInput } from '../schemas/eventSchema'
+import { EventSchemaInput } from '../schemas/eventSchema.js'
 
 export function calculateEventCtpPotIfNoWinners(event: EventSchemaInput): number {
   const someoneWonCtp = !!event.ctpUserIds?.length
