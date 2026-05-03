@@ -6,8 +6,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "lint:fix": "npm run lint:fix --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
-    "dev": "tmux new-session -A -s app 'npm run dev -w shared' \\; split-window -h 'npm run dev -w web' \\; split-window -v 'npm run dev -w server' \\; select-layout tiled",
-    "eas-build-post-install": "npm run build -w shared"
+    "dev": "tmux new-session -A -s app 'npm run dev -w shared' \\; split-window -h 'npm run dev -w web' \\; split-window -v 'npm run dev -w server' \\; select-layout tiled"
   },
   "workspaces": [
     "shared",
