@@ -1,7 +1,8 @@
 import { formStyles } from '@/theme/forms'
+import { colors } from '@/theme/colors'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, ActivityIndicator } from 'react-native'
 import { eventPlayerSchema, EventPlayerSchema, EventPlayerSchemaInput } from '@birdogey/shared'
 import { NumericInput } from './NumericInput'
 
@@ -60,8 +61,8 @@ export function EventPlayerForm({ submitText, submitIcon, initialValues, onSubmi
           style={formStyles.button}
           onPress={() => void handleSubmit(onSubmit)()}
         >
+          {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : submitIcon}
           <Text style={formStyles.buttonText}>{submitText}</Text>
-          {submitIcon}
         </Pressable>
       </View>
     </View>

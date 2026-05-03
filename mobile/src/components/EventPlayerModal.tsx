@@ -38,7 +38,6 @@ export function EventPlayerModal({ player, onSubmit = () => {}, onDismiss = () =
               onPress={handleEditLinkPress}
             >
               <Text style={{ color: colors.primary }}>Edit Player</Text>
-              <SymbolView name="person" size={20} tintColor="#fff" weight="bold" />
             </Pressable>
           </View>
 

@@ -1,4 +1,4 @@
-import { Text, View, Pressable } from 'react-native'
+import { Text, View, Pressable, ActivityIndicator } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { LoginCodeSchema, loginCodeSchema } from '@birdogey/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,11 +24,18 @@ export function LoginCodeStep({ onSuccess }: { onSuccess: (code: string) => void
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              onChangeText={onChange}
+              onChangeText={(text) => {
+                onChange(text)
+                if (text.length === 6) {
+                  void handleSubmit(onSubmit)()
+                }
+              }}
               onBlur={onBlur}
               value={value}
               placeholder="XXXXXX"
               keyboardType="number-pad"
+              maxLength={6}
+              autoFocus
               icon={<SymbolView name="number" size={20} tintColor={colors.primary} />}
             />
           )}
@@ -43,7 +50,7 @@ export function LoginCodeStep({ onSuccess }: { onSuccess: (code: string) => void
         onPress={() => void handleSubmit(onSubmit)()}
       >
         <Text style={formStyles.buttonText}>Send Code</Text>
-        <SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />
+        {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : <SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />}
       </Pressable>
     </>
   )

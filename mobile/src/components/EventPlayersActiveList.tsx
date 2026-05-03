@@ -291,8 +291,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
       />
 
-      <Text>{editModalPlayer?.name}</Text>
-
       {scoreModalPlayer && (
         <ScoreModal
           player={scoreModalPlayer}
@@ -347,7 +345,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 8,
   },
   header: {
     gap: 8,

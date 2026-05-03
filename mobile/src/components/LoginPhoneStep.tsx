@@ -1,4 +1,4 @@
-import { Text, View, Pressable } from 'react-native'
+import { Text, View, Pressable, ActivityIndicator } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { LoginPhoneSchema, loginPhoneSchema } from '@birdogey/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,6 +30,7 @@ export function LoginPhoneStep({ onSuccess }: { onSuccess: (phoneNumber: string)
               placeholder="(555) 555-5555"
               keyboardType="number-pad"
               maxLength={10}
+              autoFocus
               icon={<SymbolView name="phone" size={20} tintColor={colors.primary} />}
             />
           )}
@@ -44,7 +45,7 @@ export function LoginPhoneStep({ onSuccess }: { onSuccess: (phoneNumber: string)
         onPress={() => void handleSubmit(onSubmit)()}
       >
         <Text style={formStyles.buttonText}>Send Code</Text>
-        <SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />
+        {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : <SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />}
       </Pressable>
     </>
   )

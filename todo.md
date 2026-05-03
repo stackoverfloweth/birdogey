@@ -21,7 +21,7 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] web favicon
 [x] actually deploy to your iphone
 
-[] swap `name` for `start` date on event
+[x] swap `name` for `start` date on event
 
 ## Later
 
