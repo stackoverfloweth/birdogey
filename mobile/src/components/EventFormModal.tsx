@@ -59,7 +59,7 @@ export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: E
       <View style={[modalStyles.content, style]}>
         <View style={modalStyles.header}>
           <Pressable style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]} onPress={onDismiss}>
-            <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />
+            <SymbolView name="chevron.down" size={30} tintColor="#fff" weight="bold" />
           </Pressable>
         </View>
 

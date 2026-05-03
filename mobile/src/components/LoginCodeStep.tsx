@@ -28,7 +28,7 @@ export function LoginCodeStep({ onSuccess }: { onSuccess: (code: string) => void
               onBlur={onBlur}
               value={value}
               placeholder="XXXXXX"
-              keyboardType="numeric"
+              keyboardType="number-pad"
               icon={<SymbolView name="number" size={20} tintColor={colors.primary} />}
             />
           )}

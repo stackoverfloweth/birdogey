@@ -11,17 +11,18 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] build event player form
 [x] use event player form in event players list
 [x] player image upload
-[] player image upload should offer photos, not just files
-
+[x] player image upload should offer photos, not just files
 [x] build out a home view
 [x] use new events endpoint for next
 [x] add new events endpoint for last, update events/create.tsx
 [x] active now
 [x] current tag(s)
-
 [x] media for splash screen, app icon, etc
 [x] web favicon
-[] actually deploy to your iphone
+[x] actually deploy to your iphone
+
+[x] settings > profile > too tall
+[] swap `name` for `start` date on event
 
 ## Later
 

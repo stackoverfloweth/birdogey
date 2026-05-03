@@ -28,7 +28,7 @@ export function LoginPhoneStep({ onSuccess }: { onSuccess: (phoneNumber: string)
               onBlur={onBlur}
               value={value}
               placeholder="(555) 555-5555"
-              keyboardType="numeric"
+              keyboardType="number-pad"
               maxLength={10}
               icon={<SymbolView name="phone" size={20} tintColor={colors.primary} />}
             />

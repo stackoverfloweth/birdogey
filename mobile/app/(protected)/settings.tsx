@@ -74,6 +74,7 @@ export default function Settings(): React.ReactNode {
           visible={playerModalVisible}
           onDismiss={() => setPlayerModalVisible(false)}
           onSubmit={updatePlayer}
+          style={{ height: '93%' }}
         />
       )}
     </SafeAreaView>

@@ -15,11 +15,7 @@ type PlayersModalProps<T extends User> = Omit<FlatListProps<T>, 'data' | 'render
 
 export function PlayersModal<T extends User>({ players, visible, beforeList, renderItem, onSelect = () => {}, onDismiss = () => {}, style, ...listProps }: PlayersModalProps<T>): React.ReactNode {
   function defaultRenderItem({ item }: ListRenderItemInfo<T>): React.ReactElement {
-    return (
-      <Pressable onPress={() => onSelect(item)}>
-        <PlayerListItem player={item} />
-      </Pressable>
-    )
+    return <PlayerListItem player={item} onPress={() => onSelect(item)} />
   }
 
   return (

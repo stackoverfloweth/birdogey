@@ -12,9 +12,10 @@
       "bundleIdentifier": "com.stackoverfloweth.birdogey",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSFaceIDUsageDescription": "Allow Birdogey to use Face ID for sign-in."
+        "NSFaceIDUsageDescription": "Allow Birdogey to use Face ID for sign-in.",
+        "NSPhotoLibraryUsageDescription": "Allow Birdogey to access your photos so you can set a player image."
       },
-      "buildNumber": "4"
+      "buildNumber": "6"
     },
     "android": {
       "adaptiveIcon": {

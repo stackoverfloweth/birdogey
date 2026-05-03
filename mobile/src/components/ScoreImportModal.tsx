@@ -91,7 +91,7 @@ export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, playe
       <View style={[modalStyles.content, styles.modalContent, !!selectedAsset ? style : {}]}>
         <View style={{ alignItems: 'flex-end' }}>
           <Pressable onPress={onDismiss} style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]}>
-            <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />
+            <SymbolView name="chevron.down" size={30} tintColor="#fff" weight="bold" />
           </Pressable>
         </View>
 

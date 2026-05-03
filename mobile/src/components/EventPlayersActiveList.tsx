@@ -257,11 +257,12 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
           placeholder="Add players"
           value={playerSearch}
           onChangeText={setPlayerSearch}
+          clearButtonMode="while-editing"
           icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
         />
 
-        <Pressable style={[formStyles.iconButton, { marginRight: -18, backgroundColor: colors.outline_variant }]} onPress={setDoneAddingPlayers}>
-          <SymbolView name="xmark" size={30} tintColor="#fff" weight="bold" />
+        <Pressable style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]} onPress={setDoneAddingPlayers}>
+          <SymbolView name="chevron.down" size={30} tintColor="#fff" weight="bold" />
         </Pressable>
       </View>
     )

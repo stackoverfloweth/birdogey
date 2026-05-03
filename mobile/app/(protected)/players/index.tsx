@@ -35,6 +35,7 @@ export default function Players(): React.ReactNode {
           placeholder="Search players"
           value={playerSearch}
           onChangeText={setPlayerSearch}
+          clearButtonMode="while-editing"
           icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
         />
       </View>
