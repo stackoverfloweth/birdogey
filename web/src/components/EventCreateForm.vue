@@ -27,6 +27,7 @@
 
   const previousEventCtpHole = computed(() => props.previousEvent?.ctpHole)
 
+  const start = ref(new Date())
   const notes = ref<string>()
   const ctpStartingBalance = ref(previousEventBalance.value.ctpStartingBalance / 100)
   const aceStartingBalance = ref(previousEventBalance.value.aceStartingBalance / 100)
@@ -42,6 +43,7 @@
     }
 
     const request = {
+      start: start.value,
       notes: notes.value,
       seasonId: props.seasonId,
       ctpStartingBalance: Math.floor(ctpStartingBalance.value * 100),

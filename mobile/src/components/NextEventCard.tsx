@@ -15,7 +15,7 @@ export type NextEventCardProps = {
 
 export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
   const season = useSeason(event.seasonId)
-  const startsIn = formatDistanceToNow(event.created)
+  const startsIn = formatDistanceToNow(event.start)
 
   return (
     <View style={[cardStyles.card, styles.container]}>
@@ -29,7 +29,7 @@ export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
 
       <View>
         {season && <Text style={styles.headerText}>{season.name}</Text>}
-        <Text style={styles.subheaderText}>{format(event.created, 'MMMM do')}</Text>
+        <Text style={styles.subheaderText}>{format(event.start, 'MMMM do')}</Text>
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8, width: '100%', justifyContent: 'space-between' }}>

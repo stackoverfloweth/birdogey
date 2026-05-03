@@ -5,6 +5,7 @@ export type EventResponse = {
   _id: ObjectId,
   seasonId: ObjectId,
   created: Date,
+  start: Date,
   completed?: Date,
   notes?: string,
   players: EventPlayerResponse[],

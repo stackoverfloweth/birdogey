@@ -20,7 +20,7 @@
   const eventSubscription = useSubscription(api.events.getById, [eventId])
   const event = computed(() => eventSubscription.response ?? null)
   const eventLabel = computed(() => {
-    return event.value ? format(event.value.created, 'MMMM do') : '...'
+    return event.value ? format(event.value.start, 'MMMM do') : '...'
   })
 
   const { value: checkinModalVisible, setTrue: showCheckinModal } = useBoolean()

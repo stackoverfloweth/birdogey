@@ -22,7 +22,7 @@
 
   const ctp = computed(() => calculateEventCtpPot(props.event))
   const ace = computed(() => calculateEventAcePot(props.event))
-  const createdLabel = computed(() => format(props.event.created, 'MMMM do'))
+  const startLabel = computed(() => format(props.event.start, 'MMMM do'))
 </script>
 
 <template>
@@ -32,7 +32,7 @@
         <div success class="event-list-item__active-tag" />
       </template>
 
-      <span class="event-list-item__name-value">{{ createdLabel }}</span>
+      <span class="event-list-item__name-value">{{ startLabel }}</span>
     </div>
 
     <div class="event-list-item__event-summary">

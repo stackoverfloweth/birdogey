@@ -36,6 +36,7 @@ export default function EventCreate(): React.ReactNode {
 
     return {
       ...toEventSchemaInput(latestEvent),
+      start: new Date(),
       players: [],
       ctpStartingBalance: calculateEventCtpPotIfNoWinners(latestEvent) / 100,
       aceStartingBalance: calculateEventAcePotIfNoWinners(latestEvent) / 100,

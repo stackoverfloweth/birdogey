@@ -33,7 +33,7 @@ export function EventListItem({ event, right }: EventListItemProps): React.React
       <View style={styles.header}>
         <View>
           <Text style={styles.headerText}>{seasonsMap.get(event.seasonId)?.name}</Text>
-          <Text>{format(event.created, 'MMMM do')}</Text>
+          <Text>{format(event.start, 'MMMM do')}</Text>
         </View>
 
         {isActiveEvent(event)

@@ -17,6 +17,7 @@ export type EventPlayerSchemaInput = z.input<typeof eventPlayerSchema>
 export type EventPlayerSchema = z.output<typeof eventPlayerSchema>
 
 export const eventSchema = z.object({
+  start: z.date(),
   notes: z.string().optional(),
   completed: z.date().optional(),
   players: z.array(eventPlayerSchema).optional(),

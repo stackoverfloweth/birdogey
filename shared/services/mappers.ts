@@ -19,6 +19,7 @@ export function mapEvent(source: EventJson): Event {
     id: source._id,
     seasonId: source.seasonId,
     created: new Date(source.created),
+    start: source.start ? new Date(source.start) : new Date(source.created),
     completed: source.completed ? new Date(source.completed) : undefined,
     notes: source.notes ?? undefined,
     players: source.players.map(mapEventPlayer),

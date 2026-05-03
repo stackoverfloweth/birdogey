@@ -59,6 +59,7 @@ export type EventJson = {
   _id: string,
   seasonId: string,
   created: string,
+  start: string,
   completed?: string,
   notes?: string,
   players: EventPlayerJson[],
