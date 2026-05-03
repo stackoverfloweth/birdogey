@@ -1,6 +1,6 @@
 import { Alert, Pressable, StyleSheet, View } from 'react-native'
 import { useState } from 'react'
-import * as DocumentPicker from 'expo-document-picker'
+import * as ImagePicker from 'expo-image-picker'
 import { UserImage } from '@/components/UserImage'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { config } from '@/config/env'
@@ -24,16 +24,24 @@ export function UserImageUpload({ imageUrl, onImageUrlChange, disabled }: UserIm
   async function pickImage(): Promise<void> {
     if (loading || disabled) return
 
-    const result = await DocumentPicker.getDocumentAsync({
-      type: 'image/*',
-      copyToCacheDirectory: true,
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if (!permission.granted) {
+      Alert.alert('Permission needed', 'Allow photo library access to choose an image.')
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
     })
 
     if (result.canceled) return
 
     const [asset] = result.assets
 
-    if (asset.size !== undefined && asset.size > MAX_FILE_SIZE) {
+    if (asset.fileSize !== undefined && asset.fileSize > MAX_FILE_SIZE) {
       Alert.alert(`Image must be smaller than ${MAX_FILE_SIZE / 1024 / 1024}MB`)
       return
     }
@@ -41,20 +49,22 @@ export function UserImageUpload({ imageUrl, onImageUrlChange, disabled }: UserIm
     void upload(asset)
   }
 
-  async function upload(asset: DocumentPicker.DocumentPickerAsset): Promise<void> {
+  async function upload(asset: ImagePicker.ImagePickerAsset): Promise<void> {
     setLoading(true)
     setProgress(0)
 
     try {
       const auth = await api.imagekit.authenticate()
 
+      const fileName = asset.fileName ?? asset.uri.split('/').pop() ?? 'photo.jpg'
+
       const formData = new FormData()
       formData.append('file', {
         uri: asset.uri,
-        name: asset.name,
+        name: fileName,
         type: asset.mimeType ?? 'image/jpeg',
       } as unknown as Blob)
-      formData.append('fileName', asset.name)
+      formData.append('fileName', fileName)
       formData.append('publicKey', config.imageKitPublicKey)
       formData.append('token', auth.token)
       formData.append('expire', String(auth.expire))
