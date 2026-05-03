@@ -10,6 +10,7 @@ import { formStyles } from '@/theme/forms'
 import { modalStyles } from '@/theme/modals'
 import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
 import * as LocalAuthentication from 'expo-local-authentication'
+import * as Sentry from '@sentry/react-native'
 import { authenticateWithBiometrics, setBiometricsEnabled } from '@/services/biometrics'
 import { LoginPhoneStep } from '@/components/LoginPhoneStep'
 import { LoginCodeStep } from '@/components/LoginCodeStep'
@@ -60,7 +61,8 @@ export default function Login(): React.ReactNode {
       await authenticateWithBiometrics()
       await exchange()
       router.replace('/')
-    } catch {
+    } catch (error) {
+      Sentry.captureException(error)
       Alert.alert('Error', 'Failed to authenticate with biometrics')
       setExchangeFailed(true)
     }

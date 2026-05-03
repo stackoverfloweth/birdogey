@@ -21,13 +21,12 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] web favicon
 [x] actually deploy to your iphone
 
-[x] settings > profile > too tall
 [] swap `name` for `start` date on event
 
 ## Later
 
 [] add swipe actions to event list, "edit" and "delete"
-[] add swipe actions to players list, "delete"
+[] add swipe actions to players list, "deletpe"
 [] courses near you
 [] add mechanism for users to join seasons (creates UserSeason record)
 [] your winnings (on home screen)

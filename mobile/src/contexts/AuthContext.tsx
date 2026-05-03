@@ -1,4 +1,4 @@
-import { setAccessToken, removeAccessToken, getRefreshToken, setRefreshToken, removeRefreshToken } from '@/services/tokenStorage'
+import { setAccessToken, removeAccessToken, getRefreshToken, setRefreshToken } from '@/services/tokenStorage'
 import { isBiometricsEnabled, getAvailableBiometrics } from '@/services/biometrics'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { MINUTE, User } from '@birdogey/shared'
@@ -56,20 +56,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
 
   const queryClient = useQueryClient()
 
-  const { isLoading: isRehydrating } = useQuery({
-    queryKey: ['authRehydrate'],
-    queryFn: async () => {
-      try {
-        await exchange()
-      } catch {
-        // no refresh token, expired, or revoked — stay logged out
-      }
-      return null
-    },
-    staleTime: Infinity,
-    retry: false,
-  })
-
   useQuery({
     queryKey: ['refreshLogin'],
     queryFn: () => refreshAccessToken()
@@ -115,14 +101,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
 
   const logout = useCallback(async () => {
     removeAccessToken()
-    removeRefreshToken()
     setUser(null)
     queryClient.invalidateQueries()
   }, [queryClient])
 
   const isLoading = useMemo(() => {
-    return isRehydrating || isAvailableBiometricsLoading || isBiometricsEnabledLoading
-  }, [isRehydrating, isAvailableBiometricsLoading, isBiometricsEnabledLoading])
+    return isAvailableBiometricsLoading || isBiometricsEnabledLoading
+  }, [isAvailableBiometricsLoading, isBiometricsEnabledLoading])
 
   const value = useMemo<AuthState>(() => ({
     user,
