@@ -11,12 +11,13 @@ const MAX_FILE_SIZE = 1024 * 1024 * 5
 const UPLOAD_URL = 'https://upload.imagekit.io/api/v1/files/upload'
 
 type UserImageUploadProps = {
+  userId?: string,
   imageUrl?: string,
   onImageUrlChange: (imageUrl: string) => void,
   disabled?: boolean,
 }
 
-export function UserImageUpload({ imageUrl, onImageUrlChange, disabled }: UserImageUploadProps): React.ReactNode {
+export function UserImageUpload({ userId, imageUrl, onImageUrlChange, disabled }: UserImageUploadProps): React.ReactNode {
   const api = useApiClient()
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -104,7 +105,7 @@ export function UserImageUpload({ imageUrl, onImageUrlChange, disabled }: UserIm
     <View style={styles.container}>
       <Pressable onPress={() => void pickImage()} disabled={loading || disabled}>
         <View style={styles.imageWrapper}>
-          <UserImage imageUrl={imageUrl} width={IMAGE_SIZE} height={IMAGE_SIZE} />
+          <UserImage userId={userId} imageUrl={imageUrl} width={IMAGE_SIZE} height={IMAGE_SIZE} />
         </View>
         {loading && (
           <View style={styles.progressTrack}>

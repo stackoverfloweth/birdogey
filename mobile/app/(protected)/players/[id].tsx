@@ -32,6 +32,7 @@ export default function PlayerView(): React.ReactNode {
   return (
     <View style={[cardStyles.card, styles.container]}>
       <PlayerForm
+        userId={player?.id}
         initialValues={player}
         submitText="Save"
         submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}

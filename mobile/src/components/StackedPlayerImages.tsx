@@ -24,7 +24,7 @@ export function StackedPlayerImages({ playerIds }: { playerIds: string[] }): Rea
   return (
     <View style={styles.container}>
       {users.map((user) => (
-        <UserImage key={user.id} imageUrl={user.imageUrl} width={40} height={40} />
+        <UserImage key={user.id} userId={user.id} imageUrl={user.imageUrl} width={40} height={40} />
       ))}
     </View>
   )

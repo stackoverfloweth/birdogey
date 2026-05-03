@@ -38,6 +38,7 @@ export function PlayerFormModal({ player, visible, onDismiss, onSubmit, style }:
 
         <ScrollView contentContainerStyle={styles.modalContent}>
           <PlayerForm
+            userId={player.id}
             submitText="Save"
             submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
             initialValues={initialValues}

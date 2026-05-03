@@ -59,7 +59,7 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
 
       <View style={[modalStyles.content, styles.modalContent]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <UserImage imageUrl={player.imageUrl} width={40} height={40} />
+          <UserImage userId={player.userId} imageUrl={player.imageUrl} width={40} height={40} />
           {renderSubTitle()}
           {renderRightState()}
         </View>

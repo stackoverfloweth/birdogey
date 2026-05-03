@@ -1,8 +1,15 @@
 import { usePlayerImage } from '@/hooks/usePlayerImage'
 import { DimensionValue, Image, StyleSheet } from 'react-native'
 
-export function UserImage({ imageUrl, width = '100%', height = '100%' }: { imageUrl?: string, width?: DimensionValue, height?: DimensionValue }): React.ReactNode {
-  const { data: uri } = usePlayerImage(imageUrl)
+export type UserImageProps = {
+  userId?: string,
+  imageUrl?: string,
+  width?: DimensionValue,
+  height?: DimensionValue,
+}
+
+export function UserImage({ userId, imageUrl, width = '100%', height = '100%' }: UserImageProps): React.ReactNode {
+  const { data: uri } = usePlayerImage(userId, imageUrl)
 
   return (
     <Image

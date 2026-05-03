@@ -8,6 +8,7 @@ import { userSchema, UserSchema, UserSchemaInput } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
 
 export type PlayerFormProps = {
+  userId?: string,
   submitText?: string,
   submitIcon?: React.ReactNode,
   initialValues?: UserSchemaInput | undefined,
@@ -16,7 +17,7 @@ export type PlayerFormProps = {
   onCancel?: () => void,
 }
 
-export function PlayerForm({ submitText, submitIcon, initialValues, isLoading, onSubmit, onCancel }: PlayerFormProps): React.ReactNode {
+export function PlayerForm({ userId, submitText, submitIcon, initialValues, isLoading, onSubmit, onCancel }: PlayerFormProps): React.ReactNode {
   const { control, handleSubmit, formState: { errors, isLoading: formIsLoading } } = useForm<UserSchemaInput, any, UserSchema>({
     resolver: zodResolver(userSchema),
     defaultValues: initialValues,
@@ -28,7 +29,7 @@ export function PlayerForm({ submitText, submitIcon, initialValues, isLoading, o
         <Controller
           control={control}
           render={({ field: { onChange, value } }) => (
-            <UserImageUpload imageUrl={value} onImageUrlChange={onChange} />
+            <UserImageUpload userId={userId} imageUrl={value} onImageUrlChange={onChange} />
           )}
           name="imageUrl"
         />

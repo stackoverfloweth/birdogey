@@ -29,7 +29,7 @@ export function PlayerListItem({ player: playerOrPlayerId, visible = true, right
   return (
     <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.primary}>
-        <UserImage imageUrl={visible ? player?.imageUrl : undefined} width={40} height={40} />
+        <UserImage userId={player?.id} imageUrl={visible ? player?.imageUrl : undefined} width={40} height={40} />
         <View style={{ gap: 2 }}>
           <Text style={styles.primaryText}>{player?.name}</Text>
           {subTitle}

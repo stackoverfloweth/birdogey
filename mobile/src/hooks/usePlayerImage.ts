@@ -4,7 +4,7 @@ import ImageKit from 'imagekit-javascript'
 
 const DEFAULT_TRANSFORMATION = [{ raw: 'fo-face,r-max' }] satisfies Record<string, string>[]
 
-export function usePlayerImage(imageUrl?: string, transformation: Record<string, string>[] = DEFAULT_TRANSFORMATION) {
+export function usePlayerImage(userId?: string, imageUrl?: string, transformation: Record<string, string>[] = DEFAULT_TRANSFORMATION) {
   const imagekit = new ImageKit({
     urlEndpoint: config.imageKitUrl,
     publicKey: config.imageKitPublicKey,
@@ -13,7 +13,7 @@ export function usePlayerImage(imageUrl?: string, transformation: Record<string,
   const path = `/players/${imageUrl ?? 'default.png'}`
 
   return useQuery({
-    queryKey: ['playerImage', imageUrl, JSON.stringify(transformation)],
+    queryKey: ['players', userId, imageUrl, JSON.stringify(transformation)],
     queryFn: () => imagekit.url({
       path,
       transformation,
