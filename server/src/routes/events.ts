@@ -63,9 +63,9 @@ events.get('/next', async (context) => {
 
   const [result] = await eventsCollection.find({
     seasonId: { $in: seasonIds },
-    created: { $lte: new Date() },
+    start: { $gte: new Date() },
   })
-    .sort({ created: 1 })
+    .sort({ start: 1 })
     .limit(1)
     .toArray()
 
@@ -106,7 +106,6 @@ events.post('/', async (context) => {
 
   if (!isValidRequest<EventRequest>(body, [
     ['seasonId', 'string'],
-    ['name', 'string'],
   ])) {
     throw new HttpError(400, 'Invalid request')
   }
@@ -128,7 +127,7 @@ events.post('/', async (context) => {
     _id: new ObjectId(),
     seasonId: new ObjectId(body.seasonId),
     created: new Date(),
-    name: body.name,
+    start: new Date(body.start),
     notes: body.notes,
     ctpStartingBalance: body.ctpStartingBalance ?? 0,
     aceStartingBalance: body.aceStartingBalance ?? 0,

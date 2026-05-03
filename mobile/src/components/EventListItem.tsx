@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 import { badgeStyles } from '@/theme/badge'
 import { SymbolView } from 'expo-symbols'
 import { useAuthSeasons } from '@/hooks/useAuthSeasons'
+import { format } from 'date-fns'
 
 type EventListItemProps = {
   event: Event,
@@ -32,7 +33,7 @@ export function EventListItem({ event, right }: EventListItemProps): React.React
       <View style={styles.header}>
         <View>
           <Text style={styles.headerText}>{seasonsMap.get(event.seasonId)?.name}</Text>
-          <Text>{event.name}</Text>
+          <Text>{format(event.start, 'MMMM do')}</Text>
         </View>
 
         {isActiveEvent(event)

@@ -8,7 +8,6 @@ import { useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { queryClient } from '@/services/queryClient'
 import { router } from 'expo-router'
-import { format } from 'date-fns'
 import { SymbolView } from 'expo-symbols'
 import { useSeason } from '@/hooks/useSeason'
 import { cardStyles } from '@/theme/card'
@@ -32,21 +31,18 @@ export default function EventCreate(): React.ReactNode {
     },
   })
 
-  const today = format(new Date(), 'MMMM do')
-
   const initialValues = useMemo<EventSchemaInput | undefined>(() => {
     if (!latestEvent) return undefined
 
     return {
       ...toEventSchemaInput(latestEvent),
+      start: new Date(),
       players: [],
-      notes: undefined,
-      name: today,
       ctpStartingBalance: calculateEventCtpPotIfNoWinners(latestEvent) / 100,
       aceStartingBalance: calculateEventAcePotIfNoWinners(latestEvent) / 100,
       ctpHole: getNextCtpHole(latestEvent.ctpHole, season),
     }
-  }, [season, latestEvent, today])
+  }, [season, latestEvent])
 
   return (
     <ScrollView style={{ margin: 16 }} contentContainerStyle={[cardStyles.card, styles.container]}>

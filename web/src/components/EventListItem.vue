@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { useSubscription } from '@prefecthq/vue-compositions'
+  import { format } from 'date-fns'
   import { computed } from 'vue'
   import { useApi } from '@/composables'
   import { Event, penniesToUSD } from '@birdogey/shared'
@@ -21,6 +22,7 @@
 
   const ctp = computed(() => calculateEventCtpPot(props.event))
   const ace = computed(() => calculateEventAcePot(props.event))
+  const startLabel = computed(() => format(props.event.start, 'MMMM do'))
 </script>
 
 <template>
@@ -30,7 +32,7 @@
         <div success class="event-list-item__active-tag" />
       </template>
 
-      <span class="event-list-item__name-value">{{ event.name }}</span>
+      <span class="event-list-item__name-value">{{ startLabel }}</span>
     </div>
 
     <div class="event-list-item__event-summary">

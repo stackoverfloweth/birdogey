@@ -26,22 +26,6 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
   return (
     <View style={formStyles.form}>
       <View style={formStyles.formGroup}>
-        <Text style={formStyles.label}>Event Name</Text>
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-            />
-          )}
-          name="name"
-        />
-        {errors.name && <Text style={formStyles.errorText}>{errors.name.message}</Text>}
-      </View>
-
-      <View style={formStyles.formGroup}>
         <Text style={formStyles.label}>Notes</Text>
         <Controller
           control={control}
