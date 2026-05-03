@@ -5,9 +5,26 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ApiClientProvider } from '@/contexts/ApiClientContext'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import * as Sentry from '@sentry/react-native'
+import { config } from '@/config/env'
 import 'intl-pluralrules'
 
-export default function RootLayout(): React.ReactNode {
+Sentry.init({
+  dsn: config.sentryDsn,
+  environment: __DEV__ ? 'development' : 'production',
+  beforeSend(event) {
+    const frames = event.exception?.values?.flatMap((value) => value.stacktrace?.frames ?? []) ?? []
+    const files = frames.map((frame) => frame.filename ?? '').filter(Boolean)
+
+    if (['/auth/refresh'].some((file) => files.includes(file))) {
+      return null
+    }
+
+    return event
+  },
+})
+
+function RootLayout(): React.ReactNode {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -22,3 +39,5 @@ export default function RootLayout(): React.ReactNode {
     </GestureHandlerRootView>
   )
 }
+
+export default Sentry.wrap(RootLayout)

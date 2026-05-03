@@ -4,6 +4,7 @@ interface AppConfig {
   apiBaseUrl: string,
   imageKitUrl: string,
   imageKitPublicKey: string,
+  sentryDsn: string,
 }
 
 function getConfig(): AppConfig {
@@ -13,6 +14,7 @@ function getConfig(): AppConfig {
     apiBaseUrl: extra?.apiBaseUrl,
     imageKitUrl: extra?.imageKitUrl,
     imageKitPublicKey: extra?.imageKitPublicKey,
+    sentryDsn: extra?.sentryDsn,
   }
 }
 

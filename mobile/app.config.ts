@@ -32,11 +32,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         photosPermission: 'Allow Birdogey to access your photos so you can set a player image.',
       },
     ],
+    '@sentry/react-native/expo',
   ],
   extra: {
     ...config.extra,
     apiBaseUrl: process.env.API_BASE_URL,
     imageKitUrl: process.env.IMAGEKIT_URL,
     imageKitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    sentryDsn: process.env.SENTRY_DSN,
   },
 })
