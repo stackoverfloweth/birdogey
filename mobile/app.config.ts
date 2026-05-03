@@ -26,6 +26,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         faceIDPermission: 'Allow Birdogey to use Face ID for sign-in.',
       },
     ],
+    [
+      'expo-image-picker',
+      {
+        photosPermission: 'Allow Birdogey to access your photos so you can set a player image.',
+      },
+    ],
   ],
   extra: {
     ...config.extra,
