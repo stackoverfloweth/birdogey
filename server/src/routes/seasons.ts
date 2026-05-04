@@ -5,7 +5,7 @@ import { getDb } from '../db.js'
 import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
 import { checkSeasonAccess } from '../utilities/seasonAccess.js'
 import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
-import { HttpError } from 'src/types.js'
+import { HttpError } from '../types.js'
 
 const seasons = new Hono()
 
