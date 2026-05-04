@@ -51,6 +51,10 @@ export function mapUserSeason(source: UserSeasonJson): UserSeason {
   return {
     ...mapUser(source),
     seasonId: source.seasonId,
+    season: {
+      _id: source.season._id,
+      name: source.season.name,
+    },
     tagId: source.tagId,
     entryPaid: source.entryPaid,
   }

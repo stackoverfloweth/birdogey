@@ -15,8 +15,10 @@ type PlayerListItemProps = {
 
 export function PlayerListItem({ player: playerOrPlayerId, visible = true, right, subTitle, onPress }: PlayerListItemProps): React.ReactNode {
   const api = useApiClient()
+
+  const playerId = typeof playerOrPlayerId === 'string' ? playerOrPlayerId : playerOrPlayerId.id
   const { data: player } = useQuery({
-    queryKey: ['players', playerOrPlayerId],
+    queryKey: ['players', playerId],
     queryFn: () => {
       if (typeof playerOrPlayerId === 'string') {
         return api.user.getById(playerOrPlayerId)

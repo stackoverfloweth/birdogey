@@ -26,7 +26,7 @@
 
   const eventSubscription = useSubscription(api.events.getList, [seasonId])
 
-  const playerSubscription = useSubscription(api.users.getUsersInSeason, [seasonId])
+  const playerSubscription = useSubscription(api.season.getUsersInSeason, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
   const notes = ref(props.event.notes)

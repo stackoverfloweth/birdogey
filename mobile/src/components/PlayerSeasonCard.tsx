@@ -1,15 +1,20 @@
 import { cardStyles } from '@/theme/card'
 import { View, Text, StyleSheet } from 'react-native'
-import { useSeason } from '@/hooks/useSeason'
 import { UserSeason } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
+import { useApiClient } from '@/contexts/ApiClientContext'
+import { useQuery } from '@tanstack/react-query'
 
-export type UserSeasonCardProps = {
+export type PlayerSeasonCardProps = {
   userSeason: UserSeason,
 }
 
-export function UserSeasonCard({ userSeason }: UserSeasonCardProps): React.ReactNode {
-  const season = useSeason(userSeason.seasonId)
+export function PlayerSeasonCard({ userSeason }: PlayerSeasonCardProps): React.ReactNode {
+  const api = useApiClient()
+  const { data: season } = useQuery({
+    queryKey: ['seasons', userSeason.seasonId],
+    queryFn: () => api.season.getById(userSeason.seasonId),
+  })
 
   return (
     <View style={[cardStyles.card, styles.container]}>

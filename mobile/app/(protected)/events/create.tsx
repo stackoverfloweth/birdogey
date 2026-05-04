@@ -1,21 +1,26 @@
 import { EventForm } from '@/components/EventForm'
-import { EventSeasonSelect } from '@/components/EventSeasonSelect'
+import { SeasonSelect } from '@/components/SeasonSelect'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners, EventSchema, EventSchemaInput, getNextCtpHole, toEventSchemaInput } from '@birdogey/shared'
 import { formStyles } from '@/theme/forms'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View, Text } from 'react-native'
 import { queryClient } from '@/services/queryClient'
 import { router } from 'expo-router'
 import { SymbolView } from 'expo-symbols'
-import { useSeason } from '@/hooks/useSeason'
 import { cardStyles } from '@/theme/card'
+import { useAuthSeasons } from '@/hooks/useAuthSeasons'
 
 export default function EventCreate(): React.ReactNode {
   const [seasonId, setSeasonId] = useState('')
   const api = useApiClient()
-  const season = useSeason(seasonId)
+  const seasons = useAuthSeasons()
+
+  const { data: season } = useQuery({
+    queryKey: ['seasons', seasonId],
+    queryFn: () => api.season.getById(seasonId),
+  })
 
   const { data: latestEvent = null } = useQuery({
     queryKey: ['events', 'last', seasonId],
@@ -47,8 +52,16 @@ export default function EventCreate(): React.ReactNode {
   return (
     <ScrollView style={{ margin: 16 }} contentContainerStyle={[cardStyles.card, styles.container]}>
       <View style={formStyles.form}>
-        <EventSeasonSelect value={seasonId} onChange={setSeasonId} />
+        <View style={formStyles.formGroup}>
+          <Text style={formStyles.label}>Season</Text>
+          <SeasonSelect
+            seasons={seasons}
+            value={seasonId}
+            onChange={setSeasonId}
+          />
+        </View>
       </View>
+
       {latestEvent && (
         <EventForm
           key={seasonId}

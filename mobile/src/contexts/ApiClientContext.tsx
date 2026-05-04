@@ -1,11 +1,12 @@
 import { config } from '@/config/env'
-import { AuthApi, createUserApi, createAuthApi, createEventApi, createImageKitApi, EventApi, FetchHttpClient, ImageKitApi, UserApi } from '@birdogey/shared'
+import { AuthApi, createUserApi, createAuthApi, createEventApi, createImageKitApi, EventApi, FetchHttpClient, ImageKitApi, UserApi, SeasonApi, createSeasonApi } from '@birdogey/shared'
 import { createContext, useContext, useRef } from 'react'
 import { getAccessToken } from '@/services/tokenStorage'
 
 export type ApiClient = {
   event: EventApi,
   user: UserApi,
+  season: SeasonApi,
   auth: AuthApi,
   imagekit: ImageKitApi,
 }
@@ -25,6 +26,9 @@ export function ApiClientProvider({ children }: { children: React.ReactNode }): 
   const event = useRef<EventApi | null>(null)
   event.current ??= createEventApi(apiClient.current)
 
+  const season = useRef<SeasonApi | null>(null)
+  season.current ??= createSeasonApi(apiClient.current)
+
   const imagekit = useRef<ImageKitApi | null>(null)
   imagekit.current ??= createImageKitApi(apiClient.current)
 
@@ -33,6 +37,7 @@ export function ApiClientProvider({ children }: { children: React.ReactNode }): 
       auth: auth.current,
       user: user.current,
       event: event.current,
+      season: season.current,
       imagekit: imagekit.current,
     }}
     >

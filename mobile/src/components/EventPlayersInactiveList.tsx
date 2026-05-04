@@ -26,7 +26,7 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
 
   const { data: players = [], isFetched } = useQuery({
     queryKey: ['players', event.seasonId],
-    queryFn: () => api.user.getUsersInSeason(event.seasonId),
+    queryFn: () => api.season.getUsersInSeason(event.seasonId),
     enabled: !!event.seasonId,
   })
 

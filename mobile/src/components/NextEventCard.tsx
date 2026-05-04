@@ -3,18 +3,24 @@ import { cardStyles } from '@/theme/card'
 import { Pressable, StyleSheet, View, Text } from 'react-native'
 import { Event } from '@birdogey/shared'
 import { badgeStyles } from '@/theme/badge'
-import { useSeason } from '@/hooks/useSeason'
 import { formatDistanceToNow, format } from 'date-fns'
 import { router } from 'expo-router'
 import { SymbolView } from 'expo-symbols'
 import { formStyles } from '@/theme/forms'
+import { useApiClient } from '@/contexts/ApiClientContext'
+import { useQuery } from '@tanstack/react-query'
 
 export type NextEventCardProps = {
   event: Event,
 }
 
 export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
-  const season = useSeason(event.seasonId)
+  const api = useApiClient()
+  const { data: season } = useQuery({
+    queryKey: ['seasons', event.seasonId],
+    queryFn: () => api.season.getById(event.seasonId),
+  })
+
   const startsIn = formatDistanceToNow(event.start)
 
   return (

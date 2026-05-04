@@ -17,7 +17,7 @@
   const filteredSeasons = ref<string[]>([])
 
   const playerSubscription = useSubscription(api.users.getList, [filteredSeasons])
-  const seasonPlayerSubscription = useSubscription(api.users.getUsersInSeason, [seasonId])
+  const seasonPlayerSubscription = useSubscription(api.season.getUsersInSeason, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const seasonPlayers = computed(() => seasonPlayerSubscription.response ?? [])
   const playersNotInSeason = computed(() => players.value.filter((player) => !seasonPlayers.value.some((seasonPlayer) => seasonPlayer.id === player.id)))

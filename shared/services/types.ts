@@ -39,10 +39,14 @@ export type UserJson = {
   imageUrl?: string,
 }
 
-export type UserSeasonJson = UserJson & {
+export type UserSeasonJson = SeasonJson & UserJson & {
   seasonId: string,
   tagId: number,
   entryPaid: boolean,
+  season: {
+    _id: string,
+    name: string,
+  },
 }
 
 export type EventPlayerJson = {

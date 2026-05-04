@@ -9,9 +9,9 @@ import { EventPlayerRequest, pluralize, UserRequest, UserSeason } from '@birdoge
 import { useState } from 'react'
 import * as Linking from 'expo-linking'
 import { useApiClient } from '@/contexts/ApiClientContext'
-import { useSeason } from '@/hooks/useSeason'
 import { AccordionItem } from './AccordionItem'
 import Animated, { LinearTransition } from 'react-native-reanimated'
+import { useQuery } from '@tanstack/react-query'
 
 type ScoreImportModalProps = {
   visible: boolean,
@@ -26,7 +26,10 @@ type ScoreImportModalProps = {
 export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, players, eventPlayers, style }: ScoreImportModalProps): React.ReactNode {
   const { scores, notInBirdogey, unmatchedInEvent, missingMetadata, parseFile, reset: resetImport } = useUDiscImport(players, eventPlayers)
   const api = useApiClient()
-  const season = useSeason(seasonId)
+  const { data: season } = useQuery({
+    queryKey: ['seasons', seasonId],
+    queryFn: () => api.season.getById(seasonId),
+  })
 
   const [selectedAsset, setSelectedAsset] = useState<DocumentPicker.DocumentPickerAsset>()
   const [processing, setProcessing] = useState(false)

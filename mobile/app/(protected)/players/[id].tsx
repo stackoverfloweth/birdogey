@@ -7,10 +7,15 @@ import { UserRequest } from '@birdogey/shared'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { router, useLocalSearchParams } from 'expo-router'
 import { SymbolView } from 'expo-symbols'
-import { StyleSheet, View, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, ActivityIndicator, Pressable, Text, ScrollView } from 'react-native'
+import { PlayerSeasonFormModal } from '@/components/PlayerSeasonFormModal'
+import { useState } from 'react'
+import { formStyles } from '@/theme/forms'
+import { PlayerSeasonsList } from '@/components/PlayerSeasonsList'
 
 export default function PlayerView(): React.ReactNode {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const [playerSeasonModalVisible, setPlayerSeasonModalVisible] = useState(false)
 
   const api = useApiClient()
   const { data: player, isLoading, isRefetching } = useQuery({
@@ -30,25 +35,30 @@ export default function PlayerView(): React.ReactNode {
   }
 
   return (
-    <View style={[cardStyles.card, styles.container]}>
-      <PlayerForm
-        userId={player?.id}
-        initialValues={player}
-        submitText="Save"
-        submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
-        isLoading={isUpdatingPlayer || isRefetching}
-        onCancel={() => router.back()}
-        onSubmit={updatePlayer}
-      />
-    </View>
+    <>
+      <ScrollView contentContainerStyle={[cardStyles.card, styles.container]}>
+        <PlayerForm
+          userId={player?.id}
+          initialValues={player}
+          submitText="Save"
+          submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
+          isLoading={isUpdatingPlayer || isRefetching}
+          onSubmit={updatePlayer}
+        />
+
+        <View style={formStyles.form}>
+          {player?.id && <PlayerSeasonsList userId={player.id} />}
+        </View>
+      </ScrollView>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'space-between',
     paddingHorizontal: 0,
     margin: 16,
+    gap: 8,
   },
 })

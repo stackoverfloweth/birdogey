@@ -1,7 +1,7 @@
 import { formStyles } from '@/theme/forms'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
-import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native'
+import { View, Text, Pressable, ActivityIndicator } from 'react-native'
 import { TextInput } from '@/components/TextInput'
 import { UserImageUpload } from '@/components/UserImageUpload'
 import { userSchema, UserSchema, UserSchemaInput } from '@birdogey/shared'
@@ -11,20 +11,21 @@ export type PlayerFormProps = {
   userId?: string,
   submitText?: string,
   submitIcon?: React.ReactNode,
+  cancelText?: string,
   initialValues?: UserSchemaInput | undefined,
   isLoading?: boolean,
   onSubmit: (data: UserSchema) => void,
   onCancel?: () => void,
 }
 
-export function PlayerForm({ userId, submitText, submitIcon, initialValues, isLoading, onSubmit, onCancel }: PlayerFormProps): React.ReactNode {
+export function PlayerForm({ userId, submitText, submitIcon, cancelText, initialValues, isLoading, onSubmit, onCancel }: PlayerFormProps): React.ReactNode {
   const { control, handleSubmit, formState: { errors, isLoading: formIsLoading } } = useForm<UserSchemaInput, any, UserSchema>({
     resolver: zodResolver(userSchema),
     defaultValues: initialValues,
   })
 
   return (
-    <ScrollView contentContainerStyle={formStyles.form}>
+    <View style={formStyles.form}>
       <View style={[formStyles.formGroup, { marginBottom: 16 }]}>
         <Controller
           control={control}
@@ -88,7 +89,10 @@ export function PlayerForm({ userId, submitText, submitIcon, initialValues, isLo
         <Pressable
           disabled={formIsLoading || isLoading}
           style={formStyles.button}
-          onPress={() => void handleSubmit(onSubmit)()}
+          onPress={() => {
+            void handleSubmit(onSubmit)()
+            onCancel?.()
+          }}
         >
           {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : submitIcon}
           <Text style={formStyles.buttonText}>{submitText}</Text>
@@ -99,10 +103,10 @@ export function PlayerForm({ userId, submitText, submitIcon, initialValues, isLo
             style={formStyles.secondaryButton}
             onPress={onCancel}
           >
-            <Text style={formStyles.secondaryButtonText}>Cancel</Text>
+            <Text style={formStyles.secondaryButtonText}>{cancelText ?? 'Cancel'}</Text>
           </Pressable>
         )}
       </View>
-    </ScrollView>
+    </View>
   )
 }

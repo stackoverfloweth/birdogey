@@ -13,7 +13,7 @@
 
   const api = useApi()
   const seasonId = computed(() => props.event.seasonId)
-  const playerSubscription = useSubscription(api.users.getUsersInSeason, [seasonId])
+  const playerSubscription = useSubscription(api.season.getUsersInSeason, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
 
   const eventPlayers = computed(() => props.event.players.map(({ userId }) => {

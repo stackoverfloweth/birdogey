@@ -29,7 +29,7 @@
   const { value: loading, setTrue: startLoading, setFalse: stopLoading } = useBoolean()
 
   const { seasonId } = toRefs(props)
-  const playerSubscription = useSubscription(api.users.getUsersInSeason, [seasonId])
+  const playerSubscription = useSubscription(api.season.getUsersInSeason, [seasonId])
   const players = computed(() => playerSubscription.response ?? [])
   const player = computed(() => players.value.find(({ id }) => id === props.userId))
 

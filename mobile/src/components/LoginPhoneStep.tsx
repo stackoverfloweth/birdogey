@@ -30,7 +30,6 @@ export function LoginPhoneStep({ onSuccess }: { onSuccess: (phoneNumber: string)
               placeholder="(555) 555-5555"
               keyboardType="number-pad"
               maxLength={10}
-              autoFocus
               icon={<SymbolView name="phone" size={20} tintColor={colors.primary} />}
             />
           )}

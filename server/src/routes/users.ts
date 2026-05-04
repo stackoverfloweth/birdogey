@@ -49,9 +49,8 @@ users.get('/', authMiddleware, async (context) => {
   return context.json(result)
 })
 
-users.get('/seasons', authMiddleware, async (context) => {
-  const token = getJwtPayload(context)
-  const userId = ObjectId.createFromHexString(token._id.toString())
+users.get('/:id/seasons', authMiddleware, async (context) => {
+  const userId = ObjectId.createFromHexString(context.req.param('id'))
   const db = getDb()
 
   const collection = db.collection<UserSeasonResponse>('userSeasons')
@@ -79,47 +78,8 @@ users.get('/seasons', authMiddleware, async (context) => {
       },
     },
     { $unwind: '$season' },
-    { $project: { _id: 1, seasonId: 1, tagId: 1, entryPaid: 1, season: { _id: 1, name: 1 } } },
+    { $project: { _id: 1, seasonId: 1, tagId: 1, entryPaid: 1, season: 1 } },
   ]).toArray()
-
-  return context.json(result)
-})
-
-users.get('/seasons/:seasonId', authMiddleware, async (context) => {
-  const seasonId = context.req.param('seasonId')
-
-  const token = getJwtPayload(context)
-  const db = getDb()
-
-  if (!seasonId) {
-    throw new HttpError(400, 'seasonId is required')
-  }
-
-  checkSeasonAccess(seasonId, token)
-
-  const collection = db.collection<UserSeasonResponse>('userSeasons')
-
-  const result = await collection
-    .aggregate([
-      { $match: { seasonId: new ObjectId(seasonId) } },
-      { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
-      { $unwind: '$user' },
-      { $match: { 'user.deletedAt': { $exists: false } } },
-      {
-        $project: {
-          _id: { $toString: '$user._id' },
-          name: '$user.name',
-          udiscId: '$user.udiscId',
-          pdgaNumber: '$user.pdgaNumber',
-          imageUrl: '$user.imageUrl',
-          seasonId: { $toString: '$seasonId' },
-          tagId: 1,
-          entryPaid: 1,
-        },
-      },
-      { $sort: { tagId: 1 } },
-    ])
-    .toArray()
 
   return context.json(result)
 })

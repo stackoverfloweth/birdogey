@@ -1,11 +1,13 @@
 import { NextEventCard } from '@/components/NextEventCard'
-import { UserSeasonCard } from '@/components/UserSeasonCard'
+import { PlayerSeasonCard } from '@/components/PlayerSeasonCard'
 import { useApiClient } from '@/contexts/ApiClientContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { useQuery } from '@tanstack/react-query'
 import { ScrollView, StyleSheet } from 'react-native'
 
 export default function ProtectedIndex(): React.ReactNode {
   const api = useApiClient()
+  const auth = useAuth()
 
   const { data: nextEvent } = useQuery({
     queryKey: ['events', 'next'],
@@ -13,15 +15,16 @@ export default function ProtectedIndex(): React.ReactNode {
   })
 
   const { data: seasons = [] } = useQuery({
-    queryKey: ['players', 'seasons'],
-    queryFn: () => api.user.getSeasonsForUser(),
+    queryKey: ['players', auth.user?.id, 'seasons'],
+    queryFn: () => api.user.getSeasonsForUser(auth.user?.id ?? ''),
+    enabled: !!auth.user?.id,
   })
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {!!nextEvent && <NextEventCard event={nextEvent} />}
       {seasons.map((season) => (
-        <UserSeasonCard key={season.seasonId} userSeason={season} />
+        <PlayerSeasonCard key={season.seasonId} userSeason={season} />
       ))}
     </ScrollView>
   )
