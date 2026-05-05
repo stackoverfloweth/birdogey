@@ -1,6 +1,6 @@
-import { ActivityIndicator, Alert, Modal, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
+import { ActivityIndicator, Alert, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import * as DocumentPicker from 'expo-document-picker'
-import { modalStyles } from '@/theme/modals'
+import { BottomSheet } from '@/components/BottomSheet'
 import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
 import { SymbolView } from 'expo-symbols'
@@ -88,128 +88,118 @@ export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, playe
   }
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onDismiss}>
-      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
-
-      <View style={[modalStyles.content, styles.modalContent, !!selectedAsset ? style : {}]}>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Pressable onPress={onDismiss} style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]}>
-            <SymbolView name="chevron.down" size={30} tintColor="#fff" weight="bold" />
-          </Pressable>
-        </View>
-
-        {selectedAsset === undefined && (
-          <>
-            {!!season?.course.udiscId && (
-              <Pressable
-                style={formStyles.secondaryButton}
-                onPress={() => void Linking.openURL(`https://udisc.com/leagues/${season.course.udiscId}`)}
-              >
-                <Text style={formStyles.secondaryButtonText}>Open in UDisc</Text>
-                <SymbolView name="arrow.up.right.square.fill" size={16} tintColor={colors.on_surface} />
-              </Pressable>
-            )}
-            <Pressable style={formStyles.button} onPress={() => void pickFile()}>
-              <SymbolView name="arrow.up.document.fill" size={24} tintColor="#fff" weight="bold" />
-              <Text style={formStyles.buttonText}>Select a file</Text>
+    <BottomSheet visible={visible} onDismiss={onDismiss} contentStyle={[styles.modalContent, !!selectedAsset ? style : {}]}>
+      {selectedAsset === undefined && (
+        <>
+          {!!season?.course.udiscId && (
+            <Pressable
+              style={formStyles.secondaryButton}
+              onPress={() => void Linking.openURL(`https://udisc.com/leagues/${season.course.udiscId}`)}
+            >
+              <Text style={formStyles.secondaryButtonText}>Open in UDisc</Text>
+              <SymbolView name="arrow.up.right.square.fill" size={16} tintColor={colors.on_surface} />
             </Pressable>
-          </>
-        )}
+          )}
+          <Pressable style={formStyles.button} onPress={() => void pickFile()}>
+            <SymbolView name="arrow.up.document.fill" size={24} tintColor="#fff" weight="bold" />
+            <Text style={formStyles.buttonText}>Select a file</Text>
+          </Pressable>
+        </>
+      )}
 
-        {!!selectedAsset && (
-          <>
-            <Animated.ScrollView contentContainerStyle={styles.review} layout={LinearTransition}>
-              <View style={styles.summary}>
-                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{scores.size}</Text>
-                <Text style={{ fontSize: 16 }}>
-                  {pluralize(scores.size, 'score')}
-                  {' '}
-                  ready to apply.
-                </Text>
-              </View>
+      {!!selectedAsset && (
+        <>
+          <Animated.ScrollView contentContainerStyle={styles.review} layout={LinearTransition}>
+            <View style={styles.summary}>
+              <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{scores.size}</Text>
+              <Text style={{ fontSize: 16 }}>
+                {pluralize(scores.size, 'score')}
+                {' '}
+                ready to apply.
+              </Text>
+            </View>
 
-              <AccordionItem
-                title={`Not found in Birdogey (${notInBirdogey.length})`}
-                children={(
-                  <View style={styles.list}>
-                    {notInBirdogey.map((player) => (
-                      <View style={styles.listItem} key={player.username}>
-                        <SymbolView name="circle.fill" size={10} tintColor={colors.on_surface} />
-                        <Text>
-                          {player.name}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
-              />
-
-              <AccordionItem
-                title={`Not found in UDisc import (${unmatchedInEvent.length})`}
-                children={(
-                  <View>
-                    {unmatchedInEvent.map((player) => (
-                      <View style={styles.listItem} key={player.userId}>
-                        <SymbolView name="circle.fill" size={10} tintColor={colors.on_surface} />
-                        <Text>
-                          {player.userName}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
-              />
-
-              {missingMetadata.size > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Set missing profile data (opt in)</Text>
-
-                  {Array.from(missingMetadata.entries()).map(([userId, meta]) => (
-                    <View style={styles.metadataRow} key={userId}>
-                      <View style={styles.metadataInfo}>
-                        <Text style={styles.metadataName}>{meta.name}</Text>
-                        <View style={styles.metadataDetail}>
-                          {meta.udiscId && (
-                            <View style={{ gap: 2, flexDirection: 'row', alignItems: 'center' }}>
-                              <Text style={styles.metadataDetailText}>UDisc ID:</Text>
-                              <Text style={styles.metadataValue}>
-                                {meta.udiscId}
-                              </Text>
-                            </View>
-                          )}
-                          {meta.pdgaNumber && (
-                            <View style={{ gap: 2, flexDirection: 'row', alignItems: 'center' }}>
-                              <Text style={styles.metadataDetailText}>PDGA #: </Text>
-                              <Text style={styles.metadataValue}>
-                                {meta.pdgaNumber}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                      </View>
-
-                      <Pressable style={[formStyles.iconButton, { width: 42, backgroundColor: colors.surface_container_low }]} onPress={() => void saveUserMetadata(userId, meta)}>
-                        <SymbolView name="checkmark" size={18} tintColor={colors.primary} />
-                      </Pressable>
+            <AccordionItem
+              title={`Not found in Birdogey (${notInBirdogey.length})`}
+              children={(
+                <View style={styles.list}>
+                  {notInBirdogey.map((player) => (
+                    <View style={styles.listItem} key={player.username}>
+                      <SymbolView name="circle.fill" size={10} tintColor={colors.on_surface} />
+                      <Text>
+                        {player.name}
+                      </Text>
                     </View>
                   ))}
                 </View>
               )}
-            </Animated.ScrollView>
+            />
 
-            <Pressable style={formStyles.secondaryButton} onPress={reset}>
-              <SymbolView name="arrow.left" size={24} tintColor={colors.on_surface_variant} weight="bold" />
-              <Text style={formStyles.secondaryButtonText}>Back</Text>
-            </Pressable>
+            <AccordionItem
+              title={`Not found in UDisc import (${unmatchedInEvent.length})`}
+              children={(
+                <View>
+                  {unmatchedInEvent.map((player) => (
+                    <View style={styles.listItem} key={player.userId}>
+                      <SymbolView name="circle.fill" size={10} tintColor={colors.on_surface} />
+                      <Text>
+                        {player.userName}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            />
 
-            <Pressable style={formStyles.button} onPress={applyScores}>
-              <SymbolView name="checkmark" size={24} tintColor="#fff" weight="bold" />
-              <Text style={formStyles.buttonText}>Import scores</Text>
-            </Pressable>
-          </>
-        )}
-      </View>
-    </Modal>
+            {missingMetadata.size > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Set missing profile data (opt in)</Text>
+
+                {Array.from(missingMetadata.entries()).map(([userId, meta]) => (
+                  <View style={styles.metadataRow} key={userId}>
+                    <View style={styles.metadataInfo}>
+                      <Text style={styles.metadataName}>{meta.name}</Text>
+                      <View style={styles.metadataDetail}>
+                        {meta.udiscId && (
+                          <View style={{ gap: 2, flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={styles.metadataDetailText}>UDisc ID:</Text>
+                            <Text style={styles.metadataValue}>
+                              {meta.udiscId}
+                            </Text>
+                          </View>
+                        )}
+                        {meta.pdgaNumber && (
+                          <View style={{ gap: 2, flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={styles.metadataDetailText}>PDGA #: </Text>
+                            <Text style={styles.metadataValue}>
+                              {meta.pdgaNumber}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+
+                    <Pressable style={[formStyles.iconButton, { width: 42, backgroundColor: colors.surface_container_low }]} onPress={() => void saveUserMetadata(userId, meta)}>
+                      <SymbolView name="checkmark" size={18} tintColor={colors.primary} />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            )}
+          </Animated.ScrollView>
+
+          <Pressable style={formStyles.secondaryButton} onPress={reset}>
+            <SymbolView name="arrow.left" size={24} tintColor={colors.on_surface_variant} weight="bold" />
+            <Text style={formStyles.secondaryButtonText}>Back</Text>
+          </Pressable>
+
+          <Pressable style={formStyles.button} onPress={applyScores}>
+            <SymbolView name="checkmark" size={24} tintColor="#fff" weight="bold" />
+            <Text style={formStyles.buttonText}>Import scores</Text>
+          </Pressable>
+        </>
+      )}
+    </BottomSheet>
   )
 }
 

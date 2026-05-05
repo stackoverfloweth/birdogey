@@ -1,5 +1,5 @@
-import { modalStyles } from '@/theme/modals'
-import { Pressable, StyleSheet, Modal, View } from 'react-native'
+import { BottomSheet } from '@/components/BottomSheet'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { Score } from '@/components/Score'
 import { colors } from '@/theme/colors'
 import { SymbolView } from 'expo-symbols'
@@ -54,41 +54,36 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
     )
   }
   return (
-    <Modal animationType="slide" transparent={true} visible={!!player} onRequestClose={onDismiss}>
-      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
-
-      <View style={[modalStyles.content, styles.modalContent]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <UserImage userId={player.userId} imageUrl={player.imageUrl} width={40} height={40} />
-          {renderSubTitle()}
-          {renderRightState()}
-        </View>
-
-        <View style={styles.scoreGrid}>
-          {negativeValues.map((value) => (
-            <Pressable key={value} style={styles.scoreButton} onPress={() => save(value)}>
-              <Score value={value} />
-            </Pressable>
-          ))}
-
-          <Pressable style={[styles.scoreButton, { width: '100%' }]} onPress={() => save(0)}>
-            <Score value={0} />
-          </Pressable>
-
-          {positiveValues.map((value) => (
-            <Pressable key={value} style={styles.scoreButton} onPress={() => save(value)}>
-              <Score value={value} />
-            </Pressable>
-          ))}
-        </View>
+    <BottomSheet visible={!!player} onDismiss={() => onDismiss?.()} contentStyle={styles.modalContent}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <UserImage userId={player.userId} imageUrl={player.imageUrl} width={40} height={40} />
+        {renderSubTitle()}
+        {renderRightState()}
       </View>
-    </Modal>
+
+      <View style={styles.scoreGrid}>
+        {negativeValues.map((value) => (
+          <Pressable key={value} style={styles.scoreButton} onPress={() => save(value)}>
+            <Score value={value} />
+          </Pressable>
+        ))}
+
+        <Pressable style={[styles.scoreButton, { width: '100%' }]} onPress={() => save(0)}>
+          <Score value={0} />
+        </Pressable>
+
+        {positiveValues.map((value) => (
+          <Pressable key={value} style={styles.scoreButton} onPress={() => save(value)}>
+            <Score value={value} />
+          </Pressable>
+        ))}
+      </View>
+    </BottomSheet>
   )
 }
 
 const styles = StyleSheet.create({
   modalContent: {
-    height: 680,
     padding: 24,
     gap: 16,
   },

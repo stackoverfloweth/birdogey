@@ -1,15 +1,13 @@
-import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, ScrollView, Alert, Text } from 'react-native'
-import { modalStyles } from '@/theme/modals'
+import { StyleSheet, StyleProp, ViewStyle, ScrollView, Alert } from 'react-native'
+import { BottomSheet } from '@/components/BottomSheet'
 import { EventForm } from '@/components/EventForm'
 import { Event, EventSchema, EventSchemaInput, toEventSchemaInput } from '@birdogey/shared'
 import { SymbolView } from 'expo-symbols'
 import { useMemo } from 'react'
-import { colors } from '@/theme/colors'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useMutation } from '@tanstack/react-query'
 import { router } from 'expo-router'
 import { queryClient } from '@/services/queryClient'
-import { formStyles } from '@/theme/forms'
 
 type EventFormModalProps = {
   event: Event,
@@ -53,40 +51,23 @@ export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: E
   }
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={() => {}}>
-      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
-
-      <View style={[modalStyles.content, style]}>
-        <View style={modalStyles.header}>
-          <Pressable style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]} onPress={onDismiss}>
-            <SymbolView name="chevron.down" size={30} tintColor="#fff" weight="bold" />
-          </Pressable>
-        </View>
-
-        <ScrollView contentContainerStyle={styles.modalContent}>
-          <EventForm
-            submitText="Save"
-            submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
-            initialValues={initialValues}
-            onSubmit={(data) => onSubmit?.(data)}
-            onCancel={onDismiss}
-            onDelete={handleDelete}
-          />
-        </ScrollView>
-      </View>
-    </Modal>
+    <BottomSheet visible={!!visible} onDismiss={() => onDismiss?.()} contentStyle={style}>
+      <ScrollView contentContainerStyle={styles.modalContent}>
+        <EventForm
+          submitText="Save"
+          submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
+          initialValues={initialValues}
+          onSubmit={(data) => onSubmit?.(data)}
+          onCancel={onDismiss}
+          onDelete={handleDelete}
+        />
+      </ScrollView>
+    </BottomSheet>
   )
 }
 
 const styles = StyleSheet.create({
   modalContent: {
-    position: 'relative',
     paddingBottom: 24,
-  },
-  submitButton: {
-    position: 'absolute',
-    top: 12,
-    right: 18,
-    backgroundColor: colors.primary,
   },
 })

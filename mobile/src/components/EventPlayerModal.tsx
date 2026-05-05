@@ -1,11 +1,10 @@
-import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, Text } from 'react-native'
-import { modalStyles } from '@/theme/modals'
+import { Pressable, StyleSheet, View, StyleProp, ViewStyle, Text } from 'react-native'
+import { BottomSheet } from '@/components/BottomSheet'
 import { EventPlayerForm } from '@/components/EventPlayerForm'
 import { PlayerInEvent } from '@/components/EventPlayersActiveList'
 import { EventPlayerSchemaInput } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
 import { SymbolView } from 'expo-symbols'
-import { formStyles } from '@/theme/forms'
 import { router } from 'expo-router'
 
 type EventPlayerModalProps = {
@@ -27,46 +26,32 @@ export function EventPlayerModal({ player, onSubmit = () => {}, onDismiss = () =
   }
 
   return (
-    <Modal animationType="slide" transparent={true} visible={!!player} onRequestClose={onDismiss}>
-      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
-
-      <View style={[modalStyles.content, styles.modalContent, style]}>
-        <View style={styles.modalHeader}>
-          <View>
-            <Text style={styles.modalTitle}>{player.name}</Text>
-            <Pressable
-              onPress={handleEditLinkPress}
-            >
-              <Text style={{ color: colors.primary }}>Edit Player</Text>
-            </Pressable>
-          </View>
-
-          <Pressable onPress={onDismiss} style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]}>
-            <SymbolView name="chevron.down" size={30} tintColor="#fff" weight="bold" />
-          </Pressable>
-        </View>
-
-        <EventPlayerForm
-          initialValues={player}
-          submitText="Save"
-          submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
-          onSubmit={handleSubmit}
-        />
+    <BottomSheet visible={!!player} onDismiss={onDismiss} contentStyle={[styles.modalContent, style]}>
+      <View style={styles.modalHeader}>
+        <Text style={styles.modalTitle}>{player.name}</Text>
+        <Pressable onPress={handleEditLinkPress}>
+          <Text style={{ color: colors.primary }}>Edit Player</Text>
+        </Pressable>
       </View>
-    </Modal>
+
+      <EventPlayerForm
+        initialValues={player}
+        submitText="Save"
+        submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
+        onSubmit={handleSubmit}
+      />
+    </BottomSheet>
   )
 }
 
 const styles = StyleSheet.create({
   modalContent: {
-    paddingVertical: 24,
+    paddingBottom: 24,
     gap: 16,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: 24,
+    gap: 4,
   },
   modalTitle: {
     fontSize: 18,
