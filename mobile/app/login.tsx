@@ -1,13 +1,13 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { useCallback, useState } from 'react'
-import { Text, StyleSheet, Image, View, Pressable, Modal, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
+import { Text, StyleSheet, Image, View, Pressable, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import splashImage from '../../assets/birdogey-logo.png'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
 import { formStyles } from '@/theme/forms'
-import { modalStyles } from '@/theme/modals'
+import { BottomSheet } from '@/components/BottomSheet'
 import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
 import * as LocalAuthentication from 'expo-local-authentication'
 import * as Sentry from '@sentry/react-native'
@@ -128,33 +128,35 @@ export default function Login(): React.ReactNode {
         </View>
       </TouchableWithoutFeedback>
 
-      <Modal animationType="slide" transparent={true} visible={askEnableBiometrics}>
-        <View style={[styles.modalContent, modalStyles.content]}>
-          <View style={modalStyles.header}>
-            {isFaceIdAvailable && (
-              <>
-                <SymbolView name="faceid" size={28} tintColor={colors.on_surface} />
-                <Text style={modalStyles.title}>Enable Face ID?</Text>
-              </>
-            )}
-            {isTouchIDAvailable && (
-              <>
-                <SymbolView name="touchid" size={28} tintColor={colors.on_surface} />
-                <Text style={modalStyles.title}>Enable Touch ID?</Text>
-              </>
-            )}
-          </View>
-
-          <View style={modalStyles.buttons}>
-            <Pressable style={formStyles.button} onPress={() => void handleEnableBiometrics()}>
-              <Text style={formStyles.buttonText}>Yes</Text>
-            </Pressable>
-            <Pressable style={formStyles.secondaryButton} onPress={() => void handleDisableBiometrics()}>
-              <Text style={formStyles.secondaryButtonText}>No</Text>
-            </Pressable>
-          </View>
+      <BottomSheet
+        visible={askEnableBiometrics}
+        onDismiss={() => void handleDisableBiometrics()}
+        contentStyle={styles.modalContent}
+      >
+        <View style={styles.biometricsHeader}>
+          {isFaceIdAvailable && (
+            <>
+              <SymbolView name="faceid" size={28} tintColor={colors.on_surface} />
+              <Text style={styles.biometricsModalTitle}>Enable Face ID?</Text>
+            </>
+          )}
+          {isTouchIDAvailable && (
+            <>
+              <SymbolView name="touchid" size={28} tintColor={colors.on_surface} />
+              <Text style={styles.biometricsModalTitle}>Enable Touch ID?</Text>
+            </>
+          )}
         </View>
-      </Modal>
+
+        <View style={styles.biometricsButtons}>
+          <Pressable style={formStyles.button} onPress={() => void handleEnableBiometrics()}>
+            <Text style={formStyles.buttonText}>Yes</Text>
+          </Pressable>
+          <Pressable style={formStyles.secondaryButton} onPress={() => void handleDisableBiometrics()}>
+            <Text style={formStyles.secondaryButtonText}>No</Text>
+          </Pressable>
+        </View>
+      </BottomSheet>
     </SafeAreaView>
   )
 }
@@ -217,5 +219,21 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     padding: 24,
+    gap: 12,
+  },
+  biometricsHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  biometricsModalTitle: {
+    fontSize: 18,
+    color: colors.on_surface,
+  },
+  biometricsButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
   },
 })

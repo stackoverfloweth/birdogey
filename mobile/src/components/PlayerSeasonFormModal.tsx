@@ -1,13 +1,11 @@
-import { Pressable, StyleSheet, View, Modal, StyleProp, ViewStyle, ScrollView, Alert, Text } from 'react-native'
-import { modalStyles } from '@/theme/modals'
+import { StyleSheet, StyleProp, ViewStyle, ScrollView, Alert } from 'react-native'
+import { BottomSheet } from '@/components/BottomSheet'
 import { PlayerSeasonForm } from '@/components/PlayerSeasonForm'
 import { SymbolView } from 'expo-symbols'
-import { colors } from '@/theme/colors'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useMutation } from '@tanstack/react-query'
 import { router } from 'expo-router'
 import { queryClient } from '@/services/queryClient'
-import { formStyles } from '@/theme/forms'
 import { UserSeasonSchemaInput } from '@birdogey/shared'
 
 type PlayerSeasonFormModalProps = {
@@ -61,41 +59,24 @@ export function PlayerSeasonFormModal({ userId, visible, initialValues, onDismis
   }
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={() => {}}>
-      <Pressable style={modalStyles.backdrop} onPress={onDismiss} />
-
-      <View style={[modalStyles.content, style]}>
-        <View style={modalStyles.header}>
-          <Pressable style={[formStyles.iconButton, { backgroundColor: colors.outline_variant }]} onPress={onDismiss}>
-            <SymbolView name="chevron.down" size={30} tintColor="#fff" weight="bold" />
-          </Pressable>
-        </View>
-
-        <ScrollView contentContainerStyle={styles.modalContent}>
-          <PlayerSeasonForm
-            submitText={initialValues ? 'Save' : 'Add'}
-            submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
-            deleteText="Remove"
-            initialValues={initialValues}
-            onSubmit={(data) => setUserSeason(data)}
-            onCancel={onDismiss}
-            onDelete={handleDelete}
-          />
-        </ScrollView>
-      </View>
-    </Modal>
+    <BottomSheet visible={!!visible} onDismiss={() => onDismiss?.()} contentStyle={style}>
+      <ScrollView contentContainerStyle={styles.modalContent}>
+        <PlayerSeasonForm
+          submitText={initialValues ? 'Save' : 'Add'}
+          submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
+          deleteText="Remove"
+          initialValues={initialValues}
+          onSubmit={(data) => setUserSeason(data)}
+          onCancel={onDismiss}
+          onDelete={handleDelete}
+        />
+      </ScrollView>
+    </BottomSheet>
   )
 }
 
 const styles = StyleSheet.create({
   modalContent: {
-    position: 'relative',
     paddingBottom: 24,
-  },
-  submitButton: {
-    position: 'absolute',
-    top: 12,
-    right: 18,
-    backgroundColor: colors.primary,
   },
 })
