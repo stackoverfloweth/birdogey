@@ -96,9 +96,12 @@ export function PotBalances({ event, eventPlayers, onChange }: PotBalancesProps)
 
   function renderItem(player: PlayerInEvent, onSelect: (player: PlayerInEvent) => void): React.ReactElement {
     return (
-      <Pressable onPress={() => onSelect(player)}>
-        <PlayerListItem player={player} right={renderRightState(player)} subTitle={renderSubTitle(player)} />
-      </Pressable>
+      <PlayerListItem
+        player={player}
+        right={renderRightState(player)}
+        subTitle={renderSubTitle(player)}
+        onPress={() => onSelect(player)}
+      />
     )
   }
 

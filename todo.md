@@ -22,11 +22,11 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] actually deploy to your iphone
 [x] swap `name` for `start` date on event
 [x] submit ace + ctp selections when swipe is closed
-[] setting ctp (and prob ace) didn’t work
-[] adding players to event should be sorted alphabetically
-[] created new player, cache didn't invalidate
-[] refreshing event should bust more cache?
-[] small modals, like event player, get eclipsed by keyboard. can’t actually use them
+[x] adding players to event should be sorted alphabetically
+[x] created new player, cache didn't invalidate
+[x] refreshing event should bust more cache?
+[x] small modals, like event player, get eclipsed by keyboard. can’t actually use them
+[x] setting ctp (and prob ace) didn’t work
 [] filter players/index by season
 
 ## later
@@ -40,7 +40,6 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [] look into errors, on logout
 [x] implement soft delete for players
 [] implement private notes
-[] drag to close modals
 [] sticky footer in forms
 
 ## eventually
