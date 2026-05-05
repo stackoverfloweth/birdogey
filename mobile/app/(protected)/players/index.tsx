@@ -8,14 +8,21 @@ import { router } from 'expo-router'
 import { useCallback, useMemo, useState } from 'react'
 import { colors } from '@/theme/colors'
 import { TextInput } from '@/components/TextInput'
+import { badgeStyles } from '@/theme/badge'
 
 export default function Players(): React.ReactNode {
   const api = useApiClient()
   const [playerSearch, setPlayerSearch] = useState('')
+  const [filterSeasonIds, setFilterSeasonIds] = useState<string[]>([])
 
   const { data: players = [], refetch, isFetching } = useQuery({
-    queryKey: ['players'],
-    queryFn: () => api.user.getList(),
+    queryKey: ['players', filterSeasonIds],
+    queryFn: () => api.user.getList(Array.from(filterSeasonIds)),
+  })
+
+  const { data: seasons = [] } = useQuery({
+    queryKey: ['seasons'],
+    queryFn: () => api.season.getList(),
   })
 
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
@@ -26,6 +33,14 @@ export default function Players(): React.ReactNode {
   const filteredPlayers = useMemo(() => {
     return players.filter((player) => player.name.toLowerCase().includes(playerSearch.toLowerCase()))
   }, [players, playerSearch])
+
+  function toggleSeason(seasonId: string): void {
+    if (filterSeasonIds.includes(seasonId)) {
+      setFilterSeasonIds((prev) => prev.filter((id) => id !== seasonId))
+    } else {
+      setFilterSeasonIds((prev) => [...prev, seasonId])
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -38,6 +53,18 @@ export default function Players(): React.ReactNode {
           clearButtonMode="while-editing"
           icon={<SymbolView name="magnifyingglass" size={20} tintColor={colors.primary} />}
         />
+      </View>
+
+      <View style={styles.seasonFilters}>
+        {seasons.map((season) => (
+          <Pressable
+            key={season.id}
+            style={[badgeStyles.badge, styles.seasonBadge, { backgroundColor: filterSeasonIds.includes(season.id) ? colors.primary : colors.surface_container_highest }]}
+            onPress={() => toggleSeason(season.id)}
+          >
+            <Text style={[styles.seasonBadgeText, { color: filterSeasonIds.includes(season.id) ? colors.surface_container_lowest : colors.on_surface_variant }]}>{season.name}</Text>
+          </Pressable>
+        ))}
       </View>
 
       <FlatList
@@ -71,6 +98,20 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 16,
     padding: 16,
+  },
+  seasonFilters: {
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  seasonBadge: {
+    paddingVertical: 12,
+    borderRadius: 9999,
+  },
+  seasonBadgeText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: colors.surface_container_lowest,
   },
   flatList: {
     flex: 1,
