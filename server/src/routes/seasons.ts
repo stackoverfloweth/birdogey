@@ -72,7 +72,7 @@ seasons.get('/:id/users', authMiddleware, async (context) => {
           season: 1,
         },
       },
-      { $sort: { tagId: 1 } },
+      { $sort: { name: 1 } },
     ])
     .toArray()
 

@@ -31,6 +31,10 @@ export function PlayerSeasonFormModal({ userId, visible, initialValues, onDismis
       onDismiss?.()
       router.replace('/players')
       queryClient.invalidateQueries({ queryKey: ['players', userId] })
+
+      if (initialValues?.seasonId) {
+        queryClient.invalidateQueries({ queryKey: ['players', userId, 'seasons'] })
+      }
     },
   })
 
@@ -40,6 +44,10 @@ export function PlayerSeasonFormModal({ userId, visible, initialValues, onDismis
       onDismiss?.()
       router.replace('/players')
       queryClient.invalidateQueries({ queryKey: ['players', userId] })
+
+      if (initialValues?.seasonId) {
+        queryClient.invalidateQueries({ queryKey: ['players', userId, 'seasons'] })
+      }
     },
   })
 

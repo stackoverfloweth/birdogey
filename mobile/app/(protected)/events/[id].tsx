@@ -16,7 +16,13 @@ export default function EventView(): React.ReactNode {
     queryKey: ['events', id],
     queryFn: () => api.event.getById(id),
   })
+
   const eventPlayers = useMemo(() => event?.players ?? [], [event])
+
+  function handleRefresh(): void {
+    queryClient.invalidateQueries({ queryKey: ['events', id] })
+    queryClient.invalidateQueries({ queryKey: ['players', event?.seasonId] })
+  }
 
   const { mutate: updateEventPlayers } = useMutation({
     mutationFn: (players: EventPlayerRequest[]) => api.event.update(id, { ...event, players }),
@@ -73,7 +79,7 @@ export default function EventView(): React.ReactNode {
           onEventChanged={updateEvent}
           onCompleteEvent={completeEvent}
           isRefreshing={isRefetching}
-          onRefresh={() => void refetch()}
+          onRefresh={handleRefresh}
         />
       )}
     </View>
