@@ -21,11 +21,17 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] web favicon
 [x] actually deploy to your iphone
 [x] swap `name` for `start` date on event
-[] search players in event, also search outside season, option to add to season + event
+[x] submit ace + ctp selections when swipe is closed
+[] setting ctp (and prob ace) didn’t work
+[] adding players to event should be sorted alphabetically
+[] created new player, cache didn't invalidate
+[] refreshing event should bust more cache?
+[] small modals, like event player, get eclipsed by keyboard. can’t actually use them
 [] filter players/index by season
 
 ## later
 
+[] search players in event, also search outside season, option to add to season + event
 [] add swipe actions to event list, "edit" and "delete"
 [] add swipe actions to players list, "deletpe"
 [] courses near you

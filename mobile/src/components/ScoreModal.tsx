@@ -9,8 +9,8 @@ import { useState } from 'react'
 
 type ScoreModalProps = {
   player: PlayerInEvent,
-  onDismiss: () => void,
-  onChange: (value: PlayerInEvent) => void,
+  onDismiss?: () => void,
+  onChange?: (value: PlayerInEvent) => void,
 }
 
 export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): React.ReactNode {
@@ -23,8 +23,8 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
     .map((_value, index) => index + 1)
 
   function save(score: number | undefined): void {
-    onChange({ ...player, score })
-    onDismiss()
+    onChange?.({ ...player, score })
+    onDismiss?.()
   }
 
   function renderRightState(): React.ReactNode {

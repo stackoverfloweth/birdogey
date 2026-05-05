@@ -1,22 +1,18 @@
 import { Event, EventPlayerRequest, EventRequest, EventSchema, pluralize, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
 import { Alert, FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
 import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { formStyles } from '@/theme/forms'
 import { PotBalances } from '@/components/PotBalances'
 import { TextInput } from '@/components/TextInput'
-import { PlayerListItem } from '@/components/PlayerListItem'
 import { SymbolView } from 'expo-symbols'
 import { colors } from '@/theme/colors'
 import { cardStyles } from '@/theme/card'
-import { Score } from '@/components/Score'
-import { ScoreModal } from '@/components/ScoreModal'
 import { PlayersModal } from '@/components/PlayersModal'
 import { EventFormModal } from '@/components/EventFormModal'
 import { ScoreImportModal } from '@/components/ScoreImportModal'
-import { EventPlayerModal } from '@/components/EventPlayerModal'
+import { PlayerListItemWithSwipeActions } from './PlayerListItemWithSwipeActions'
 
 type EventPlayersActiveListProps = {
   event: Event,
@@ -35,8 +31,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   const [playerSearchModalVisible, setPlayerSearchModalVisible] = useState(false)
   const [eventModalVisible, setEventModalVisible] = useState(false)
   const [scoreImportModalVisible, setScoreImportModalVisible] = useState(false)
-  const [editModalPlayer, setEditModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
-  const [scoreModalPlayer, setScoreModalPlayer] = useState<PlayerInEvent | undefined>(undefined)
 
   const api = useApiClient()
 
@@ -133,16 +127,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     onPlayersChanged?.(eventPlayers.map((existingPlayer) => (existingPlayer.userId === player.userId ? player : existingPlayer)))
   }
 
-  function handleCtpToggle(player: PlayerInEvent): void {
-    const inForCtp = !player.inForCtp
-    handlePlayerChanged({ ...player, inForCtp })
-  }
-
-  function handleAceToggle(player: PlayerInEvent): void {
-    const inForAce = !player.inForAce
-    handlePlayerChanged({ ...player, inForAce })
-  }
-
   function handleEventModalSave(event: EventSchema): void {
     onEventChanged?.({
       ...event,
@@ -211,44 +195,6 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     )
   }
 
-  function renderRightActions(player: PlayerInEvent): React.ReactNode {
-    return (
-      <View style={styles.swipeActions}>
-        <Pressable style={[styles.swipeAction, player.inForAce ? styles.swipeActionActive : undefined]} onPress={() => handleAceToggle(player)}>
-          <Text style={styles.swipeActionText}>ACE</Text>
-        </Pressable>
-        <Pressable style={[styles.swipeAction, player.inForCtp ? styles.swipeActionActive : undefined]} onPress={() => handleCtpToggle(player)}>
-          <Text style={styles.swipeActionText}>CTP</Text>
-        </Pressable>
-        <Pressable style={[styles.swipeAction, styles.swipeActionRemove]} onPress={() => handlePlayerRemove(player.userId)}>
-          <SymbolView name="trash" size={24} tintColor="#fff" weight="bold" />
-        </Pressable>
-      </View>
-    )
-  }
-
-  function renderRightState(player: PlayerInEvent): React.ReactNode {
-    return (
-      <View style={{ flexDirection: 'row', gap: 16 }}>
-        <Pressable onPress={() => setScoreModalPlayer(player)}>
-          {player.score === undefined ? <SymbolView name="exclamationmark.triangle.fill" size={32} tintColor={colors.error} /> : <Score value={player.score} />}
-        </Pressable>
-      </View>
-    )
-  }
-
-  function renderSubTitle(player: PlayerInEvent): React.ReactNode {
-    return (
-      <View style={{ flexDirection: 'row', gap: 12 }}>
-        <Text>{player.incomingTagId ? `#${player.incomingTagId}` : 'No tag'}</Text>
-
-        <Text style={player.inForAce ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.outline_variant }}>ACE</Text>
-
-        <Text style={player.inForCtp ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.outline_variant }}>CTP</Text>
-      </View>
-    )
-  }
-
   function renderBeforeList(): React.ReactNode {
     return (
       <View style={[formStyles.formGroup, { flexDirection: 'row', gap: 24 }]}>
@@ -275,37 +221,18 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
         contentContainerStyle={styles.list}
         ListHeaderComponent={renderHeader()}
         renderItem={({ item }) => (
-          <ReanimatedSwipeable renderRightActions={() => renderRightActions(item)} overshootRight={false}>
-            <PlayerListItem
-              player={item}
-              visible={visibleIds.has(item.id)}
-              right={renderRightState(item)}
-              subTitle={renderSubTitle(item)}
-              onPress={() => setEditModalPlayer(item)}
-            />
-          </ReanimatedSwipeable>
+          <PlayerListItemWithSwipeActions
+            player={item}
+            visible={visibleIds.has(item.id)}
+            onChange={handlePlayerChanged}
+            onRemove={handlePlayerRemove}
+          />
         )}
         keyExtractor={(item) => item.id}
         onViewableItemsChanged={onViewableItemsChanged}
         refreshControl={<RefreshControl refreshing={isRefreshing ?? false} onRefresh={onRefresh} />}
         viewabilityConfig={{ itemVisiblePercentThreshold: 5 }}
       />
-
-      {scoreModalPlayer && (
-        <ScoreModal
-          player={scoreModalPlayer}
-          onDismiss={() => setScoreModalPlayer(undefined)}
-          onChange={handlePlayerChanged}
-        />
-      )}
-
-      {editModalPlayer && (
-        <EventPlayerModal
-          player={editModalPlayer}
-          onSubmit={handlePlayerChanged}
-          onDismiss={() => setEditModalPlayer(undefined)}
-        />
-      )}
 
       <PlayersModal
         players={searchResults}
@@ -361,31 +288,5 @@ const styles = StyleSheet.create({
   list: {
     gap: 8,
     paddingBottom: 16,
-  },
-  swipeActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingLeft: 8,
-  },
-  swipeAction: {
-    width: 72,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 9999,
-    gap: 4,
-    backgroundColor: colors.outline_variant,
-  },
-  swipeActionText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: colors.surface_container_lowest,
-  },
-  swipeActionActive: {
-    backgroundColor: colors.primary,
-  },
-  swipeActionRemove: {
-    backgroundColor: colors.error,
   },
 })
