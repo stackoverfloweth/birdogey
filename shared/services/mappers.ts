@@ -1,5 +1,5 @@
-import type { EventJson, EventPlayerJson, UserJson, UserSeasonJson, SeasonJson, UserAuthJson } from './types.js'
-import { EventPlayer, Event, Season, User } from '../models/index.js'
+import type { EventJson, EventPlayerJson, NoteJson, UserJson, UserSeasonJson, SeasonJson, UserAuthJson } from './types.js'
+import { EventPlayer, Event, Note, Season, User } from '../models/index.js'
 import { UserSeason } from '../models/userSeason.js'
 
 export function mapEventPlayer(source: EventPlayerJson): EventPlayer {
@@ -76,6 +76,17 @@ export function mapSeason(source: SeasonJson): Season {
       udiscId: source.course.udiscId,
       holeCount: source.course.holeCount,
     },
+  }
+}
+
+export function mapNote(source: NoteJson): Note {
+  return {
+    id: source._id,
+    userId: source.userId,
+    authorId: source.authorId,
+    content: source.content,
+    createdAt: new Date(source.createdAt),
+    updatedAt: new Date(source.updatedAt),
   }
 }
 
