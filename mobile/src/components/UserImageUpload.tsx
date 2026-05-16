@@ -3,7 +3,7 @@ import { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { UserImage } from '@/components/UserImage'
 import { useApiClient } from '@/contexts/ApiClientContext'
-import { config } from '@/config/env'
+import { ENV } from 'varlock/env'
 import { colors } from '@/theme/colors'
 
 const IMAGE_SIZE = 250
@@ -66,7 +66,7 @@ export function UserImageUpload({ userId, imageUrl, onImageUrlChange, disabled }
         type: asset.mimeType ?? 'image/jpeg',
       } as unknown as Blob)
       formData.append('fileName', fileName)
-      formData.append('publicKey', config.imageKitPublicKey)
+      formData.append('publicKey', ENV.IMAGEKIT_PUBLIC_KEY)
       formData.append('token', auth.token)
       formData.append('expire', String(auth.expire))
       formData.append('signature', auth.signature)

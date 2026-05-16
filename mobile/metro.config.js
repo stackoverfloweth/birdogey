@@ -1,4 +1,5 @@
 const { getDefaultConfig } = require('expo/metro-config');
+const { withVarlockMetroConfig } = require('@varlock/expo-integration/metro-config');
 const path = require('path');
 
 const projectRoot = __dirname;
@@ -13,4 +14,4 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, 'node_modules'),
 ];
 
-module.exports = config;
+module.exports = withVarlockMetroConfig(config);

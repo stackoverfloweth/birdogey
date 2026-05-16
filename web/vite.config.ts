@@ -1,4 +1,5 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin'
+import { varlockVitePlugin } from '@varlock/vite-integration'
 import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
@@ -7,7 +8,9 @@ import svgLoader from 'vite-svg-loader'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(),
+  plugins: [
+    varlockVitePlugin(),
+    vue(),
     svgLoader(),
     VueDevTools(),
     sentryVitePlugin({

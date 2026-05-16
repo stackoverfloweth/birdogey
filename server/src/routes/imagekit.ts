@@ -1,14 +1,14 @@
 import { Hono } from 'hono'
 import ImageKit from 'imagekit'
-import { env } from '../env.js'
+import { ENV } from 'varlock/env'
 
 const imagekit = new Hono()
 
 imagekit.get('/auth', (context) => {
   const ik = new ImageKit({
-    urlEndpoint: env().imagekitUrl,
-    publicKey: env().imagekitPublicKey,
-    privateKey: env().imagekitPrivateKey,
+    urlEndpoint: ENV.IMAGEKIT_URL,
+    publicKey: ENV.IMAGEKIT_PUBLIC_KEY,
+    privateKey: ENV.IMAGEKIT_PRIVATE_KEY,
   })
 
   return context.json(ik.getAuthenticationParameters())

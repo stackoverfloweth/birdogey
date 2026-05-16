@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "wait-on -d 1000 ../shared/dist/index.js && tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/src/index.js",
     "lint": "eslint src",
@@ -13,18 +13,19 @@
   "dependencies": {
     "@birdogey/shared": "*",
     "@hono/node-server": "^1.11.0",
-    "dotenv": "^17.3.1",
     "hono": "^4.4.0",
     "imagekit": "^4.1.4",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
-    "twilio": "^5.5.0"
+    "twilio": "^5.5.0",
+    "varlock": "^1.2.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.11.24",
     "tsc-alias": "^1.8.8",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "wait-on": "^9.0.10"
   }
 }

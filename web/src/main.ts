@@ -5,7 +5,7 @@ import { router } from '@/router'
 import App from '@/App.vue'
 import { auth, initAuthFromStorage } from '@/services/auth'
 import { apiKey, createApi } from '@/services/createApi'
-import { env } from '@/utilities/env'
+import { ENV } from 'varlock/env'
 import { install as VueRecaptcha } from 'vue3-recaptcha-v2'
 import * as Sentry from '@sentry/vue'
 
@@ -13,7 +13,7 @@ import '@prefecthq/prefect-design/prefect-design.css'
 import '@/styles/index.css'
 
 const api = createApi({
-  baseUrl: env().baseApiUrl,
+  baseUrl: ENV.VITE_BASE_API_URL,
   getAccessToken: () => auth.accessToken ?? null,
 })
 
@@ -23,8 +23,8 @@ const app = createApp(App)
 
 Sentry.init({
   app,
-  dsn: env().sentryDsn,
-  environment: env().prod ? 'production' : 'development',
+  dsn: ENV.VITE_SENTRY_DSN,
+  environment: import.meta.env.PROD ? 'production' : 'development',
   beforeSend(event) {
     const frames = event.exception?.values?.flatMap((value) => value.stacktrace?.frames ?? []) ?? []
     const files = frames.map((frame) => frame.filename ?? '').filter(Boolean)
@@ -41,5 +41,5 @@ app.provide(apiKey, api)
 app.use(VueQueryPlugin)
 app.use(router)
 app.use(PrefectDesign)
-app.use(VueRecaptcha, { sitekey: env().recaptchaSiteKey })
+app.use(VueRecaptcha, { sitekey: ENV.VITE_RECAPTCHA_SITE_KEY })
 app.mount('#app')

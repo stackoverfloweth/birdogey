@@ -2,7 +2,7 @@
   import { IKContext, IKUpload } from 'imagekitio-vue'
   import { ref } from 'vue'
   import { useApi } from '@/composables/useApi'
-  import { env } from '@/utilities'
+  import { ENV } from 'varlock/env'
   import UserImage from '@/components/UserImage.vue'
   import { showToast } from '@prefecthq/prefect-design'
 
@@ -34,7 +34,7 @@
 
 <template>
   <div class="player-image-upload">
-    <IKContext :public-key="env().imagekitPublicKey" :url-endpoint="env().imagekitUrl" :authenticator="api.imagekit.authenticate">
+    <IKContext :public-key="ENV.VITE_IMAGEKIT_PUBLIC_KEY" :url-endpoint="ENV.VITE_IMAGEKIT_URL" :authenticator="api.imagekit.authenticate">
       <div class="player-image-upload__current">
         <UserImage :image-url="imageUrl" width="250" height="250" />
         <template v-if="loading">

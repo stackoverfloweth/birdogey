@@ -1,23 +1,23 @@
 import { Context, MiddlewareHandler } from 'hono'
 import jwt from 'jsonwebtoken'
 import { UserAuthResponse } from '@birdogey/shared/api'
-import { env } from '../env.js'
+import { ENV } from 'varlock/env'
 import { HttpError, JwtPayload, RefreshTokenPayload } from '../types.js'
 
 const ACCESS_TOKEN_EXPIRY = '2h'
 const REFRESH_TOKEN_EXPIRY = '30d'
 
 export function generateAccessToken(user: UserAuthResponse): string {
-  return jwt.sign(user, env().jwtSecret, { expiresIn: ACCESS_TOKEN_EXPIRY })
+  return jwt.sign(user, ENV.JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY })
 }
 
 export function generateRefreshToken(user: UserAuthResponse): string {
-  return jwt.sign(user, env().jwtRefreshSecret, { expiresIn: REFRESH_TOKEN_EXPIRY })
+  return jwt.sign(user, ENV.JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRY })
 }
 
 export function verifyRefreshToken(token: string): RefreshTokenPayload | null {
   try {
-    return jwt.verify(token, env().jwtRefreshSecret) as RefreshTokenPayload
+    return jwt.verify(token, ENV.JWT_REFRESH_SECRET) as RefreshTokenPayload
   } catch (error) {
     console.error('Refresh token verification failed:', error)
     return null
@@ -26,7 +26,7 @@ export function verifyRefreshToken(token: string): RefreshTokenPayload | null {
 
 function verifyAccessToken(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, env().jwtSecret) as JwtPayload
+    return jwt.verify(token, ENV.JWT_SECRET) as JwtPayload
   } catch (error) {
     console.error('Access token verification failed:', error)
     return null

@@ -7,13 +7,12 @@ import { getDb, storeRefreshToken, findRefreshToken } from '../db.js'
 import { HttpError } from '../types.js'
 import { authMiddleware, generateAccessToken, generateRefreshToken, getJwtPayload, verifyRefreshToken } from '../middleware/auth.js'
 import { isValidRequest } from '../utilities/requestValidation.js'
-import { env } from '../env.js'
+import { ENV } from 'varlock/env'
 
 const auth = new Hono()
 
 function getTwilioClient(): Twilio {
-  const { twilioAccountSid, twilioAuthToken } = env()
-  return twilio(twilioAccountSid, twilioAuthToken)
+  return twilio(ENV.TWILIO_ACCOUNT_SID, ENV.TWILIO_AUTH_TOKEN)
 }
 
 auth.post('/send-code', async (context) => {
@@ -25,10 +24,8 @@ auth.post('/send-code', async (context) => {
 
   const phoneNumber = normalizePhoneNumber(body.phoneNumber)
 
-  const { twilioBypassCode, twilioVerifyServiceSid } = env()
-
-  if (twilioBypassCode) {
-    console.warn(`[DEV] Twilio bypassed for ${phoneNumber} — use code: ${twilioBypassCode}`)
+  if (ENV.TWILIO_BYPASS_CODE) {
+    console.warn(`[DEV] Twilio bypassed for ${phoneNumber} — use code: ${ENV.TWILIO_BYPASS_CODE}`)
     return context.json({ success: true })
   }
 
@@ -36,7 +33,7 @@ auth.post('/send-code', async (context) => {
 
   try {
     await client.verify.v2
-      .services(twilioVerifyServiceSid)
+      .services(ENV.TWILIO_VERIFY_SERVICE_SID)
       .verifications.create({
         to: phoneNumber,
         channel: 'sms',
@@ -58,10 +55,8 @@ auth.post('/verify-code', async (context) => {
 
   const phoneNumber = normalizePhoneNumber(body.phoneNumber)
 
-  const { twilioBypassCode, twilioVerifyServiceSid } = env()
-
-  if (twilioBypassCode) {
-    if (body.code !== twilioBypassCode) {
+  if (ENV.TWILIO_BYPASS_CODE) {
+    if (body.code !== ENV.TWILIO_BYPASS_CODE) {
       throw new HttpError(401, 'Invalid verification code')
     }
   } else {
@@ -69,7 +64,7 @@ auth.post('/verify-code', async (context) => {
 
     try {
       const verification = await client.verify.v2
-        .services(twilioVerifyServiceSid)
+        .services(ENV.TWILIO_VERIFY_SERVICE_SID)
         .verificationChecks.create({
           to: phoneNumber,
           code: body.code,

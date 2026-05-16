@@ -1,5 +1,4 @@
 export * from './array'
-export * from './env'
 export * from './string'
 export * from './variables'
 export * from './vue'

@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
 import { RecaptchaVerifyRequest, SignupKeyResponse } from '@birdogey/shared/api'
+import { ENV } from 'varlock/env'
 import { getDb } from '../db.js'
-import { env } from '../env.js'
 import { HttpError } from '../types.js'
 import { isValidRequest } from '../utilities/requestValidation.js'
 
@@ -22,7 +22,7 @@ recaptcha.post('/verify', async (context) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      secret: env().recaptchaSecret,
+      secret: ENV.RECAPTCHA_SECRET,
       response: body.recaptchaToken,
     }),
   })

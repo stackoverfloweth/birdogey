@@ -1,4 +1,4 @@
-import { config } from '@/config/env'
+import { ENV } from 'varlock/env'
 import { useQuery } from '@tanstack/react-query'
 import ImageKit from 'imagekit-javascript'
 
@@ -6,8 +6,8 @@ const DEFAULT_TRANSFORMATION = [{ raw: 'fo-face,r-max' }] satisfies Record<strin
 
 export function usePlayerImage(userId?: string, imageUrl?: string, transformation: Record<string, string>[] = DEFAULT_TRANSFORMATION) {
   const imagekit = new ImageKit({
-    urlEndpoint: config.imageKitUrl,
-    publicKey: config.imageKitPublicKey,
+    urlEndpoint: ENV.IMAGEKIT_URL,
+    publicKey: ENV.IMAGEKIT_PUBLIC_KEY,
   })
 
   const path = `/players/${imageUrl ?? 'default.png'}`

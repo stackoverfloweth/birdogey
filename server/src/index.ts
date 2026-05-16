@@ -1,16 +1,20 @@
-import 'dotenv/config'
+import 'varlock/auto-load'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { ENV } from 'varlock/env'
 import { connectDb, disconnectDb } from './db.js'
-import { env } from './env.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import { routes } from './routes/index.js'
+
+const corsOrigins = ENV.CORS_ORIGINS
+  ? ENV.CORS_ORIGINS.split(',').map((origin) => origin.trim())
+  : ['http://localhost:5173']
 
 const app = new Hono()
 
 app.use('*', cors({
-  origin: env().corsOrigins,
+  origin: corsOrigins,
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
 }))
@@ -24,10 +28,8 @@ app.route('/api', routes)
 async function start(): Promise<void> {
   await connectDb()
 
-  const port = env().port
-
-  serve({ fetch: app.fetch, port }, () => {
-    console.log(`Server running on port ${port}`)
+  serve({ fetch: app.fetch, port: ENV.PORT }, () => {
+    console.log(`Server running on port ${ENV.PORT}`)
   })
 }
 

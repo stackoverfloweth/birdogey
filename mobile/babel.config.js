@@ -3,6 +3,7 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
+      require('@varlock/expo-integration/babel-plugin'),
       ['module-resolver', { alias: { '@': './src' } }],
     ],
   };

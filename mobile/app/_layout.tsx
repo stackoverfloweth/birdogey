@@ -6,11 +6,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ApiClientProvider } from '@/contexts/ApiClientContext'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import * as Sentry from '@sentry/react-native'
-import { config } from '@/config/env'
+import { ENV } from 'varlock/env'
 import 'intl-pluralrules'
 
 Sentry.init({
-  dsn: config.sentryDsn,
+  dsn: ENV.SENTRY_DSN,
   environment: __DEV__ ? 'development' : 'production',
   beforeSend(event) {
     const frames = event.exception?.values?.flatMap((value) => value.stacktrace?.frames ?? []) ?? []

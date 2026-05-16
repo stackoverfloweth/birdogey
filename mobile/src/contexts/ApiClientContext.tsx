@@ -1,4 +1,4 @@
-import { config } from '@/config/env'
+import { ENV } from 'varlock/env'
 import { AuthApi, createUserApi, createAuthApi, createEventApi, createImageKitApi, EventApi, FetchHttpClient, ImageKitApi, UserApi, SeasonApi, createSeasonApi } from '@birdogey/shared'
 import { createContext, useContext, useRef } from 'react'
 import { getAccessToken } from '@/services/tokenStorage'
@@ -15,7 +15,7 @@ const ApiClientContext = createContext<ApiClient | null>(null)
 
 export function ApiClientProvider({ children }: { children: React.ReactNode }): React.ReactNode {
   const apiClient = useRef<FetchHttpClient | null>(null)
-  apiClient.current ??= new FetchHttpClient({ baseUrl: config.apiBaseUrl, getAccessToken })
+  apiClient.current ??= new FetchHttpClient({ baseUrl: ENV.API_BASE_URL, getAccessToken })
 
   const auth = useRef<AuthApi | null>(null)
   auth.current ??= createAuthApi(apiClient.current)

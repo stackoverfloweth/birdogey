@@ -1,12 +1,12 @@
 import { Collection, Db, MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
-import { env } from './env.js'
+import { ENV } from 'varlock/env'
 import { RefreshTokenDocument } from './types.js'
 
 let client: MongoClient | null = null
 let db: Db | null = null
 
 export async function connectDb(): Promise<void> {
-  client = new MongoClient(env().mongodbUrl, {
+  client = new MongoClient(ENV.MONGODB_URI, {
     ignoreUndefined: true,
     serverApi: {
       version: ServerApiVersion.v1,
@@ -16,7 +16,7 @@ export async function connectDb(): Promise<void> {
   })
 
   await client.connect()
-  db = client.db(env().mongodbName)
+  db = client.db(ENV.MONGODB_NAME)
 }
 
 export function getDb(): Db {

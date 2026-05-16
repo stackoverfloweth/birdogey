@@ -49,7 +49,7 @@ export function LoginCodeStep({ onSuccess }: { onSuccess: (code: string) => void
         style={formStyles.button}
         onPress={() => void handleSubmit(onSubmit)()}
       >
-        <Text style={formStyles.buttonText}>Send Code</Text>
+        <Text style={formStyles.buttonText}>Verify Code</Text>
         {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : <SymbolView name="arrow.right" size={20} tintColor="#fff" weight="bold" />}
       </Pressable>
     </>
