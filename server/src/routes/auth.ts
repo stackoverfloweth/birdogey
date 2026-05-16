@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
 import twilio, { Twilio } from 'twilio'
@@ -40,6 +41,9 @@ auth.post('/send-code', async (context) => {
       })
   } catch (error) {
     console.error('Twilio send-code error:', error)
+    Sentry.captureException(error, {
+      tags: { route: 'auth/send-code', service: 'twilio' },
+    })
     throw new HttpError(400, 'Failed to send verification code')
   }
 
@@ -75,6 +79,11 @@ auth.post('/verify-code', async (context) => {
       }
     } catch (error) {
       console.error('Twilio verify-code error:', error)
+      if (!(error instanceof HttpError)) {
+        Sentry.captureException(error, {
+          tags: { route: 'auth/verify-code', service: 'twilio' },
+        })
+      }
       throw new HttpError(400, 'Verification failed')
     }
   }

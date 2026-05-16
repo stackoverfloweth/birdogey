@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
 import { RecaptchaVerifyRequest, SignupKeyResponse } from '@birdogey/shared/api'
@@ -27,9 +28,14 @@ recaptcha.post('/verify', async (context) => {
     }),
   })
 
-  const recaptchaData = await recaptchaResponse.json() as { success: boolean }
+  const recaptchaData = await recaptchaResponse.json() as { 'success': boolean, 'error-codes'?: string[] }
 
   if (!recaptchaData.success) {
+    Sentry.captureMessage('reCAPTCHA verification failed', {
+      level: 'warning',
+      tags: { service: 'recaptcha' },
+      extra: { errorCodes: recaptchaData['error-codes'] },
+    })
     throw new HttpError(403, 'reCAPTCHA verification failed')
   }
 

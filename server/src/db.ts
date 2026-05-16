@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { Collection, Db, MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
 import { ENV } from 'varlock/env'
 import { RefreshTokenDocument } from './types.js'
@@ -15,8 +16,13 @@ export async function connectDb(): Promise<void> {
     },
   })
 
-  await client.connect()
-  db = client.db(ENV.MONGODB_NAME)
+  try {
+    await client.connect()
+    db = client.db(ENV.MONGODB_NAME)
+  } catch (error) {
+    Sentry.captureException(error, { tags: { service: 'mongodb', stage: 'connect' } })
+    throw error
+  }
 }
 
 export function getDb(): Db {

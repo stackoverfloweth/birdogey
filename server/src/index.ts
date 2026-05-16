@@ -1,4 +1,4 @@
-import 'varlock/auto-load'
+import { Sentry } from './instrument.js'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
@@ -33,19 +33,37 @@ async function start(): Promise<void> {
   })
 }
 
-process.on('SIGTERM', () => {
-  disconnectDb().then(() => {
+async function shutdown(signal: string): Promise<void> {
+  try {
+    await disconnectDb()
+    await Sentry.close(2000)
+  } catch (error) {
+    console.error(`Error during ${signal} shutdown:`, error)
+  } finally {
     process.exit(0)
-  })
+  }
+}
+
+process.on('SIGTERM', () => {
+  void shutdown('SIGTERM')
 })
 
 process.on('SIGINT', () => {
-  disconnectDb().then(() => {
-    process.exit(0)
-  })
+  void shutdown('SIGINT')
+})
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error)
+  Sentry.captureException(error)
+})
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason)
+  Sentry.captureException(reason)
 })
 
 start().catch((error: unknown) => {
   console.error('Failed to start server:', error)
-  process.exit(1)
+  Sentry.captureException(error)
+  void Sentry.close(2000).finally(() => process.exit(1))
 })
