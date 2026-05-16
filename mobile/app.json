@@ -15,7 +15,7 @@
         "NSFaceIDUsageDescription": "Allow Birdogey to use Face ID for sign-in.",
         "NSPhotoLibraryUsageDescription": "Allow Birdogey to access your photos so you can set a player image."
       },
-      "buildNumber": "11"
+      "buildNumber": "12"
     },
     "android": {
       "adaptiveIcon": {

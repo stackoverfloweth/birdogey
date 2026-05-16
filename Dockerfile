@@ -39,8 +39,9 @@ COPY package.json package-lock.json ./
 COPY shared/package.json ./shared/
 COPY --from=build /app/shared/dist/ ./shared/dist/
 
-# Copy server package.json
+# Copy server package.json and env schema (varlock reads .env.schema at runtime)
 COPY server/package.json ./server/
+COPY server/.env.schema ./server/
 
 # Install production dependencies only
 RUN npm ci --workspace=server --workspace=shared --include-workspace-root --omit=dev
@@ -50,4 +51,5 @@ COPY --from=build /app/server/dist/ ./server/dist/
 
 EXPOSE 8080
 
-CMD ["node", "server/dist/src/index.js"]
+WORKDIR /app/server
+CMD ["node", "dist/src/index.js"]
