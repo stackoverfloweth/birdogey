@@ -49,6 +49,9 @@ RUN npm ci --workspace=server --workspace=shared --include-workspace-root --omit
 # Copy built server output
 COPY --from=build /app/server/dist/ ./server/dist/
 
+# varlock's @generateTypes directive writes env.d.ts here at startup; dir must exist
+RUN mkdir -p ./server/src
+
 EXPOSE 8080
 
 WORKDIR /app/server
