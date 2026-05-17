@@ -23,7 +23,8 @@
         "autoIncrement": "buildNumber"
       },
       "env": {
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "NODE_ENV": "production"
       }
     }
   },
