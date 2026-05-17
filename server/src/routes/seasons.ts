@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
 import { SeasonResponse, UserSeasonResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
-import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
+import { authMiddleware, getJwtPayload, requireAdmin } from '../middleware/auth.js'
 import { checkSeasonAccess } from '../utilities/seasonAccess.js'
 import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
 import { HttpError } from '../types.js'
@@ -79,7 +79,7 @@ seasons.get('/:id/users', authMiddleware, async (context) => {
   return context.json(result)
 })
 
-seasons.put('/:id/users/:userId', async (context) => {
+seasons.put('/:id/users/:userId', requireAdmin, async (context) => {
   const seasonIdParam = context.req.param('id')
   const userIdParam = context.req.param('userId')
   const body = await context.req.json().catch(() => ({}))
@@ -117,7 +117,7 @@ seasons.put('/:id/users/:userId', async (context) => {
   return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-seasons.delete('/:id/users/:userId', async (context) => {
+seasons.delete('/:id/users/:userId', requireAdmin, async (context) => {
   const seasonIdParam = context.req.param('id')
   const userIdParam = context.req.param('userId')
   const token = getJwtPayload(context)

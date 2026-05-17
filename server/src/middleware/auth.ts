@@ -59,6 +59,16 @@ export const authMiddleware: MiddlewareHandler = async (context, next) => {
   await next()
 }
 
+export const requireAdmin: MiddlewareHandler = async (context, next) => {
+  const jwtPayload = context.get('jwtPayload') as JwtPayload | undefined
+
+  if (!jwtPayload?.isAdmin) {
+    throw new HttpError(403, 'Admin required')
+  }
+
+  await next()
+}
+
 export function getJwtPayload({ get }: Context): JwtPayload {
   return get('jwtPayload') as JwtPayload
 }
