@@ -10,7 +10,7 @@
     "lint": "eslint src app app.config.ts",
     "lint:fix": "eslint src app app.config.ts --fix",
     "typecheck": "tsc --noEmit",
-    "eas-build-post-install": "if [ -n \"$MOBILE_ENV_PRODUCTION_FILE\" ]; then echo \"[post-install] copying $MOBILE_ENV_PRODUCTION_FILE -> .env.production\"; cp \"$MOBILE_ENV_PRODUCTION_FILE\" .env.production && echo \"[post-install] .env.production contents:\" && wc -l .env.production; else echo \"[post-install] WARNING: MOBILE_ENV_PRODUCTION_FILE not set; varlock will have no values\"; fi && cd .. && npm run build -w shared",
+    "eas-build-post-install": "echo '[post-install] writing .env.production from EAS env' && : ${API_BASE_URL:?missing in EAS env} && : ${IMAGEKIT_URL:?missing in EAS env} && : ${IMAGEKIT_PUBLIC_KEY:?missing in EAS env} && printf 'NODE_ENV=production\\nAPI_BASE_URL=%s\\nIMAGEKIT_URL=%s\\nIMAGEKIT_PUBLIC_KEY=%s\\n' \"$API_BASE_URL\" \"$IMAGEKIT_URL\" \"$IMAGEKIT_PUBLIC_KEY\" > .env.production && echo '[post-install] .env.production written:' && cat .env.production && cd .. && npm run build -w shared",
     "eas-build": "eas build -p ios --profile production",
     "eas-deploy": "eas submit -p ios --latest"
   },
