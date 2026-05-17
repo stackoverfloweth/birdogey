@@ -7,7 +7,7 @@ export type UserResponse = {
   udiscId?: string,
   pdgaNumber?: string,
   imageUrl?: string,
-  isAdmin?: boolean,
+  role?: string,
   isReadonly?: boolean,
   deletedAt?: Date,
 }

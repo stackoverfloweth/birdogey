@@ -203,7 +203,7 @@ async function fetchUser(match: Record<string, unknown>): Promise<UserAuthRespon
   return {
     ...userAccount,
     isAuthorized: true,
-    isAdmin: userAccount.isAdmin ?? false,
+    role: userAccount.role ?? '',
     isReadonly: userAccount.isReadonly ?? false,
   }
 }
