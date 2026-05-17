@@ -190,7 +190,7 @@ async function fetchUser(match: Record<string, unknown>): Promise<UserAuthRespon
         as: 'seasons',
       },
     },
-    { $project: { password: 0, userSeasonDocs: 0, seasonIds: 0 } },
+    { $project: { password: 0, userSeasonDocs: 0, seasonIds: 0, adminImageUrl: 0 } },
   ]).toArray()
 
   const [userAccount] = users
@@ -203,7 +203,7 @@ async function fetchUser(match: Record<string, unknown>): Promise<UserAuthRespon
   return {
     ...userAccount,
     isAuthorized: true,
-    isAdmin: userAccount.isAdmin ?? false,
+    role: userAccount.role ?? '',
     isReadonly: userAccount.isReadonly ?? false,
   }
 }

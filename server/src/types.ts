@@ -1,5 +1,9 @@
 import { ObjectId } from 'mongodb'
-import { UserAuthResponse } from '@birdogey/shared/api'
+import { UserAuthResponse, UserResponse } from '@birdogey/shared/api'
+
+export type UserDocument = UserResponse & {
+  adminImageUrl?: string,
+}
 
 export class HttpError extends Error {
   public statusCode: number

@@ -14,7 +14,7 @@ seasons.use(authMiddleware)
 seasons.get('/', async (context) => {
   const token = getJwtPayload(context)
 
-  if (token.isAdmin) {
+  if (token.role === 'admin') {
     const db = getDb()
     const collection = db.collection<SeasonResponse>('seasons')
     const result = await collection.find().toArray()

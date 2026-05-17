@@ -2,13 +2,21 @@ import { Hono } from 'hono'
 import { ObjectId } from 'mongodb'
 import { EventResponse, UserRequest, UserResponse, UserSeasonResponse, SignupRequest, SignupKeyResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
-import { HttpError } from '../types.js'
+import { HttpError, UserDocument } from '../types.js'
 import { authMiddleware, getJwtPayload, requireAdmin } from '../middleware/auth.js'
 import { isValidRequest } from '../utilities/requestValidation.js'
 import { checkSeasonAccess } from '../utilities/seasonAccess.js'
 import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
 
 const users = new Hono()
+
+function toApiUser<T extends Partial<UserDocument>>(doc: T, isAdmin: boolean): Omit<T, 'adminImageUrl'> {
+  const { adminImageUrl, imageUrl, ...rest } = doc
+  return {
+    ...rest,
+    imageUrl: isAdmin ? (imageUrl ?? adminImageUrl) : imageUrl,
+  } as Omit<T, 'adminImageUrl'>
+}
 
 users.get('/', authMiddleware, async (context) => {
   const token = getJwtPayload(context)
@@ -28,7 +36,7 @@ users.get('/', authMiddleware, async (context) => {
     .map((season) => new ObjectId(season))
 
   const result = await collection
-    .aggregate([
+    .aggregate<Pick<UserDocument, '_id' | 'name' | 'udiscId' | 'pdgaNumber' | 'imageUrl' | 'adminImageUrl'>>([
       ...(seasonIds !== undefined ? [{ $match: { seasonId: { $in: seasonIds } } }] : []),
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
@@ -40,13 +48,14 @@ users.get('/', authMiddleware, async (context) => {
           udiscId: { $first: '$user.udiscId' },
           pdgaNumber: { $first: '$user.pdgaNumber' },
           imageUrl: { $first: '$user.imageUrl' },
+          adminImageUrl: { $first: '$user.adminImageUrl' },
         },
       },
       { $sort: { name: 1 } },
     ])
     .toArray()
 
-  return context.json(result)
+  return context.json(result.map((user) => toApiUser(user, token.isAdmin ?? false)))
 })
 
 users.get('/:id/seasons', authMiddleware, async (context) => {
@@ -86,13 +95,14 @@ users.get('/:id/seasons', authMiddleware, async (context) => {
 
 users.get('/:id', authMiddleware, async (context) => {
   const id = context.req.param('id')
+  const token = getJwtPayload(context)
 
   const db = getDb()
-  const collection = db.collection<UserResponse>('users')
+  const collection = db.collection<UserDocument>('users')
 
   const user = await collection.findOne({ _id: new ObjectId(id) })
 
-  return context.json(user)
+  return context.json(user === null ? null : toApiUser(user, token.isAdmin ?? false))
 })
 
 users.post('/', authMiddleware, requireAdmin, async (context) => {
@@ -106,14 +116,14 @@ users.post('/', authMiddleware, requireAdmin, async (context) => {
   }
 
   const db = getDb()
-  const usersCollection = db.collection<UserResponse>('users')
+  const usersCollection = db.collection<UserDocument>('users')
 
   const result = await usersCollection.insertOne({
     _id: new ObjectId(),
     name: body.name,
     udiscId: body.udiscId,
     pdgaNumber: body.pdgaNumber,
-    imageUrl: body.imageUrl,
+    adminImageUrl: body.imageUrl,
   })
 
   if (body.seasonId) {
@@ -137,19 +147,36 @@ users.post('/', authMiddleware, requireAdmin, async (context) => {
 users.put('/:id', authMiddleware, async (context) => {
   const id = context.req.param('id')
   const body = await context.req.json()
-  const { seasonId, tagId, entryPaid, ...$set } = body
+  const { seasonId, tagId, entryPaid, imageUrl, ...$set } = body
   const token = getJwtPayload(context)
 
-  if (!token.isAdmin && token._id.toString() !== id) {
+  if (token.role !== 'admin' && token._id.toString() !== id) {
     throw new HttpError(403, 'Not authorized to edit this user')
   }
 
   const db = getDb()
-  const usersCollection = db.collection<UserResponse>('users')
+  const usersCollection = db.collection<UserDocument>('users')
 
-  const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, { $set })
+  const isSelf = token._id.toString() === id
+  const $unset: Record<string, ''> = {}
 
-  if (token.isAdmin && seasonId && typeof seasonId === 'string') {
+  if (imageUrl !== undefined) {
+    if (isSelf) {
+      $set.imageUrl = imageUrl
+      $unset.adminImageUrl = ''
+    } else {
+      $set.adminImageUrl = imageUrl
+    }
+  }
+
+  const update: Record<string, unknown> = { $set }
+  if (Object.keys($unset).length > 0) {
+    update.$unset = $unset
+  }
+
+  const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, update)
+
+  if (token.role === 'admin' && seasonId && typeof seasonId === 'string') {
     checkSeasonAccess(seasonId, token)
     const userSeasons = db.collection<UserSeasonResponse>('userSeasons')
 
@@ -184,7 +211,7 @@ users.put('/:id/checkin', authMiddleware, async (context) => {
   const body = await context.req.json()
   const token = getJwtPayload(context)
 
-  if (!token.isAdmin && token._id.toString() !== id) {
+  if (token.role !== 'admin' && token._id.toString() !== id) {
     throw new HttpError(403, 'Not authorized to check in this user')
   }
 

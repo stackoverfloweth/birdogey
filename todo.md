@@ -29,6 +29,10 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 [x] setting ctp (and prob ace) didn’t work
 [x] filter players/index by season
 
+## Prepare for non-admin users
+
+[] ask claude to audit entire app, find security vulnerabilities, protect against them
+
 ## later
 
 [] add swipe actions to event list, "edit" and "delete"
@@ -44,5 +48,4 @@ please add an endpoint to server/src/routes/events.ts that will return the neare
 ## eventually
 
 [] search players in event, also search outside season, option to add to season + event
-[] what needs to change to make this app work for individual players? not admins
-[] hide existing player images?
+[x] hide existing player images?

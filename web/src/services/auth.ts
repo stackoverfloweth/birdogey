@@ -6,7 +6,7 @@ import { useLocalStorage } from '@/composables/useLocalStorage'
 export const auth = reactive<User>({
   id: '',
   name: '',
-  isAdmin: false,
+  role: '',
   isAuthorized: false,
   isReadonly: true,
   seasons: [],
@@ -49,7 +49,7 @@ export function clearStoredAuth(): void {
 
   Object.assign(auth, {
     id: undefined,
-    isAdmin: false,
+    role: '',
     isAuthorized: false,
     isReadonly: true,
     seasons: [],

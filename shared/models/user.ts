@@ -9,7 +9,7 @@ export type User = {
   udiscId?: string,
   pdgaNumber?: string,
   imageUrl?: string,
-  isAdmin: boolean,
+  role: string,
   isAuthorized: boolean,
   isReadonly: boolean,
   seasons: Season[],
