@@ -24,7 +24,7 @@ export type UserAuthJson = {
   udiscId?: string,
   pdgaNumber?: string,
   imageUrl?: string,
-  isAdmin?: boolean,
+  role?: string,
   isAuthorized?: boolean,
   isReadonly?: boolean,
   seasons: SeasonJson[],

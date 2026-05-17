@@ -8,7 +8,7 @@ export type UserAuthResponse = {
   udiscId?: string,
   imageUrl?: string,
   seasons: SeasonResponse[],
-  isAdmin?: boolean,
+  role?: string,
   isAuthorized?: boolean,
   isReadonly?: boolean,
   accessToken?: string,
