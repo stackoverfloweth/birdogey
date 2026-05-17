@@ -10,18 +10,11 @@ import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
 
 const users = new Hono()
 
-function toApiUser<T extends Partial<UserDocument>>(doc: T, isAdmin: boolean): Omit<T, 'adminImageUrl'> {
-  const { adminImageUrl, imageUrl, ...rest } = doc
-  return {
-    ...rest,
-    imageUrl: isAdmin ? (imageUrl ?? adminImageUrl) : imageUrl,
-  } as Omit<T, 'adminImageUrl'>
-}
-
 users.get('/', authMiddleware, async (context) => {
   const token = getJwtPayload(context)
   const db = getDb()
-  const collection = db.collection<UserSeasonResponse>('userSeasons')
+  const users = db.collection<UserResponse>('users')
+  const userSeasons = db.collection<UserSeasonResponse>('userSeasons')
 
   const seasonIds = context.req.query('seasonIds')?.split(',')
     .filter((season) => {
@@ -35,8 +28,23 @@ users.get('/', authMiddleware, async (context) => {
     })
     .map((season) => new ObjectId(season))
 
-  const result = await collection
-    .aggregate<Pick<UserDocument, '_id' | 'name' | 'udiscId' | 'pdgaNumber' | 'imageUrl' | 'adminImageUrl'>>([
+  if (token.role === 'admin') {
+    const results = await users.aggregate([
+      ...(seasonIds !== undefined ? [
+        { $lookup: { from: 'userSeasons', localField: '_id', foreignField: 'userId', as: 'userSeasons' } },
+        { $match: { 'userSeasons.seasonId': { $in: seasonIds } } },
+      ] : []),
+      { $match: { deletedAt: { $exists: false } } },
+      { $set: { imageUrl: { $ifNull: ['$imageUrl', '$adminImageUrl', '$$REMOVE'] } } },
+      { $unset: ['adminImageUrl', 'userSeasons'] },
+      { $sort: { name: 1 } },
+    ]).toArray()
+
+    return context.json(results)
+  }
+
+  const result = await userSeasons
+    .aggregate([
       ...(seasonIds !== undefined ? [{ $match: { seasonId: { $in: seasonIds } } }] : []),
       { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'user' } },
       { $unwind: '$user' },
@@ -48,14 +56,14 @@ users.get('/', authMiddleware, async (context) => {
           udiscId: { $first: '$user.udiscId' },
           pdgaNumber: { $first: '$user.pdgaNumber' },
           imageUrl: { $first: '$user.imageUrl' },
-          adminImageUrl: { $first: '$user.adminImageUrl' },
         },
       },
+      { $unset: 'adminImageUrl' },
       { $sort: { name: 1 } },
     ])
     .toArray()
 
-  return context.json(result.map((user) => toApiUser(user, token.isAdmin ?? false)))
+  return context.json(result)
 })
 
 users.get('/:id/seasons', authMiddleware, async (context) => {
@@ -99,10 +107,17 @@ users.get('/:id', authMiddleware, async (context) => {
 
   const db = getDb()
   const collection = db.collection<UserDocument>('users')
+  const coalesceAdminImageUrl = token.role === 'admin'
+    ? [{ $set: { imageUrl: { $ifNull: ['$imageUrl', '$adminImageUrl', '$$REMOVE'] } } }]
+    : []
 
-  const user = await collection.findOne({ _id: new ObjectId(id) })
+  const users = await collection.aggregate([
+    { $match: { _id: new ObjectId(id) } },
+    ...coalesceAdminImageUrl,
+    { $unset: 'adminImageUrl' },
+  ]).toArray()
 
-  return context.json(user === null ? null : toApiUser(user, token.isAdmin ?? false))
+  return context.json(users.pop() ?? null)
 })
 
 users.post('/', authMiddleware, async (context) => {
