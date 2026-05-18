@@ -10,7 +10,7 @@
     "lint": "eslint src app app.config.ts",
     "lint:fix": "eslint src app app.config.ts --fix",
     "typecheck": "tsc --noEmit",
-    "eas-build-post-install": "echo '[post-install] writing .env.production from EAS env' && : ${API_BASE_URL:?missing in EAS env} && : ${IMAGEKIT_URL:?missing in EAS env} && : ${IMAGEKIT_PUBLIC_KEY:?missing in EAS env} && printf 'NODE_ENV=production\\nAPI_BASE_URL=%s\\nIMAGEKIT_URL=%s\\nIMAGEKIT_PUBLIC_KEY=%s\\n' \"$API_BASE_URL\" \"$IMAGEKIT_URL\" \"$IMAGEKIT_PUBLIC_KEY\" > .env.production && echo '[post-install] .env.production written:' && cat .env.production && cd .. && npm run build -w shared",
+    "eas-build-post-install": "echo '[post-install] writing .env.production from EAS env' && : ${API_BASE_URL:?missing in EAS env} && : ${IMAGEKIT_URL:?missing in EAS env} && : ${IMAGEKIT_PUBLIC_KEY:?missing in EAS env} && printf 'NODE_ENV=production\\nAPI_BASE_URL=%s\\nIMAGEKIT_URL=%s\\nIMAGEKIT_PUBLIC_KEY=%s\\n' \"$API_BASE_URL\" \"$IMAGEKIT_URL\" \"$IMAGEKIT_PUBLIC_KEY\" > .env.production && echo '[post-install] .env.production written:' && cat .env.production && mkdir -p ios && printf '{\"name\":\"birdogey-ios-cwd-shim\",\"private\":true,\"varlock\":{\"loadPath\":\"..\"}}\\n' > ios/package.json && echo '[post-install] wrote ios/package.json so varlock finds schema when bundle phase runs from ios/:' && cat ios/package.json && cd .. && npm run build -w shared",
     "eas-build": "eas build -p ios --profile production --non-interactive",
     "eas-deploy": "eas submit -p ios --latest --non-interactive"
   },
