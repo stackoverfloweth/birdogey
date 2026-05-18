@@ -14,6 +14,9 @@
     "web",
     "server"
   ],
+  "varlock": {
+    "loadPath": "./mobile"
+  },
   "devDependencies": {
     "@kitbag/eslint-config": "1.0.2",
     "eslint": "^9.23.0",
