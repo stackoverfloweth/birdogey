@@ -11,6 +11,7 @@ shared/dist
 .env.local
 .env.production
 .env.staging
+!mobile/.env.schema
 
 # Log files
 npm-debug.log*
