@@ -11,8 +11,8 @@
     "lint:fix": "eslint src app app.config.ts --fix",
     "typecheck": "tsc --noEmit",
     "eas-build-post-install": "echo '[post-install] writing .env.production from EAS env' && : ${API_BASE_URL:?missing in EAS env} && : ${IMAGEKIT_URL:?missing in EAS env} && : ${IMAGEKIT_PUBLIC_KEY:?missing in EAS env} && printf 'NODE_ENV=production\\nAPI_BASE_URL=%s\\nIMAGEKIT_URL=%s\\nIMAGEKIT_PUBLIC_KEY=%s\\n' \"$API_BASE_URL\" \"$IMAGEKIT_URL\" \"$IMAGEKIT_PUBLIC_KEY\" > .env.production && echo '[post-install] .env.production written:' && cat .env.production && cd .. && npm run build -w shared",
-    "eas-build": "eas build -p ios --profile production",
-    "eas-deploy": "eas submit -p ios --latest"
+    "eas-build": "eas build -p ios --profile production --non-interactive",
+    "eas-deploy": "eas submit -p ios --latest --non-interactive"
   },
   "dependencies": {
     "@birdogey/shared": "*",
