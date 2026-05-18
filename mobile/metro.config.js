@@ -10,7 +10,10 @@ const monorepoRoot = path.resolve(projectRoot, '..');
 // monorepo root, where there's no schema, so varlock silently returns an
 // empty config — ENV.X references stay un-inlined and throw at runtime.
 // Force cwd to mobile/ before the wrapper loads.
-process.chdir(projectRoot);
+if (process.cwd() !== projectRoot) {
+  process.stderr.write(`[metro.config.js] chdir from ${process.cwd()} to ${projectRoot}\n`);
+  process.chdir(projectRoot);
+}
 
 const { withVarlockMetroConfig } = require('@varlock/expo-integration/metro-config');
 
