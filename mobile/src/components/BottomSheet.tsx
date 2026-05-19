@@ -81,14 +81,15 @@ export function BottomSheet({ visible, onDismiss, children, showHandle = true, c
 
   return (
     <Modal animationType="none" transparent visible onRequestClose={onDismiss}>
+      <Animated.View style={[styles.backdrop, backdropStyle]}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onDismiss} />
+      </Animated.View>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.container}
+        style={styles.keyboardAvoid}
+        pointerEvents="box-none"
       >
-        <Animated.View style={[styles.backdrop, backdropStyle]}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={onDismiss} />
-        </Animated.View>
-
         <Animated.View
           style={[
             styles.sheet,
@@ -113,8 +114,9 @@ export function BottomSheet({ visible, onDismiss, children, showHandle = true, c
 }
 
 const styles = StyleSheet.create({
-  container: {
+  keyboardAvoid: {
     flex: 1,
+    justifyContent: 'flex-end',
   },
   backdrop: {
     position: 'absolute',
@@ -125,10 +127,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.35)',
   },
   sheet: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
     backgroundColor: colors.surface_container_lowest,
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,

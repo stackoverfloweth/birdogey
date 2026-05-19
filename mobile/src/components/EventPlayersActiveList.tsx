@@ -67,10 +67,12 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
       return []
     }
 
-    return eventPlayers.map((player) => ({
-      ...player,
-      ...getPlayer(player.userId),
-    }))
+    return eventPlayers
+      .map((player) => ({
+        ...player,
+        ...getPlayer(player.userId),
+      }))
+      .sort((aPlayer, bPlayer) => aPlayer.name.localeCompare(bPlayer.name))
   }, [getPlayer, eventPlayers, isFetched])
 
   const playersNotInEvent = useMemo(() => {
