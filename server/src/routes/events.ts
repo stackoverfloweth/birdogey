@@ -3,7 +3,7 @@ import { BulkWriteResult, Db, ObjectId } from 'mongodb'
 import { EventPlayerRequest, EventPlayerResponse, EventRequest, EventResponse, UserSeasonResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError, JwtPayload } from '../types.js'
-import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
+import { authMiddleware, getJwtPayload, requireAdmin } from '../middleware/auth.js'
 import { checkSeasonAccess } from '../utilities/seasonAccess.js'
 import { isValidRequest } from '../utilities/requestValidation.js'
 
@@ -100,7 +100,7 @@ events.get('/:id', async (context) => {
   return context.json(event)
 })
 
-events.post('/', async (context) => {
+events.post('/', requireAdmin, async (context) => {
   const body = await context.req.json()
   const token = getJwtPayload(context)
 
@@ -142,7 +142,7 @@ events.post('/', async (context) => {
   return context.json(result.insertedId, 201)
 })
 
-events.put('/:id', async (context) => {
+events.put('/:id', requireAdmin, async (context) => {
   const id = context.req.param('id')
   const body = await context.req.json()
 
@@ -181,7 +181,7 @@ events.put('/:id', async (context) => {
   return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-events.put('/:id/complete', async (context) => {
+events.put('/:id/complete', requireAdmin, async (context) => {
   const id = context.req.param('id')
   const body = await context.req.json()
 
@@ -230,7 +230,7 @@ events.put('/:id/complete', async (context) => {
   return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-events.put('/:id/uncomplete', async (context) => {
+events.put('/:id/uncomplete', requireAdmin, async (context) => {
   const id = context.req.param('id')
 
   const db = getDb()
@@ -254,7 +254,7 @@ events.put('/:id/uncomplete', async (context) => {
   return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-events.delete('/:id', async (context) => {
+events.delete('/:id', requireAdmin, async (context) => {
   const id = context.req.param('id')
 
   const db = getDb()

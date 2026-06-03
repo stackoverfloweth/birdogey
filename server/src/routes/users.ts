@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { EventResponse, UserRequest, UserResponse, UserSeasonResponse, SignupRequest, SignupKeyResponse } from '@birdogey/shared/api'
 import { getDb } from '../db.js'
 import { HttpError, UserDocument } from '../types.js'
-import { authMiddleware, getJwtPayload } from '../middleware/auth.js'
+import { authMiddleware, getJwtPayload, requireAdmin } from '../middleware/auth.js'
 import { isValidRequest } from '../utilities/requestValidation.js'
 import { checkSeasonAccess } from '../utilities/seasonAccess.js'
 import { getNextAvailableTag } from '../utilities/getNextAvailableTag.js'
@@ -120,7 +120,7 @@ users.get('/:id', authMiddleware, async (context) => {
   return context.json(users.pop() ?? null)
 })
 
-users.post('/', authMiddleware, async (context) => {
+users.post('/', authMiddleware, requireAdmin, async (context) => {
   const body = await context.req.json()
   const token = getJwtPayload(context)
 
@@ -165,6 +165,10 @@ users.put('/:id', authMiddleware, async (context) => {
   const { seasonId, tagId, entryPaid, imageUrl, ...$set } = body
   const token = getJwtPayload(context)
 
+  if (token.role !== 'admin' && token._id.toString() !== id) {
+    throw new HttpError(403, 'Not authorized to edit this user')
+  }
+
   const db = getDb()
   const usersCollection = db.collection<UserDocument>('users')
 
@@ -187,7 +191,7 @@ users.put('/:id', authMiddleware, async (context) => {
 
   const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, update)
 
-  if (seasonId && typeof seasonId === 'string') {
+  if (token.role === 'admin' && seasonId && typeof seasonId === 'string') {
     checkSeasonAccess(seasonId, token)
     const userSeasons = db.collection<UserSeasonResponse>('userSeasons')
 
@@ -203,7 +207,7 @@ users.put('/:id', authMiddleware, async (context) => {
   return context.json(null, result.acknowledged ? 202 : 400)
 })
 
-users.delete('/:id', authMiddleware, async (context) => {
+users.delete('/:id', authMiddleware, requireAdmin, async (context) => {
   const id = context.req.param('id')
 
   const db = getDb()
@@ -220,6 +224,11 @@ users.delete('/:id', authMiddleware, async (context) => {
 users.put('/:id/checkin', authMiddleware, async (context) => {
   const id = context.req.param('id')
   const body = await context.req.json()
+  const token = getJwtPayload(context)
+
+  if (token.role !== 'admin' && token._id.toString() !== id) {
+    throw new HttpError(403, 'Not authorized to check in this user')
+  }
 
   if (!body) {
     throw new HttpError(400, 'Invalid request')
