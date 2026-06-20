@@ -51,6 +51,10 @@ seasons.get('/:id/users', authMiddleware, async (context) => {
 
   const collection = db.collection<UserSeasonResponse>('userSeasons')
 
+  const coalesceAdminImageUrl = token.role === 'admin'
+    ? { $ifNull: ['$user.imageUrl', '$user.adminImageUrl'] }
+    : '$user.imageUrl'
+
   const result = await collection
     .aggregate([
       { $match: { seasonId: new ObjectId(seasonId) } },
@@ -65,7 +69,7 @@ seasons.get('/:id/users', authMiddleware, async (context) => {
           name: '$user.name',
           udiscId: '$user.udiscId',
           pdgaNumber: '$user.pdgaNumber',
-          imageUrl: '$user.imageUrl',
+          imageUrl: coalesceAdminImageUrl,
           seasonId: { $toString: '$seasonId' },
           tagId: 1,
           entryPaid: 1,
