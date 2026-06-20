@@ -49,7 +49,7 @@ events.get('/', async (context) => {
   const result = await eventsCollection.find({
     seasonId: { $in: seasonIds },
   })
-    .sort({ created: -1 })
+    .sort({ start: -1 })
     .toArray()
 
   return context.json(result)
