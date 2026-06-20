@@ -33,5 +33,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     '@sentry/react-native/expo',
+    '@react-native-community/datetimepicker',
   ],
 })

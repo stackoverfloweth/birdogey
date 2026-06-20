@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { colors } from '@/theme/colors'
 import { Picker, PickerProps } from '@react-native-picker/picker'

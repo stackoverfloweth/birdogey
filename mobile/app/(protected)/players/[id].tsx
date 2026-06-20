@@ -5,17 +5,14 @@ import { colors } from '@/theme/colors'
 import { cardStyles } from '@/theme/card'
 import { UserRequest } from '@birdogey/shared'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { router, useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 import { SymbolView } from 'expo-symbols'
-import { StyleSheet, View, ActivityIndicator, Pressable, Text, ScrollView } from 'react-native'
-import { PlayerSeasonFormModal } from '@/components/PlayerSeasonFormModal'
-import { useState } from 'react'
+import { StyleSheet, View, ActivityIndicator, ScrollView } from 'react-native'
 import { formStyles } from '@/theme/forms'
 import { PlayerSeasonsList } from '@/components/PlayerSeasonsList'
 
 export default function PlayerView(): React.ReactNode {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const [playerSeasonModalVisible, setPlayerSeasonModalVisible] = useState(false)
 
   const api = useApiClient()
   const { data: player, isLoading, isRefetching } = useQuery({

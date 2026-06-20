@@ -7,6 +7,7 @@ import { NumericInput } from '@/components/NumericInput'
 import { SymbolView } from 'expo-symbols'
 import { eventSchema, EventSchema, EventSchemaInput } from '@birdogey/shared'
 import { colors } from '@/theme/colors'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 export type EventFormProps = {
   submitText?: string,
@@ -25,6 +26,29 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
 
   return (
     <View style={formStyles.form}>
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>Date</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DateTimePicker
+              value={value}
+              mode="datetime"
+              display="default"
+              minuteInterval={5}
+              onChange={(_event, selectedDate) => {
+                if (selectedDate) {
+                  onChange(selectedDate)
+                }
+              }}
+              accentColor={colors.primary_500}
+            />
+          )}
+          name="start"
+        />
+        {errors.start && <Text style={formStyles.errorText}>{errors.start.message}</Text>}
+      </View>
+
       <View style={formStyles.formGroup}>
         <Text style={formStyles.label}>Notes</Text>
         <Controller

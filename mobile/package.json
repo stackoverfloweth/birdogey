@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@birdogey/shared": "*",
+    "@react-native-community/datetimepicker": "8.6.0",
     "@react-native-picker/picker": "2.11.4",
     "@sentry/react-native": "^8.10.0",
     "@tanstack/react-query": "^5.90.21",
