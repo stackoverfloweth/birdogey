@@ -274,10 +274,16 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
       {scoreImportModalVisible && (
         <ScoreImportModal
           seasonId={event.seasonId}
-          players={playersInEvent}
+          players={players}
           eventPlayers={eventPlayers}
           visible={scoreImportModalVisible}
           onSubmit={(scores) => void applyScores(scores)}
+          onAddPlayer={(userId, score) => {
+            const player = playersMap.get(userId)
+            if (player) {
+              onPlayersChanged?.([...eventPlayers, { userId, incomingTagId: player.tagId, inForCtp: false, inForAce: false, score }])
+            }
+          }}
           onDismiss={() => setScoreImportModalVisible(false)}
           style={{ height: '93%' }}
         />

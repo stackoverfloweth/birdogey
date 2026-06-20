@@ -3,15 +3,48 @@ import { MaybeRefOrGetter, reactive, toValue } from 'vue'
 
 export function useUDiscImport(players: MaybeRefOrGetter<UserSeason[]>, eventPlayers: MaybeRefOrGetter<EventPlayerRequest[]>): UseUDiscImport {
   const notInBirdogey = reactive<{ name: string, username: string }[]>([])
+  const notInEvent = reactive<{ userId: string, userName: string, score: number, udiscId?: string, pdgaNumber?: string }[]>([])
   const unmatchedInEvent = reactive<{ userId: string, userName: string }[]>([])
   const scores = reactive(new Map<string, number>())
   const missingMetadata = reactive(new Map<string, Partial<UserRequest>>())
 
   function reset(): void {
     notInBirdogey.splice(0, notInBirdogey.length)
+    notInEvent.splice(0, notInEvent.length)
     unmatchedInEvent.splice(0, unmatchedInEvent.length)
     scores.clear()
     missingMetadata.clear()
+  }
+
+  function addToEvent(userId: string): void {
+    const entryIndex = notInEvent.findIndex((entry) => entry.userId === userId)
+    if (entryIndex === -1) return
+
+    const entry = notInEvent[entryIndex]
+    scores.set(userId, entry.score)
+
+    const playersValue = toValue(players)
+    const player = playersValue.find((player) => player.id === userId)
+    if (player) {
+      const suggestion: Partial<UserRequest> = { name: player.name }
+      let hasSuggestion = false
+
+      if (!player.udiscId && entry.udiscId) {
+        suggestion.udiscId = entry.udiscId
+        hasSuggestion = true
+      }
+
+      if (!player.pdgaNumber && entry.pdgaNumber) {
+        suggestion.pdgaNumber = entry.pdgaNumber
+        hasSuggestion = true
+      }
+
+      if (hasSuggestion) {
+        missingMetadata.set(userId, suggestion)
+      }
+    }
+
+    notInEvent.splice(entryIndex, 1)
   }
 
   async function parseFile(data: ArrayBuffer): Promise<void> {
@@ -49,7 +82,7 @@ export function useUDiscImport(players: MaybeRefOrGetter<UserSeason[]>, eventPla
       const isInEvent = eventPlayersValue.some(({ userId }) => userId === matchedPlayer.id)
 
       if (!isInEvent) {
-        notInBirdogey.push({ name: row.name ?? '', username: rowUsername ?? '' })
+        notInEvent.push({ userId: matchedPlayer.id, userName: matchedPlayer.name, score: row.event_relative_score, udiscId: rowUsername, pdgaNumber: rowPdgaNumber })
         continue
       }
 
@@ -82,5 +115,5 @@ export function useUDiscImport(players: MaybeRefOrGetter<UserSeason[]>, eventPla
     }
   }
 
-  return { scores, notInBirdogey, unmatchedInEvent, missingMetadata, parseFile, reset }
+  return { scores, notInBirdogey, notInEvent, unmatchedInEvent, missingMetadata, parseFile, addToEvent, reset }
 }

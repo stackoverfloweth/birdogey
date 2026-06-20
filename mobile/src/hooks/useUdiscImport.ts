@@ -3,20 +3,52 @@ import { useState } from 'react'
 
 export function useUDiscImport(players: UserSeason[], eventPlayers: EventPlayerRequest[]): UseUDiscImport {
   const [notInBirdogey, setNotInBirdogey] = useState<{ name: string, username: string }[]>([])
+  const [notInEvent, setNotInEvent] = useState<{ userId: string, userName: string, score: number, udiscId?: string, pdgaNumber?: string }[]>([])
   const [unmatchedInEvent, setUnmatchedInEvent] = useState<{ userId: string, userName: string }[]>([])
   const [scores, setScores] = useState<Map<string, number>>(new Map())
   const [missingMetadata, setMissingMetadata] = useState<Map<string, Partial<UserRequest>>>(new Map())
 
   function reset(): void {
     setNotInBirdogey([])
+    setNotInEvent([])
     setUnmatchedInEvent([])
     setScores(new Map())
     setMissingMetadata(new Map())
   }
 
+  function addToEvent(userId: string): void {
+    const entry = notInEvent.find((entry) => entry.userId === userId)
+    if (!entry) return
+
+    scores.set(userId, entry.score)
+
+    const player = players.find((player) => player.id === userId)
+    if (player) {
+      const suggestion: Partial<UserRequest> = { name: player.name }
+      let hasSuggestion = false
+
+      if (!player.udiscId && entry.udiscId) {
+        suggestion.udiscId = entry.udiscId
+        hasSuggestion = true
+      }
+
+      if (!player.pdgaNumber && entry.pdgaNumber) {
+        suggestion.pdgaNumber = entry.pdgaNumber
+        hasSuggestion = true
+      }
+
+      if (hasSuggestion) {
+        missingMetadata.set(userId, suggestion)
+      }
+    }
+
+    setNotInEvent(notInEvent.filter((entry) => entry.userId !== userId))
+  }
+
   async function parseFile(data: ArrayBuffer): Promise<void> {
     const rows = udisc.parseFile(data)
     const matchedUserIds = new Set<string>()
+    const newNotInEvent: typeof notInEvent = []
 
     for (const row of rows) {
       const rowPdgaNumber = udisc.toPdgaString(row.pdga_number)
@@ -47,7 +79,7 @@ export function useUDiscImport(players: UserSeason[], eventPlayers: EventPlayerR
       const isInEvent = eventPlayers.some(({ userId }) => userId === matchedPlayer.id)
 
       if (!isInEvent) {
-        notInBirdogey.push({ name: row.name ?? '', username: rowUsername ?? '' })
+        newNotInEvent.push({ userId: matchedPlayer.id, userName: matchedPlayer.name, score: row.event_relative_score, udiscId: rowUsername, pdgaNumber: rowPdgaNumber })
         continue
       }
 
@@ -78,14 +110,18 @@ export function useUDiscImport(players: UserSeason[], eventPlayers: EventPlayerR
           userName: players.find((player) => player.id === userId)?.name ?? userId,
         })))
     }
+
+    setNotInEvent(newNotInEvent)
   }
 
   return {
     scores,
     notInBirdogey,
+    notInEvent,
     unmatchedInEvent,
     missingMetadata,
     parseFile,
+    addToEvent,
     reset,
   }
 }

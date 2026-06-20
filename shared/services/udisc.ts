@@ -6,9 +6,11 @@ export type UDiscMissingMetadata = Map<string, Partial<UserRequest>>
 export type UseUDiscImport = {
   scores: Map<string, number>,
   notInBirdogey: { name: string, username: string }[],
+  notInEvent: { userId: string, userName: string, score: number, udiscId?: string, pdgaNumber?: string }[],
   unmatchedInEvent: { userId: string, userName: string }[],
   missingMetadata: UDiscMissingMetadata,
   parseFile: (data: ArrayBuffer) => Promise<void>,
+  addToEvent: (userId: string) => void,
   reset: () => void,
 }
 

@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query'
 type ScoreImportModalProps = {
   visible: boolean,
   onSubmit: (scores: Map<string, number>) => void,
+  onAddPlayer: (userId: string, score: number) => void,
   onDismiss: () => void,
   seasonId: string,
   players: UserSeason[],
@@ -23,8 +24,8 @@ type ScoreImportModalProps = {
   style?: StyleProp<ViewStyle>,
 }
 
-export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, players, eventPlayers, style }: ScoreImportModalProps): React.ReactNode {
-  const { scores, notInBirdogey, unmatchedInEvent, missingMetadata, parseFile, reset: resetImport } = useUDiscImport(players, eventPlayers)
+export function ScoreImportModal({ visible, onSubmit, onAddPlayer, onDismiss, seasonId, players, eventPlayers, style }: ScoreImportModalProps): React.ReactNode {
+  const { scores, notInBirdogey, notInEvent, unmatchedInEvent, missingMetadata, parseFile, addToEvent, reset: resetImport } = useUDiscImport(players, eventPlayers)
   const api = useApiClient()
   const { data: season } = useQuery({
     queryKey: ['seasons', seasonId],
@@ -134,6 +135,34 @@ export function ScoreImportModal({ visible, onSubmit, onDismiss, seasonId, playe
                 </View>
               )}
             />
+
+            {notInEvent.length > 0 && (
+              <AccordionItem
+                title={`In Birdogey but not in event (${notInEvent.length})`}
+                children={(
+                  <View style={styles.list}>
+                    {notInEvent.map((player) => (
+                      <View style={[styles.listItem, { justifyContent: 'space-between' }]} key={player.userId}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <SymbolView name="circle.fill" size={10} tintColor={colors.on_surface} />
+                          <Text>{player.userName}</Text>
+                        </View>
+                        <Pressable
+                          style={[formStyles.iconButton, { width: 42, backgroundColor: colors.surface_container_low }]}
+                          onPress={() => {
+                            onAddPlayer(player.userId, player.score)
+                            addToEvent(player.userId)
+                            Alert.alert('Player added to event!')
+                          }}
+                        >
+                          <SymbolView name="plus" size={18} tintColor={colors.primary} />
+                        </Pressable>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              />
+            )}
 
             <AccordionItem
               title={`Not found in UDisc import (${unmatchedInEvent.length})`}
