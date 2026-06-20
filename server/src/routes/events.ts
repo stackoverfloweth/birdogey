@@ -166,6 +166,7 @@ events.put('/:id', requireAdmin, async (context) => {
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, {
     $set: {
+      start: new Date(body.start),
       notes: body.notes,
       ctpStartingBalance: body.ctpStartingBalance,
       aceStartingBalance: body.aceStartingBalance,
