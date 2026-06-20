@@ -6,23 +6,30 @@ import { Score } from '@/components/Score'
 import { ScoreModal } from '@/components/ScoreModal'
 import { EventPlayerModal } from '@/components/EventPlayerModal'
 import { PlayerInEvent } from '@/components/EventPlayersActiveList'
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
-import { useState } from 'react'
+import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable'
+import { useRef, useState } from 'react'
 
 type PlayerListItemWithSwipeActionsProps = {
   player: PlayerInEvent,
   visible?: boolean,
   onChange?: (player: PlayerInEvent) => void,
   onRemove?: (userId: string) => void,
+  onSwipeOpen?: (ref: SwipeableMethods) => void,
 }
 
-export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRemove }: PlayerListItemWithSwipeActionsProps): React.ReactNode {
+export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRemove, onSwipeOpen }: PlayerListItemWithSwipeActionsProps): React.ReactNode {
+  const swipeableRef = useRef<SwipeableMethods>(null)
   const [ctpState, setCtpState] = useState<boolean>(player.inForCtp ?? false)
   const [aceState, setAceState] = useState<boolean>(player.inForAce ?? false)
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false)
   const [scoreModalVisible, setScoreModalVisible] = useState<boolean>(false)
 
   function handleSwipeClose(): void {
+    const noop = aceState === player.inForAce && ctpState === player.inForCtp
+    if (noop) {
+      return
+    }
+
     onChange?.({
       ...player,
       inForAce: aceState,
@@ -71,6 +78,10 @@ export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRe
   return (
     <>
       <ReanimatedSwipeable
+        ref={swipeableRef}
+        onSwipeableWillOpen={() => {
+          if (swipeableRef.current) onSwipeOpen?.(swipeableRef.current)
+        }}
         onSwipeableClose={handleSwipeClose}
         renderRightActions={() => renderRightActions(player)}
         overshootRight={false}

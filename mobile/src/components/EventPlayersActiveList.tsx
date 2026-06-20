@@ -2,7 +2,7 @@ import { Event, EventPlayerRequest, EventRequest, EventSchema, pluralize, UserSe
 import { useQuery } from '@tanstack/react-query'
 import { Alert, FlatList, Keyboard, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { formStyles } from '@/theme/forms'
 import { PotBalances } from '@/components/PotBalances'
 import { TextInput } from '@/components/TextInput'
@@ -13,6 +13,7 @@ import { PlayersModal } from '@/components/PlayersModal'
 import { EventFormModal } from '@/components/EventFormModal'
 import { ScoreImportModal } from '@/components/ScoreImportModal'
 import { PlayerListItemWithSwipeActions } from './PlayerListItemWithSwipeActions'
+import type { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable'
 
 type EventPlayersActiveListProps = {
   event: Event,
@@ -31,6 +32,19 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   const [playerSearchModalVisible, setPlayerSearchModalVisible] = useState(false)
   const [eventModalVisible, setEventModalVisible] = useState(false)
   const [scoreImportModalVisible, setScoreImportModalVisible] = useState(false)
+  const openSwipeableRef = useRef<SwipeableMethods | null>(null)
+
+  const closeOpenSwipeable = useCallback(() => {
+    openSwipeableRef.current?.close()
+    openSwipeableRef.current = null
+  }, [])
+
+  const handleSwipeOpen = useCallback((ref: SwipeableMethods) => {
+    if (openSwipeableRef.current && openSwipeableRef.current !== ref) {
+      openSwipeableRef.current.close()
+    }
+    openSwipeableRef.current = ref
+  }, [])
 
   const api = useApiClient()
 
@@ -217,7 +231,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onTouchStart={closeOpenSwipeable}>
       <FlatList
         data={playersInEvent}
         contentContainerStyle={styles.list}
@@ -228,6 +242,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
             visible={visibleIds.has(item.id)}
             onChange={handlePlayerChanged}
             onRemove={handlePlayerRemove}
+            onSwipeOpen={handleSwipeOpen}
           />
         )}
         keyExtractor={(item) => item.id}
