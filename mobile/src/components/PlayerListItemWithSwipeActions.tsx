@@ -7,29 +7,23 @@ import { ScoreModal } from '@/components/ScoreModal'
 import { EventPlayerModal } from '@/components/EventPlayerModal'
 import { PlayerInEvent } from '@/components/EventPlayersActiveList'
 import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 type PlayerListItemWithSwipeActionsProps = {
   player: PlayerInEvent,
   visible?: boolean,
   onChange?: (player: PlayerInEvent) => void,
   onRemove?: (userId: string) => void,
-  onSwipeOpen?: (ref: SwipeableMethods) => void,
+  onSwipeOpen?: (ref: SwipeableMethods, onClose: () => void) => void,
 }
 
-export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRemove, onSwipeOpen }: PlayerListItemWithSwipeActionsProps): React.ReactNode {
-  const swipeableRef = useRef<SwipeableMethods>(null)
+export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRemove }: PlayerListItemWithSwipeActionsProps): React.ReactNode {
   const [ctpState, setCtpState] = useState<boolean>(player.inForCtp ?? false)
   const [aceState, setAceState] = useState<boolean>(player.inForAce ?? false)
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false)
   const [scoreModalVisible, setScoreModalVisible] = useState<boolean>(false)
 
   function handleSwipeClose(): void {
-    const noop = aceState === player.inForAce && ctpState === player.inForCtp
-    if (noop) {
-      return
-    }
-
     onChange?.({
       ...player,
       inForAce: aceState,
@@ -39,7 +33,7 @@ export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRe
 
   function renderRightActions(player: PlayerInEvent): React.ReactNode {
     return (
-      <View style={styles.swipeActions}>
+      <View style={styles.swipeActions} onTouchStart={(event) => event.stopPropagation()}>
         <Pressable style={[styles.swipeAction, aceState ? styles.swipeActionActive : undefined]} onPress={() => setAceState(!aceState)}>
           <Text style={styles.swipeActionText}>ACE</Text>
         </Pressable>
@@ -78,10 +72,6 @@ export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRe
   return (
     <>
       <ReanimatedSwipeable
-        ref={swipeableRef}
-        onSwipeableWillOpen={() => {
-          if (swipeableRef.current) onSwipeOpen?.(swipeableRef.current)
-        }}
         onSwipeableClose={handleSwipeClose}
         renderRightActions={() => renderRightActions(player)}
         overshootRight={false}

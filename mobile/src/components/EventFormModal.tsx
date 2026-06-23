@@ -12,12 +12,13 @@ import { queryClient } from '@/services/queryClient'
 type EventFormModalProps = {
   event: Event,
   visible?: boolean,
+  readOnly?: boolean,
   onDismiss?: () => void,
   onSubmit?: (event: EventSchema) => void,
   style?: StyleProp<ViewStyle>,
 }
 
-export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: EventFormModalProps): React.ReactNode {
+export function EventFormModal({ event, visible, readOnly, onDismiss, onSubmit, style }: EventFormModalProps): React.ReactNode {
   const apiClient = useApiClient()
 
   const initialValues = useMemo<EventSchemaInput | undefined>(() => {
@@ -57,9 +58,10 @@ export function EventFormModal({ event, visible, onDismiss, onSubmit, style }: E
           submitText="Save"
           submitIcon={<SymbolView name="checkmark" size={20} tintColor="#fff" weight="bold" />}
           initialValues={initialValues}
+          readOnly={readOnly}
           onSubmit={(data) => onSubmit?.(data)}
-          onCancel={onDismiss}
-          onDelete={handleDelete}
+          onCancel={readOnly ? undefined : onDismiss}
+          onDelete={readOnly ? undefined : handleDelete}
         />
       </ScrollView>
     </BottomSheet>

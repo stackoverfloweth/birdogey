@@ -21,7 +21,8 @@ export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
     queryFn: () => api.season.getById(event.seasonId),
   })
 
-  const startsIn = formatDistanceToNow(event.start)
+  const isPast = event.start < new Date()
+  const startsIn = formatDistanceToNow(event.start, { addSuffix: true })
 
   return (
     <View style={[cardStyles.card, styles.container]}>
@@ -29,9 +30,11 @@ export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
         <SymbolView name="calendar" size={120} tintColor="#fff" />
       </View>
 
-      <View style={[badgeStyles.badge, { backgroundColor: colors.secondary }]}>
-        <Text style={badgeStyles.badgeText}>Upcoming</Text>
-      </View>
+      {!isPast && (
+        <View style={[badgeStyles.badge, { backgroundColor: colors.secondary }]}>
+          <Text style={badgeStyles.badgeText}>Upcoming</Text>
+        </View>
+      )}
 
       <View>
         {season && <Text style={styles.headerText}>{season.name}</Text>}
@@ -40,11 +43,14 @@ export function NextEventCard({ event }: NextEventCardProps): React.ReactNode {
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8, width: '100%', justifyContent: 'space-between' }}>
         <View>
-          <Text style={styles.clockLabel}>Starts in</Text>
+          <Text style={styles.clockLabel}>{isPast ? 'Started' : 'Starts'}</Text>
           <Text style={styles.clockValue}>{startsIn}</Text>
         </View>
 
-        <Pressable style={[formStyles.iconButton, { backgroundColor: colors.surface_container_low }]} onPress={() => router.push(`/events/${event.id}`)}>
+        <Pressable
+          style={[formStyles.iconButton, { backgroundColor: colors.surface_container_low }]}
+          onPress={() => router.push(`/events/${event.id}`, { withAnchor: true })}
+        >
           <SymbolView name="chevron.right" size={24} tintColor={colors.on_surface_variant} />
         </Pressable>
       </View>

@@ -13,12 +13,13 @@ export type EventFormProps = {
   submitText?: string,
   submitIcon?: React.ReactNode,
   initialValues?: EventSchemaInput | undefined,
+  readOnly?: boolean,
   onSubmit: (data: EventSchema) => void,
   onCancel?: () => void,
   onDelete?: () => void,
 }
 
-export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onCancel, onDelete }: EventFormProps): React.ReactNode {
+export function EventForm({ submitText, submitIcon, initialValues, readOnly, onSubmit, onCancel, onDelete }: EventFormProps): React.ReactNode {
   const { control, handleSubmit, formState: { errors, isLoading } } = useForm<EventSchemaInput, any, EventSchema>({
     resolver: zodResolver(eventSchema),
     defaultValues: initialValues,
@@ -36,6 +37,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
               mode="datetime"
               display="default"
               minuteInterval={5}
+              disabled={readOnly}
               onChange={(_event, selectedDate) => {
                 if (selectedDate) {
                   onChange(selectedDate)
@@ -60,6 +62,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
               value={value}
               multiline
               numberOfLines={4}
+              editable={!readOnly}
             />
           )}
           name="notes"
@@ -77,6 +80,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
               onBlur={onBlur}
               value={value}
               keyboardType="number-pad"
+              editable={!readOnly}
               icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
             />
           )}
@@ -95,6 +99,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
               onBlur={onBlur}
               value={value}
               keyboardType="number-pad"
+              editable={!readOnly}
               icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
             />
           )}
@@ -113,6 +118,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
               onBlur={onBlur}
               value={value}
               keyboardType="number-pad"
+              editable={!readOnly}
             />
           )}
           name="ctpHole"
@@ -130,6 +136,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
               onBlur={onBlur}
               value={value}
               keyboardType="number-pad"
+              editable={!readOnly}
               icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
             />
           )}
@@ -148,6 +155,7 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
               onBlur={onBlur}
               value={value}
               keyboardType="number-pad"
+              editable={!readOnly}
               icon={<SymbolView name="dollarsign" size={20} tintColor={colors.primary} />}
             />
           )}
@@ -156,35 +164,37 @@ export function EventForm({ submitText, submitIcon, initialValues, onSubmit, onC
         {errors.aceStartingBalance && <Text style={formStyles.errorText}>{errors.aceStartingBalance.message}</Text>}
       </View>
 
-      <View style={formStyles.actions}>
-        <Pressable
-          disabled={isLoading}
-          style={formStyles.button}
-          onPress={() => void handleSubmit(onSubmit)()}
-        >
-          {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : submitIcon}
-          <Text style={formStyles.buttonText}>{submitText}</Text>
-        </Pressable>
-
-        {onCancel && (
+      {!readOnly && (
+        <View style={formStyles.actions}>
           <Pressable
-            style={formStyles.secondaryButton}
-            onPress={onCancel}
+            disabled={isLoading}
+            style={formStyles.button}
+            onPress={() => void handleSubmit(onSubmit)()}
           >
-            <Text style={formStyles.secondaryButtonText}>Cancel</Text>
+            {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : submitIcon}
+            <Text style={formStyles.buttonText}>{submitText}</Text>
           </Pressable>
-        )}
 
-        {onDelete && (
-          <Pressable
-            style={formStyles.secondaryButton}
-            onPress={onDelete}
-          >
-            <SymbolView name="trash" size={20} tintColor={colors.error} weight="bold" />
-            <Text style={[formStyles.secondaryButtonText, { color: colors.error }]}>Delete</Text>
-          </Pressable>
-        )}
-      </View>
+          {onCancel && (
+            <Pressable
+              style={formStyles.secondaryButton}
+              onPress={onCancel}
+            >
+              <Text style={formStyles.secondaryButtonText}>Cancel</Text>
+            </Pressable>
+          )}
+
+          {onDelete && (
+            <Pressable
+              style={formStyles.secondaryButton}
+              onPress={onDelete}
+            >
+              <SymbolView name="trash" size={20} tintColor={colors.error} weight="bold" />
+              <Text style={[formStyles.secondaryButtonText, { color: colors.error }]}>Delete</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
     </View>
   )
 }

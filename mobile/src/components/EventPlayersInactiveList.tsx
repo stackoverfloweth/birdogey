@@ -5,6 +5,7 @@ import { useApiClient } from '@/contexts/ApiClientContext'
 import { useCallback, useMemo, useState } from 'react'
 import { PotBalances } from '@/components/PotBalances'
 import { PlayerListItem } from '@/components/PlayerListItem'
+import { EventFormModal } from '@/components/EventFormModal'
 import { Score } from './Score'
 import { colors } from '@/theme/colors'
 import { cardStyles } from '@/theme/card'
@@ -22,6 +23,7 @@ type EventPlayersInactiveListProps = {
 type PlayerInEvent = EventPlayerRequest & UserSeason
 
 export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, onUncompleteEvent, onRefresh }: EventPlayersInactiveListProps): React.ReactNode {
+  const [eventModalVisible, setEventModalVisible] = useState(false)
   const api = useApiClient()
 
   const { data: players = [], isFetched } = useQuery({
@@ -66,13 +68,28 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
   function renderHeader(): React.ReactElement {
     return (
       <View style={styles.header}>
-        <View style={[cardStyles.card, { gap: 24 }]}>
-          <View>
-            <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
-            <Text style={[cardStyles.cardPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
-          </View>
-          <View style={{ position: 'absolute', right: 16, top: 16 }}>
-            <SymbolView name="person.2.fill" size={100} tintColor={colors.surface_container_high} />
+        <View style={{ flexDirection: 'row', gap: 16 }}>
+          <Pressable
+            style={[cardStyles.card, { flex: 1, position: 'relative' }]}
+            onPress={() => setEventModalVisible(true)}
+          >
+            <View style={{ position: 'absolute', right: 20, bottom: 14 }}>
+              <SymbolView name="info.circle.fill" size={50} tintColor={colors.surface_container_high} />
+            </View>
+
+            <View>
+              <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface }]}>Event Details</Text>
+            </View>
+          </Pressable>
+          <View style={[cardStyles.card, { flex: 1, position: 'relative' }]}>
+            <View style={{ position: 'absolute', right: 20, bottom: 0 }}>
+              <SymbolView name="person.2.fill" size={80} tintColor={colors.surface_container_high} />
+            </View>
+
+            <View>
+              <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
+              <Text style={[cardStyles.cardPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
+            </View>
           </View>
         </View>
         <PotBalances event={event} eventPlayers={playersInEvent} />
@@ -117,6 +134,16 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
         <SymbolView name="lock.open.fill" size={30} tintColor={colors.surface_container_lowest} />
         <Text style={formStyles.buttonText}>Edit Event</Text>
       </Pressable>
+
+      {eventModalVisible && (
+        <EventFormModal
+          event={event}
+          visible={eventModalVisible}
+          readOnly
+          onDismiss={() => setEventModalVisible(false)}
+          style={{ height: '93%' }}
+        />
+      )}
     </View>
   )
 }
@@ -131,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    gap: 8,
+    gap: 16,
     marginVertical: 8,
   },
   list: {

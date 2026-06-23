@@ -61,13 +61,13 @@ events.get('/next', async (context) => {
   const eventsCollection = db.collection<EventResponse>('events')
   const seasonIds = await getSeasonIdsFromQueryOrAllUserSeasonIds(context, token, db)
 
-  const [result] = await eventsCollection.find({
-    seasonId: { $in: seasonIds },
-    start: { $gte: new Date() },
-  })
-    .sort({ start: 1 })
-    .limit(1)
-    .toArray()
+  const [result] = await eventsCollection.aggregate([
+    { $match: { seasonId: { $in: seasonIds }, completed: { $exists: false } } },
+    { $addFields: { _distance: { $abs: { $subtract: ['$start', new Date()] } } } },
+    { $sort: { _distance: 1 } },
+    { $limit: 1 },
+    { $unset: '_distance' },
+  ]).toArray()
 
   return context.json(result)
 })
