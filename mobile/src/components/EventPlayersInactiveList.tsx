@@ -1,4 +1,4 @@
-import { Event, EventPlayerRequest, pluralize, UserSeason } from '@birdogey/shared'
+import { Event, EventPlayerRequest, UserSeason } from '@birdogey/shared'
 import { useQuery } from '@tanstack/react-query'
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View, ViewToken } from 'react-native'
 import { useApiClient } from '@/contexts/ApiClientContext'
@@ -65,10 +65,6 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
     }))
   }, [getPlayer, eventPlayers, isFetched])
 
-  const frozenPlayers = useMemo(() => {
-    return playersInEvent.filter((player) => player.frozen)
-  }, [playersInEvent])
-
   function renderHeader(): React.ReactElement {
     return (
       <View style={styles.header}>
@@ -93,18 +89,6 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
             <View>
               <Text style={[cardStyles.cardSecondaryText, { color: colors.on_surface_variant }]}>Total Players</Text>
               <Text style={[cardStyles.cardPrimaryText, { color: colors.on_surface }]}>{eventPlayers.length}</Text>
-              {frozenPlayers.length > 0 && (
-                <View style={{ flexDirection: 'row', gap: 4 }}>
-                  <SymbolView name="snowflake" size={16} tintColor={colors.primary} />
-                  <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
-                    {frozenPlayers.length}
-                    {' '}
-                    frozen
-                    {' '}
-                    {pluralize(frozenPlayers.length, 'tag')}
-                  </Text>
-                </View>
-              )}
             </View>
           </View>
         </View>
