@@ -6,4 +6,5 @@ export type EventPlayer = {
   score?: number,
   incomingTagId: number,
   outgoingTagId?: number,
+  frozen: boolean,
 }

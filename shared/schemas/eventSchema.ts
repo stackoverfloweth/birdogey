@@ -11,6 +11,7 @@ export const eventPlayerSchema = z.object({
   score: z.number().optional(),
   incomingTagId: z.number({ message: 'Incoming tag is required' }),
   outgoingTagId: z.number().optional(),
+  frozen: z.boolean().optional(),
 })
 
 export type EventPlayerSchemaInput = z.input<typeof eventPlayerSchema>

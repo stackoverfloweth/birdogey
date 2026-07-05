@@ -101,6 +101,10 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
     return playersInEvent.filter((player) => player.score === undefined)
   }, [playersInEvent])
 
+  const frozenPlayers = useMemo(() => {
+    return playersInEvent.filter((player) => player.frozen)
+  }, [playersInEvent])
+
   function confirmCompleteEvent(): void {
     if (playersWithoutScore.length > 0) {
       Alert.alert(`There are ${playersWithoutScore.length} players without a score.`, 'Please add scores for all players before completing the event.')
@@ -197,6 +201,18 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
                   {playersWithoutScore.length}
                   {' '}
                   missing score
+                </Text>
+              </View>
+            )}
+            {frozenPlayers.length > 0 && (
+              <View style={{ flexDirection: 'row', gap: 4 }}>
+                <SymbolView name="snowflake" size={16} tintColor={colors.primary} />
+                <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
+                  {frozenPlayers.length}
+                  {' '}
+                  frozen
+                  {' '}
+                  {pluralize(frozenPlayers.length, 'tag')}
                 </Text>
               </View>
             )}

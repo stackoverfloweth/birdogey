@@ -2,7 +2,7 @@ import { formStyles } from '@/theme/forms'
 import { colors } from '@/theme/colors'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
-import { View, Text, Pressable, ActivityIndicator } from 'react-native'
+import { View, Text, Pressable, ActivityIndicator, Switch } from 'react-native'
 import { eventPlayerSchema, EventPlayerSchema, EventPlayerSchemaInput } from '@birdogey/shared'
 import { NumericInput } from './NumericInput'
 
@@ -53,6 +53,24 @@ export function EventPlayerForm({ submitText, submitIcon, initialValues, onSubmi
           />
           {errors.outgoingTagId && <Text style={formStyles.errorText}>{errors.outgoingTagId.message}</Text>}
         </View>
+      </View>
+
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>Freeze Tag</Text>
+        <Text style={{ color: colors.on_surface_variant, fontSize: 12 }}>Forgot their tag — they keep their incoming tag when the event completes</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Switch
+              trackColor={{ true: colors.primary }}
+              value={value ?? false}
+              onValueChange={onChange}
+              onBlur={onBlur}
+            />
+          )}
+          name="frozen"
+        />
+        {errors.frozen && <Text style={formStyles.errorText}>{errors.frozen.message}</Text>}
       </View>
 
       <View style={formStyles.actions}>

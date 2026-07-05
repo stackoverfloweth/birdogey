@@ -80,6 +80,10 @@
       <div class="event-player-list-item__tag event-player-list-item__tag--outgoing" :class="classes.tag">
         {{ outgoingTagId ?? '--' }}
       </div>
+
+      <div v-if="eventPlayer.frozen" class="event-player-list-item__frozen" title="Tag frozen — keeps incoming tag">
+        ❄
+      </div>
     </div>
 
     <div class="event-player-list-item__image">
@@ -143,8 +147,24 @@
 
 .event-player-list-item__tags-container {
   grid-area: tag;
+  position: relative;
   display: flex;
   justify-content: center;
+}
+
+.event-player-list-item__frozen {
+  position: absolute;
+  top: -6px;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 10px;
+  color: var(--p-color-bg-1);
+  background: var(--p-color-message-info-bg, #00b3fe);
 }
 
 .event-player-list-item__tag {
