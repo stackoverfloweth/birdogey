@@ -3,6 +3,7 @@ export type UserRequest = {
   udiscId?: string,
   pdgaNumber?: string,
   imageUrl?: string,
+  privateNotes?: string,
   seasonId?: string,
   tagId?: number,
   entryPaid?: boolean,

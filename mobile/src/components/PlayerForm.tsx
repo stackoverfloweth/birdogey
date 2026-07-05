@@ -85,6 +85,23 @@ export function PlayerForm({ userId, submitText, submitIcon, cancelText, initial
         {errors.udiscId && <Text style={formStyles.errorText}>{errors.udiscId.message}</Text>}
       </View>
 
+      <View style={formStyles.formGroup}>
+        <Text style={formStyles.label}>Private Notes</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              multiline
+            />
+          )}
+          name="privateNotes"
+        />
+        {errors.privateNotes && <Text style={formStyles.errorText}>{errors.privateNotes.message}</Text>}
+      </View>
+
       <View style={formStyles.actions}>
         <Pressable
           disabled={formIsLoading || isLoading}

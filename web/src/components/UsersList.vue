@@ -23,6 +23,11 @@
         <p-list-item class="player-list__player-details" :value="player.id">
           <div class="player-list__player-details-name">
             {{ player.name }}
+            <template v-if="player.privateNotes">
+              <div class="player-list__player-details-notes">
+                {{ player.privateNotes }}
+              </div>
+            </template>
           </div>
           <UserImage :image-url="player.imageUrl" height="30" width="30" />
 
@@ -68,6 +73,11 @@
 
 .player-list__player-details-name {
   flex-grow: 1;
+}
+
+.player-list__player-details-notes {
+  font-size: .75rem;
+  color: var(--p-color-text-subdued);
 }
 
 .player-list__player-details-paid {

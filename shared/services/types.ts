@@ -37,6 +37,7 @@ export type UserJson = {
   udiscId?: string,
   pdgaNumber?: string,
   imageUrl?: string,
+  privateNotes?: string,
 }
 
 export type UserSeasonJson = SeasonJson & UserJson & {

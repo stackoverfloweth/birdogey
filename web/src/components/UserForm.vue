@@ -23,6 +23,7 @@
   const tagId = ref(props.initialValues?.tagId)
   const entryPaid = ref(props.initialValues?.entryPaid ?? true)
   const imageUrl = ref(props.initialValues?.imageUrl)
+  const privateNotes = ref(props.initialValues?.privateNotes)
 
   const isRequired: ValidationRule<string | undefined> = (value) => value !== undefined && value.trim().length > 0
   const { error: nameErrorMessage, state: nameState } = useValidation(name, 'Name', [isRequired])
@@ -37,6 +38,7 @@
         tagId: tagId.value,
         entryPaid: entryPaid.value,
         imageUrl: imageUrl.value,
+        privateNotes: privateNotes.value,
       })
     }
   }
@@ -63,6 +65,14 @@
         <p-toggle :id="id" v-model="entryPaid" :disabled="auth.isReadonly" />
       </template>
     </p-label>
+
+    <template v-if="auth.role === 'admin'">
+      <p-label class="player-form__private-notes" label="Private Notes (admins only)">
+        <template #default="{ id }">
+          <p-textarea :id="id" v-model="privateNotes" :disabled="auth.isReadonly" />
+        </template>
+      </p-label>
+    </template>
 
     <template #footer>
       <p-button @click="emit('cancel')">

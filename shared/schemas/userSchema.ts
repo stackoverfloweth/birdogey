@@ -6,6 +6,7 @@ export const userSchema = z.object({
   udiscId: z.string().optional(),
   pdgaNumber: z.string().optional(),
   imageUrl: z.string().optional(),
+  privateNotes: z.string().optional(),
 })
 
 export type UserSchemaInput = z.input<typeof userSchema>
