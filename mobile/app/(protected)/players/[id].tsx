@@ -5,7 +5,7 @@ import { colors } from '@/theme/colors'
 import { cardStyles } from '@/theme/card'
 import { UserRequest } from '@birdogey/shared'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { SymbolView } from 'expo-symbols'
 import { StyleSheet, View, ActivityIndicator, ScrollView } from 'react-native'
 import { formStyles } from '@/theme/forms'
@@ -23,7 +23,8 @@ export default function PlayerView(): React.ReactNode {
   const { mutate: updatePlayer, isPending: isUpdatingPlayer } = useMutation({
     mutationFn: (player: UserRequest) => api.user.update(id, player),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['players', id] })
+      queryClient.invalidateQueries({ queryKey: ['players'] })
+      router.back()
     },
   })
 
