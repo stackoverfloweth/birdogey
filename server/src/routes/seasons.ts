@@ -70,6 +70,7 @@ seasons.get('/:id/users', authMiddleware, async (context) => {
           udiscId: '$user.udiscId',
           pdgaNumber: '$user.pdgaNumber',
           imageUrl: coalesceAdminImageUrl,
+          ...token.role === 'admin' ? { privateNotes: '$user.privateNotes' } : {},
           seasonId: { $toString: '$seasonId' },
           tagId: 1,
           entryPaid: 1,

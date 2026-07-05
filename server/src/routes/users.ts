@@ -114,7 +114,7 @@ users.get('/:id', authMiddleware, async (context) => {
   const users = await collection.aggregate([
     { $match: { _id: new ObjectId(id) } },
     ...coalesceAdminImageUrl,
-    { $unset: 'adminImageUrl' },
+    { $unset: token.role === 'admin' ? ['adminImageUrl'] : ['adminImageUrl', 'privateNotes'] },
   ]).toArray()
 
   return context.json(users.pop() ?? null)
@@ -139,6 +139,7 @@ users.post('/', authMiddleware, requireAdmin, async (context) => {
     udiscId: body.udiscId,
     pdgaNumber: body.pdgaNumber,
     adminImageUrl: body.imageUrl,
+    privateNotes: body.privateNotes,
   })
 
   if (body.seasonId) {
@@ -162,7 +163,7 @@ users.post('/', authMiddleware, requireAdmin, async (context) => {
 users.put('/:id', authMiddleware, async (context) => {
   const id = context.req.param('id')
   const body = await context.req.json()
-  const { seasonId, tagId, entryPaid, imageUrl, ...$set } = body
+  const { seasonId, tagId, entryPaid, imageUrl, privateNotes, ...$set } = body
   const token = getJwtPayload(context)
 
   if (token.role !== 'admin' && token._id.toString() !== id) {
@@ -182,6 +183,10 @@ users.put('/:id', authMiddleware, async (context) => {
     } else {
       $set.adminImageUrl = imageUrl
     }
+  }
+
+  if (privateNotes !== undefined && token.role === 'admin') {
+    $set.privateNotes = privateNotes
   }
 
   const update: Record<string, unknown> = { $set }

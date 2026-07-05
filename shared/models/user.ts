@@ -9,6 +9,7 @@ export type User = {
   udiscId?: string,
   pdgaNumber?: string,
   imageUrl?: string,
+  privateNotes?: string,
   role: string,
   isAuthorized: boolean,
   isReadonly: boolean,

@@ -1,7 +1,8 @@
-import { StyleSheet, StyleProp, ViewStyle, FlatList, FlatListProps, ListRenderItemInfo } from 'react-native'
+import { StyleSheet, StyleProp, ViewStyle, FlatList, FlatListProps, ListRenderItemInfo, Text } from 'react-native'
 import { User } from '@birdogey/shared'
 import { BottomSheet } from '@/components/BottomSheet'
 import { PlayerListItem } from '@/components/PlayerListItem'
+import { colors } from '@/theme/colors'
 
 type PlayersModalProps<T extends User> = Omit<FlatListProps<T>, 'data' | 'renderItem'> & {
   players: T[],
@@ -15,7 +16,13 @@ type PlayersModalProps<T extends User> = Omit<FlatListProps<T>, 'data' | 'render
 
 export function PlayersModal<T extends User>({ players, visible, beforeList, renderItem, onSelect = () => {}, onDismiss = () => {}, style, ...listProps }: PlayersModalProps<T>): React.ReactNode {
   function defaultRenderItem({ item }: ListRenderItemInfo<T>): React.ReactElement {
-    return <PlayerListItem player={item} onPress={() => onSelect(item)} />
+    return (
+      <PlayerListItem
+        player={item}
+        subTitle={item.privateNotes ? <Text style={styles.privateNotes} numberOfLines={1}>{item.privateNotes}</Text> : undefined}
+        onPress={() => onSelect(item)}
+      />
+    )
   }
 
   return (
@@ -35,5 +42,9 @@ const styles = StyleSheet.create({
   modalContent: {
     padding: 24,
     gap: 16,
+  },
+  privateNotes: {
+    fontSize: 12,
+    color: colors.on_surface_variant,
   },
 })

@@ -41,6 +41,7 @@ export function mapUser(source: UserJson): User {
     udiscId: source.udiscId,
     pdgaNumber: source.pdgaNumber,
     imageUrl: source.imageUrl,
+    privateNotes: source.privateNotes,
     role: '',
     isAuthorized: false,
     isReadonly: false,

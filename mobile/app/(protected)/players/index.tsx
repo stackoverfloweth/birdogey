@@ -75,6 +75,7 @@ export default function Players(): React.ReactNode {
           <PlayerListItem
             player={item}
             visible={visibleIds.has(item.id)}
+            subTitle={item.privateNotes ? <Text style={styles.privateNotes} numberOfLines={1}>{item.privateNotes}</Text> : undefined}
             onPress={() => router.push(`/players/${item.id}`)}
           />
         )}
@@ -115,6 +116,10 @@ const styles = StyleSheet.create({
   },
   flatList: {
     flex: 1,
+  },
+  privateNotes: {
+    fontSize: 12,
+    color: colors.on_surface_variant,
   },
   list: {
     gap: 12,
