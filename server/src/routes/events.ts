@@ -121,6 +121,7 @@ events.post('/', requireAdmin, async (context) => {
     userId: new ObjectId(eventPlayer.userId as string),
     inForCtp: eventPlayer.inForCtp ?? false,
     inForAce: eventPlayer.inForAce ?? false,
+    frozen: eventPlayer.frozen ?? false,
   })) ?? []
 
   const result = await collection.insertOne({
@@ -159,6 +160,7 @@ events.put('/:id', requireAdmin, async (context) => {
     userId: new ObjectId(eventPlayer.userId as string),
     inForCtp: eventPlayer.inForCtp ?? false,
     inForAce: eventPlayer.inForAce ?? false,
+    frozen: eventPlayer.frozen ?? false,
   })) ?? []
 
   const ctpUserIds = body.ctpUserIds?.map((userId: string) => new ObjectId(userId)) ?? []
@@ -194,8 +196,11 @@ events.put('/:id/complete', requireAdmin, async (context) => {
   const collection = db.collection<EventResponse>('events')
 
   const requestPlayers = body.players ?? []
-  const availableTags = requestPlayers.map(({ incomingTagId }: { incomingTagId: number }) => incomingTagId).sort((aTag: number, bTag: number) => aTag - bTag)
-  const sortedByScore = requestPlayers.sort((aPlayer: EventPlayerResponse, bPlayer: EventPlayerResponse) => (aPlayer.score ?? Infinity) - (bPlayer.score ?? Infinity) || aPlayer.incomingTagId - bPlayer.incomingTagId)
+  // frozen players keep their incoming tag, so they are excluded from the
+  // redistribution pool and the score ranking
+  const rankedPlayers = requestPlayers.filter(({ frozen }: { frozen?: boolean }) => !frozen)
+  const availableTags = rankedPlayers.map(({ incomingTagId }: { incomingTagId: number }) => incomingTagId).sort((aTag: number, bTag: number) => aTag - bTag)
+  const sortedByScore = rankedPlayers.sort((aPlayer: EventPlayerResponse, bPlayer: EventPlayerResponse) => (aPlayer.score ?? Infinity) - (bPlayer.score ?? Infinity) || aPlayer.incomingTagId - bPlayer.incomingTagId)
 
   const players = requestPlayers.map((eventPlayer: EventPlayerRequest) => ({
     ...eventPlayer,
@@ -203,7 +208,10 @@ events.put('/:id/complete', requireAdmin, async (context) => {
     userId: new ObjectId(eventPlayer.userId),
     inForCtp: eventPlayer.inForCtp ?? false,
     inForAce: eventPlayer.inForAce ?? false,
-    outgoingTagId: availableTags[sortedByScore.findIndex(({ userId }: { userId: ObjectId }) => userId.toString() === eventPlayer.userId)],
+    frozen: eventPlayer.frozen ?? false,
+    outgoingTagId: eventPlayer.frozen
+      ? eventPlayer.incomingTagId
+      : availableTags[sortedByScore.findIndex(({ userId }: { userId: ObjectId }) => userId.toString() === eventPlayer.userId)],
   }))
 
   const ctpUserIds = body.ctpUserIds?.map((userId: string) => new ObjectId(userId)) ?? []

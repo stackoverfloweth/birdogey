@@ -255,6 +255,7 @@ users.put('/:id/checkin', authMiddleware, async (context) => {
         incomingTagId: tagId,
         inForCtp: false,
         inForAce: false,
+        frozen: false,
       },
     },
   })

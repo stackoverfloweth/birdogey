@@ -11,6 +11,7 @@ export function mapEventPlayer(source: EventPlayerJson): EventPlayer {
     score: source.score ?? undefined,
     incomingTagId: source.incomingTagId,
     outgoingTagId: source.outgoingTagId ?? undefined,
+    frozen: source.frozen ?? false,
   }
 }
 

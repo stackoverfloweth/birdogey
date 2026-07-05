@@ -59,8 +59,10 @@ export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRe
 
   function renderSubTitle(player: PlayerInEvent): React.ReactNode {
     return (
-      <View style={{ flexDirection: 'row', gap: 12 }}>
+      <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
         <Text>{player.incomingTagId ? `#${player.incomingTagId}` : 'No tag'}</Text>
+
+        {player.frozen && <SymbolView name="snowflake" size={14} tintColor={colors.primary} />}
 
         <Text style={aceState ? { color: colors.primary, fontWeight: 'bold' } : { color: colors.outline_variant }}>ACE</Text>
 

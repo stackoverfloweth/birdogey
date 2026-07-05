@@ -32,6 +32,7 @@
 
   const incomingTagId = ref(eventPlayer.value.incomingTagId)
   const outgoingTagId = ref(eventPlayer.value.outgoingTagId)
+  const frozen = ref(eventPlayer.value.frozen ?? false)
 
   function close(): void {
     isOpen.value = false
@@ -42,6 +43,7 @@
       ...eventPlayer.value,
       incomingTagId: incomingTagId.value,
       outgoingTagId: outgoingTagId.value,
+      frozen: frozen.value,
     }
     close()
   }
@@ -60,6 +62,12 @@
         <p-label class="event-player-edit-modal__form-outgoing-tag-id" label="Outgoing Tag #">
           <template #default="{ id }">
             <p-number-input :id="id" v-model="outgoingTagId" :min="0" />
+          </template>
+        </p-label>
+
+        <p-label class="event-player-edit-modal__form-frozen" label="Freeze Tag (forgot tag, keeps incoming)">
+          <template #default="{ id }">
+            <p-toggle :id="id" v-model="frozen" />
           </template>
         </p-label>
       </div>
@@ -81,6 +89,11 @@
 .event-player-edit-modal__form {
   display: grid;
   column-gap: var(--space-sm);
+  row-gap: var(--space-sm);
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.event-player-edit-modal__form-frozen {
+  grid-column: 1 / -1;
 }
 </style>

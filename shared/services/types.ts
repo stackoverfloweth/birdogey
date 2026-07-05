@@ -57,6 +57,7 @@ export type EventPlayerJson = {
   score?: number,
   incomingTagId: number,
   outgoingTagId?: number,
+  frozen?: boolean,
 }
 
 export type EventJson = {

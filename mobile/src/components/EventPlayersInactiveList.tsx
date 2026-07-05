@@ -105,7 +105,11 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
 
   function renderSubTitle(player: PlayerInEvent): React.ReactNode {
     return (
-      <Text>{player.outgoingTagId ? `#${player.outgoingTagId}` : 'No tag'}</Text>
+      <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+        <Text>{player.outgoingTagId ? `#${player.outgoingTagId}` : 'No tag'}</Text>
+
+        {player.frozen && <SymbolView name="snowflake" size={14} tintColor={colors.primary} />}
+      </View>
     )
   }
 

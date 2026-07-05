@@ -8,4 +8,5 @@ export type EventPlayerResponse = {
   score?: number,
   incomingTagId: number,
   outgoingTagId?: number,
+  frozen?: boolean,
 }
