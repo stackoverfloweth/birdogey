@@ -200,7 +200,7 @@ events.put('/:id/complete', requireAdmin, async (context) => {
   const availableTags = rankedPlayers
     .map(({ incomingTagId }: { incomingTagId: number }) => incomingTagId)
     .sort((aTag: number, bTag: number) => aTag - bTag)
-  const sortedByScore = rankedPlayers.sort((aPlayer, bPlayer) => (aPlayer.score ?? Infinity) - (bPlayer.score ?? Infinity) || aPlayer.incomingTagId - bPlayer.incomingTagId)
+  const sortedByScore = rankedPlayers.sort((aPlayer, bPlayer) => (aPlayer.dnf ? Infinity : aPlayer.score ?? Infinity) - (bPlayer.dnf ? Infinity : bPlayer.score ?? Infinity) || aPlayer.incomingTagId - bPlayer.incomingTagId)
 
   const players = requestPlayers
     .map((eventPlayer) => ({

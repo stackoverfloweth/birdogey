@@ -12,6 +12,7 @@ export function mapEventPlayer(source: EventPlayerJson): EventPlayer {
     incomingTagId: source.incomingTagId,
     outgoingTagId: source.outgoingTagId ?? undefined,
     frozen: source.frozen ?? false,
+    dnf: source.dnf ?? false,
   }
 }
 

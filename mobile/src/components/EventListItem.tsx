@@ -24,6 +24,7 @@ export function EventListItem({ event, right }: EventListItemProps): React.React
 
   const bestScore = useMemo(() => {
     return event.players.reduce((best, player) => {
+      if (player.dnf) return best
       return Math.min(best, player.score ?? Infinity)
     }, Infinity)
   }, [event.players])

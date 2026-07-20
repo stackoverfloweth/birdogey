@@ -9,4 +9,5 @@ export type EventPlayerResponse = {
   incomingTagId: number,
   outgoingTagId?: number,
   frozen?: boolean,
+  dnf?: boolean,
 }

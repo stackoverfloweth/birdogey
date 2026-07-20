@@ -16,14 +16,15 @@ type ScoreModalProps = {
 export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): React.ReactNode {
   const count = 12
   const [score, setScore] = useState<number | undefined>(player.score)
+  const [dnf, setDnf] = useState<boolean>(player.dnf ?? false)
 
   const negativeValues = new Array(count).fill(null)
     .map((_value, index) => -count + index)
   const positiveValues = new Array(count).fill(null)
     .map((_value, index) => index + 1)
 
-  function save(score: number | undefined): void {
-    onChange?.({ ...player, score })
+  function save(score: number | undefined, dnf = false): void {
+    onChange?.({ ...player, score, dnf })
     onDismiss?.()
   }
 
@@ -41,13 +42,21 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
   function renderSubTitle(): React.ReactNode {
     return (
       <View style={{ flexDirection: 'row', gap: 16 }}>
-        <Pressable onPress={() => setScore((score = 0) => score - 1)}>
+        <Pressable onPress={() => {
+          setDnf(false)
+          setScore((score = 0) => score - 1)
+        }}
+        >
           <SymbolView name="minus" size={32} tintColor={colors.on_surface} />
         </Pressable>
 
-        <Score value={score} />
+        <Score value={score} dnf={dnf} />
 
-        <Pressable onPress={() => setScore((score = 0) => score + 1)}>
+        <Pressable onPress={() => {
+          setDnf(false)
+          setScore((score = 0) => score + 1)
+        }}
+        >
           <SymbolView name="plus" size={32} tintColor={colors.on_surface} />
         </Pressable>
       </View>
@@ -68,8 +77,12 @@ export function ScoreModal({ player, onDismiss, onChange }: ScoreModalProps): Re
           </Pressable>
         ))}
 
-        <Pressable style={[styles.scoreButton, { width: '100%' }]} onPress={() => save(0)}>
+        <Pressable style={[styles.scoreButton, { width: '48%' }]} onPress={() => save(0)}>
           <Score value={0} />
+        </Pressable>
+
+        <Pressable style={[styles.scoreButton, { width: '48%' }]} onPress={() => save(undefined, true)}>
+          <Score dnf />
         </Pressable>
 
         {positiveValues.map((value) => (
@@ -90,18 +103,16 @@ const styles = StyleSheet.create({
   scoreGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    rowGap: 12,
-    justifyContent: 'space-between',
+    gap: 8,
   },
   scoreButton: {
     alignItems: 'center',
     padding: 18,
-    width: '22%',
+    width: '23%',
+    flexGrow: 1,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.outline_variant,
-    flexGrow: 0,
-    flexShrink: 0,
     backgroundColor: colors.surface_container_lowest,
   },
 })

@@ -98,7 +98,7 @@ export function EventPlayersActiveList({ event, eventPlayers, onPlayersChanged, 
   }, [playersNotInEvent, playerSearch])
 
   const playersWithoutScore = useMemo(() => {
-    return playersInEvent.filter((player) => player.score === undefined)
+    return playersInEvent.filter((player) => player.score === undefined && !player.dnf)
   }, [playersInEvent])
 
   function confirmCompleteEvent(): void {

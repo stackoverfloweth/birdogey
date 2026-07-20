@@ -51,7 +51,7 @@ export function PlayerListItemWithSwipeActions({ player, visible, onChange, onRe
     return (
       <View style={{ flexDirection: 'row', gap: 16 }}>
         <Pressable onPress={() => setScoreModalVisible(true)}>
-          {player.score === undefined ? <SymbolView name="exclamationmark.triangle.fill" size={32} tintColor={colors.error} /> : <Score value={player.score} />}
+          {player.dnf ? <Score dnf /> : player.score === undefined ? <SymbolView name="exclamationmark.triangle.fill" size={32} tintColor={colors.error} /> : <Score value={player.score} />}
         </Pressable>
       </View>
     )

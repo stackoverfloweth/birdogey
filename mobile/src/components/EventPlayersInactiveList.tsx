@@ -99,7 +99,7 @@ export function EventPlayersInactiveList({ event, eventPlayers, isRefreshing, on
 
   function renderRightState(player: PlayerInEvent): React.ReactNode {
     return (
-      <Score value={player.score} />
+      <Score value={player.score} dnf={player.dnf} />
     )
   }
 

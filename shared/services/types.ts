@@ -59,6 +59,7 @@ export type EventPlayerJson = {
   incomingTagId: number,
   outgoingTagId?: number,
   frozen?: boolean,
+  dnf?: boolean,
 }
 
 export type EventJson = {

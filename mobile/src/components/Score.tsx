@@ -4,12 +4,19 @@ import { StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-n
 
 type ScoreProps = {
   value?: number,
+  dnf?: boolean,
 }
 
-export function Score({ value }: ScoreProps): React.ReactNode {
+export function Score({ value, dnf }: ScoreProps): React.ReactNode {
   const classes = useMemo(() => {
     const container: StyleProp<ViewStyle>[] = [styles.container]
     const text: StyleProp<TextStyle>[] = [styles.text]
+
+    if (dnf) {
+      container.push(styles.containerDnf)
+      text.push(styles.textDnf)
+      return { container, text }
+    }
 
     if (value === undefined) {
       return {
@@ -30,9 +37,13 @@ export function Score({ value }: ScoreProps): React.ReactNode {
       container,
       text,
     }
-  }, [value])
+  }, [value, dnf])
 
   const formattedValue = useMemo(() => {
+    if (dnf) {
+      return 'DNF'
+    }
+
     if (value === 0) {
       return 'E'
     }
@@ -42,7 +53,7 @@ export function Score({ value }: ScoreProps): React.ReactNode {
     }
 
     return value?.toString()
-  }, [value])
+  }, [value, dnf])
 
   return (
     <View style={classes.container}>
@@ -76,5 +87,14 @@ const styles = StyleSheet.create({
   },
   textPositive: {
     color: colors.surface_container_lowest,
+  },
+  containerDnf: {
+    backgroundColor: colors.error,
+    transform: [{ rotate: '45deg' }],
+  },
+  textDnf: {
+    color: colors.surface_container_lowest,
+    fontSize: 11,
+    transform: [{ rotate: '-45deg' }],
   },
 })
