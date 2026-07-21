@@ -23,6 +23,16 @@
         <p-list-item class="player-list__player-details" :value="player.id">
           <div class="player-list__player-details-name">
             {{ player.name }}
+            <template v-if="player.pdgaNumber || player.udiscId">
+              <div class="player-list__player-details-ids">
+                <template v-if="player.pdgaNumber">
+                  <span>PDGA #{{ player.pdgaNumber }}</span>
+                </template>
+                <template v-if="player.udiscId">
+                  <span>@{{ player.udiscId }}</span>
+                </template>
+              </div>
+            </template>
             <template v-if="player.privateNotes">
               <div class="player-list__player-details-notes">
                 {{ player.privateNotes }}
@@ -73,6 +83,13 @@
 
 .player-list__player-details-name {
   flex-grow: 1;
+}
+
+.player-list__player-details-ids {
+  display: flex;
+  gap: var(--space-xs);
+  font-size: .75rem;
+  color: var(--p-color-text-subdued);
 }
 
 .player-list__player-details-notes {
