@@ -21,8 +21,6 @@
   const user = computed(() => players.value.find(({ id }) => id === userId.value))
   const userName = computed(() => user.value?.name ?? '...')
 
-  await playerSubscription.promise()
-
   const crumbs = computed<Crumb[]>(() => [
     { text: 'Players', to: routes.users(seasonId.value) },
     { text: userName.value },
@@ -58,6 +56,7 @@
 
     <p-card>
       <UserForm
+        v-if="user"
         :loading="loading"
         :season-id="seasonId"
         :initial-values="user"
@@ -66,6 +65,7 @@
         @remove="deletePlayer"
         @cancel="router.back"
       />
+      <p-loading-icon v-else />
     </p-card>
   </div>
 </template>

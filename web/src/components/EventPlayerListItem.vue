@@ -34,6 +34,7 @@
   const inForCtp = usePatchRef(eventPlayer, 'inForCtp')
   const inForAce = usePatchRef(eventPlayer, 'inForAce')
   const score = usePatchRef(eventPlayer, 'score')
+  const dnf = usePatchRef(eventPlayer, 'dnf')
   const incomingTagId = usePatchRef(eventPlayer, 'incomingTagId')
   const outgoingTagId = usePatchRef(eventPlayer, 'outgoingTagId')
   const hasNewTag = computed(() => typeof props.eventPlayer.outgoingTagId === 'number')
@@ -54,7 +55,7 @@
     },
   }))
 
-  const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number'
+  const isRequired: ValidationRule<number | undefined> = (value) => typeof value === 'number' || dnf.value === true
   const { error: scoreErrorMessage, state: scoreState } = useValidation(score, 'Score', [isRequired])
 
   function tryShowEditPlayerModal(): void {
@@ -106,7 +107,7 @@
       <div class="event-player-list-item__score-container">
         <p-label class="event-player-list-item__score-input" :message="scoreErrorMessage" :state="scoreState">
           <template #default="{ id }">
-            <ScoreInput :id="id" v-model="score" :disabled="disabled" :state="scoreState" />
+            <ScoreInput :id="id" v-model="score" v-model:dnf="dnf" :disabled="disabled" :state="scoreState" />
           </template>
         </p-label>
 

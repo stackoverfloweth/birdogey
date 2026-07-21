@@ -20,6 +20,8 @@
 
   const { validate, pending } = useValidationObserver()
   const name = ref(props.initialValues?.name)
+  const pdgaNumber = ref(props.initialValues?.pdgaNumber)
+  const udiscId = ref(props.initialValues?.udiscId)
   const tagId = ref(props.initialValues?.tagId)
   const entryPaid = ref(props.initialValues?.entryPaid ?? true)
   const imageUrl = ref(props.initialValues?.imageUrl)
@@ -35,6 +37,8 @@
       emit('submit', {
         seasonId: props.seasonId,
         name: name.value,
+        pdgaNumber: pdgaNumber.value,
+        udiscId: udiscId.value,
         tagId: tagId.value,
         entryPaid: entryPaid.value,
         imageUrl: imageUrl.value,
@@ -51,6 +55,18 @@
     <p-label class="player-form__name" label="Name" :message="nameErrorMessage" :state="nameState">
       <template #default="{ id }">
         <p-text-input :id="id" v-model="name" :disabled="auth.isReadonly" :state="nameState" />
+      </template>
+    </p-label>
+
+    <p-label class="player-form__pdga-number" label="PDGA Number">
+      <template #default="{ id }">
+        <p-text-input :id="id" v-model="pdgaNumber" :disabled="auth.isReadonly" />
+      </template>
+    </p-label>
+
+    <p-label class="player-form__udisc-id" label="UDisc ID">
+      <template #default="{ id }">
+        <p-text-input :id="id" v-model="udiscId" :disabled="auth.isReadonly" />
       </template>
     </p-label>
 

@@ -6,10 +6,12 @@
   const props = defineProps<{
     disabled?: boolean,
     modelValue: number | null | undefined,
+    dnf?: boolean,
   }>()
 
   const emit = defineEmits<{
     'update:modelValue': [value: number | null],
+    'update:dnf': [value: boolean],
   }>()
 
   defineOptions({
@@ -22,6 +24,9 @@
     },
     set(value) {
       emit('update:modelValue', value)
+      if (props.dnf && value !== null) {
+        emit('update:dnf', false)
+      }
     },
   })
 
@@ -30,11 +35,16 @@
 
   const classes = computed(() => ({
     'score-input__formatted--disabled': props.disabled,
-    'score-input__formatted--positive': modelValue.value && modelValue.value > 0,
-    'score-input__formatted--negative': modelValue.value && modelValue.value < 0,
+    'score-input__formatted--positive': !props.dnf && modelValue.value && modelValue.value > 0,
+    'score-input__formatted--negative': !props.dnf && modelValue.value && modelValue.value < 0,
+    'score-input__formatted--dnf': props.dnf,
   }))
 
   const formattedValue = computed(() => {
+    if (props.dnf) {
+      return 'DNF'
+    }
+
     if (modelValue.value === 0) {
       return 'E'
     }
@@ -45,16 +55,21 @@
 
     return modelValue.value?.toLocaleString()
   })
+
+  function handleDnf(): void {
+    emit('update:modelValue', null)
+    emit('update:dnf', true)
+  }
 </script>
 
 <template>
   <div class="score-input">
     <p-stepper v-bind="attrs" v-model="modelValue" :disabled="disabled" />
     <div class="score-input__formatted" :class="classes" @click="openScoringModal">
-      {{ formattedValue }}
+      <span class="score-input__formatted-text">{{ formattedValue }}</span>
     </div>
 
-    <ScoreInputModal v-model="modelValue" v-model:is-open="scoringModalIsOpen" />
+    <ScoreInputModal v-model="modelValue" v-model:is-open="scoringModalIsOpen" @dnf="handleDnf" />
   </div>
 </template>
 
@@ -87,6 +102,18 @@
   color: var(--p-color-bg-1);
   background-color: var(--p-color-button-primary-bg);
   border-radius: 100%;
+}
+
+.score-input__formatted--dnf {
+  color: var(--p-color-bg-1);
+  background-color: var(--p-color-sentiment-negative);
+  transform: rotate(45deg);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.score-input__formatted--dnf .score-input__formatted-text {
+  transform: rotate(-45deg);
 }
 
 .score-input__formatted--disabled {

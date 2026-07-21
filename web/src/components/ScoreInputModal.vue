@@ -2,6 +2,10 @@
   const modelValue = defineModel<number | null>({ required: true })
   const isOpen = defineModel<boolean>('isOpen', { required: true })
 
+  const emit = defineEmits<{
+    dnf: [],
+  }>()
+
   const count = 15
   const negativeValues = new Array(count).fill(null)
     .map((_value, index) => -count + index)
@@ -10,6 +14,11 @@
 
   function setScore(value: number): void {
     modelValue.value = value
+    isOpen.value = false
+  }
+
+  function setDnf(): void {
+    emit('dnf')
     isOpen.value = false
   }
 </script>
@@ -25,6 +34,10 @@
 
       <p-button class="score-input-modal__option score-input-modal__option--zero" @click="setScore(0)">
         E
+      </p-button>
+
+      <p-button class="score-input-modal__option score-input-modal__option--dnf" @click="setDnf">
+        DNF
       </p-button>
 
       <template v-for="value in positiveValues" :key="value">
@@ -52,7 +65,15 @@
 
 .score-input-modal__option--zero {
   justify-self: stretch;
-  grid-column: 1 / -1;
+  grid-column: 1 / 2;
+}
+
+.score-input-modal__option--dnf {
+  justify-self: stretch;
+  grid-column: 2 / -1;
+  color: var(--p-color-bg-1);
+  background-color: var(--p-color-sentiment-negative);
+  border-radius: 4px;
 }
 
 .score-input-modal__option--negative {
