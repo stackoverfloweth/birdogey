@@ -1,8 +1,11 @@
 <script lang="ts" setup>
   import { routes } from '@/router/routes'
+  import { useTheme } from '@/composables'
   import { useRouteParam } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import { format } from 'date-fns'
+
+  const { theme, toggleTheme } = useTheme()
 
   const { position = 'left' } = defineProps<{
     position?: 'left' | 'right',
@@ -26,6 +29,11 @@
         <p-overflow-menu-item icon="UsersIcon" label="Manage Players" :to="routes.users(seasonId)" />
       </template>
 
+      <p-overflow-menu-item
+        :icon="theme === 'dark' ? 'SunIcon' : 'MoonIcon'"
+        :label="theme === 'dark' ? 'Light Mode' : 'Dark Mode'"
+        @click="toggleTheme"
+      />
       <p-overflow-menu-item icon="ArrowRightOnRectangleIcon" label="Logout" :to="routes.logout()" />
 
       <p class="app-menu__build-time">

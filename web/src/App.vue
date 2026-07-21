@@ -46,6 +46,8 @@ body,
 dialog {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: var(--text-base-size);
+    background-color: var(--contrast-background);
+    color: var(--contrast-foreground);
 }
 
 .app {

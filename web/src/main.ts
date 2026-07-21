@@ -11,6 +11,7 @@ import * as Sentry from '@sentry/vue'
 
 import '@prefecthq/prefect-design/prefect-design.css'
 import '@/styles/index.css'
+import '@/composables/useTheme'
 
 const api = createApi({
   baseUrl: ENV.VITE_BASE_API_URL,
