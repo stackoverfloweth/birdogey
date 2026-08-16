@@ -4,6 +4,7 @@ import { useApiClient } from '@/contexts/ApiClientContext'
 import { calculateEventAcePotIfNoWinners, calculateEventCtpPotIfNoWinners, EventSchema, EventSchemaInput, getNextCtpHole, toEventSchemaInput } from '@birdogey/shared'
 import { formStyles } from '@/theme/forms'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { set, getHours, getMinutes } from 'date-fns'
 import { useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
 import { queryClient } from '@/services/queryClient'
@@ -41,7 +42,7 @@ export default function EventCreate(): React.ReactNode {
 
     return {
       ...toEventSchemaInput(latestEvent),
-      start: new Date(),
+      start: set(new Date(), { hours: getHours(latestEvent.start), minutes: getMinutes(latestEvent.start), seconds: 0, milliseconds: 0 }),
       players: [],
       ctpStartingBalance: calculateEventCtpPotIfNoWinners(latestEvent) / 100,
       aceStartingBalance: calculateEventAcePotIfNoWinners(latestEvent) / 100,
